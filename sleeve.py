@@ -1,3 +1,3 @@
 class Bob():
 	def lol():
-		print('hihi')
+		print('hihi'+'haha')

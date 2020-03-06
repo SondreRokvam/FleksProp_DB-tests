@@ -45,6 +45,7 @@ class FleksProp():
         self.tol = 0.01
         self.r = float(getInput('Enter the propeller radius(mm):'))
 
+        print('hei')
         # --------------------Prompt user for which radii to inspect--------------------
         fields = (('R= ', '0.5'), ('R= ', ''), ('R= ', ''), ('R= ', ''), ('R= ', ''), ('R= ', ''), ('R= ', ''), ('R= ', ''),
                   ('R= ', ''), ('R= ', ''))

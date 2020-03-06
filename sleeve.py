@@ -1,3 +1,3 @@
 class Bob():
-	def lol()
+	def lol():
 		print('hihi')

@@ -4,7 +4,7 @@ stpFilePath = 'C:\Users\Jon\OneDrive\FleksProp\HW_2020_02\HydroWing.stp'
 loadTxtFilePath = 'C:\Users\Jon\OneDrive\FleksProp\Scripts\load.txt'
 inputFileLocation = 'C:\Users\Jon\Documents'
 
-propellerType = 'HW' # or propeller = 'AZP'
+propellerType = 'HW' # or propeller = 'A65C'
 plottedRadii = [0.5,0.6,0.7,0.8,0.9]
 partition = 'Fan' # or partition = 'Grid', partition = 'Horizontal', partition = 'Vertical'
 partitionRefinement = 5

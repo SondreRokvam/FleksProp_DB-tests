@@ -688,8 +688,9 @@ class FleksProp():
                     multiprocessingMode=DEFAULT,
                     numCpus=1,
                     numGPUs=0)
-            mdb.jobs[job].submit(consistencyChecking=OFF)
-            mdb.jobs[job].waitForCompletion()
+            mdb.jobs[job].writeInput(consistencyChecking=OFF)
+            #mdb.jobs[job].submit(consistencyChecking=OFF)
+            #mdb.jobs[job].waitForCompletion()
 
 
 Mdb()

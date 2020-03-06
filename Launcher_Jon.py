@@ -10,8 +10,9 @@ partition = 'Fan' # or partition = 'Grid', partition = 'Horizontal', partition =
 partitionRefinement = 5
 shellOrSolid = 'Solid' # or shellOrSolid = 'Solid'
 cellOrFace = 'Cell' # or cellOrFace = 'Face'
-side = 'P' # or side = 'S'
+side = 'P' # or side = 'S', side = 'PS'
 
+inputFileLocation += '\' + propellerType + '-' + partition + partitionRefinement + '-' + shellOrSolid + '-' + cellOrFace + '-' side
 
 propeller = MC(propellerType,plottedRadii,partition,partitionRefinement,shellOrSolid,cellOrFace,side,inputFileLocation)
 

@@ -1,8 +1,8 @@
 
 """ Computer specific paths """
-stpFilePath = 'C:\Users\Jon\OneDrive\FleksProp\HW_2020_02\HydroWing.stp'
+stpFilePath = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Propeller_3D-files .prt .stp .iges\HydroWing.stp'
 loadTxtFilePath = 'C:\Users\Jon\OneDrive\FleksProp\Scripts\load.txt'
-inputFileLocation = 'C:\Users\Jon\Documents'
+inputFileLocation = 'C:\Temp'
 #inputFileLocation += '\' + propellerType + '-' + partition + str(partitionRefinement) + '-' + shellOrSolid + '-' + cellOrFace + '-' side
 
 

@@ -11,10 +11,12 @@ partitionRefinement = 5
 shellOrSolid = 'Solid' # or shellOrSolid = 'Solid'
 cellOrFace = 'Cell' # or cellOrFace = 'Face'
 side = 'P' # or side = 'S', side = 'PS'
+plyAngleLimits = [-45,45], # or nothing
+plyAngleStep = 5 #
 
-inputFileLocation += '\' + propellerType + '-' + partition + partitionRefinement + '-' + shellOrSolid + '-' + cellOrFace + '-' side
+inputFileLocation += '\' + propellerType + '-' + partition + str(partitionRefinement) + '-' + shellOrSolid + '-' + cellOrFace + '-' side
 
-propeller = MC(propellerType,plottedRadii,partition,partitionRefinement,shellOrSolid,cellOrFace,side,inputFileLocation)
+propeller = MC(propellerType,plottedRadii,partition,partitionRefinement,shellOrSolid,cellOrFace,side,inputFileLocation, plyAngleLimits, plyAngleStep)
 
 propeller.prep()
 propeller.partition()

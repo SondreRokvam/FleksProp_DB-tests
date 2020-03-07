@@ -693,18 +693,18 @@ class FleksProp():
             #mdb.jobs[job].waitForCompletion()
 
 
-Mdb()
-part_name = 'A65C'
-file_path = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Shell.stp'
-pressure_field_path = "C:\Users\Eivind\Pres.25kn_561rpm__Aba.txt"
-inputFileLocation = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models'
-r_val = []
-partition = 'Fan'
-partitionRefinement = 10
-shellOrSolid = 'shell'
-side = 'P'
-ratio_list = []
+#Mdb()
+#part_name = 'A65C'
+#file_path = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Shell.stp'
+#pressure_field_path = "C:\Users\Eivind\Pres.25kn_561rpm__Aba.txt"
+#inputFileLocation = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models'
+#r_val = []
+#partition = 'Fan'
+#partitionRefinement = 10
+#shellOrSolid = 'shell'
+#side = 'P'
+#ratio_list = []
 
-p1 = FleksProp(file_path, pressure_field_path, inputFileLocation, part_name, r_val, partition, partitionRefinement, shellOrSolid, side, ratio_list)
-p1.SetUpAZP()
-p1.FullLaminateAZP()
+#p1 = FleksProp(file_path, pressure_field_path, inputFileLocation, part_name, r_val, partition, partitionRefinement, shellOrSolid, side, ratio_list)
+#p1.SetUpAZP()
+#p1.FullLaminateAZP()

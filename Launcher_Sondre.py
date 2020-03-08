@@ -1,3 +1,28 @@
+if True:
+    from abaqus import *
+    from abaqus import getInput
+    from abaqus import getInputs
+    from abaqusConstants import *
+    import __main__
+    import time
+    import section
+    import regionToolset
+    import displayGroupMdbToolset as dgm
+    import part
+    import material
+    import assembly
+    import step
+    import interaction
+    import load
+    import mesh
+    import optimization
+    import job
+    import sketch
+    import visualization
+    import xyPlot
+    import displayGroupOdbToolset as dgo
+    import connectorBehavior
+    import numpy as np
 """ Test Parameters """
 if True:
     stepOrCAEimport =['step','CAE']
@@ -61,7 +86,7 @@ from ClassTest import FleksProp as MC
 propeller = MC(inputLocation+name+'.cae', 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt',
                  inputLocation, name, r, partitionMethods,
                  Refinement, shellOrSolidTest,
-                 sides, plottedRadii)#, stepOrCAEimport)
+                 sides, plottedRadii, stepOrCAEimport)
 
 os.chdir(r"C:/temp")
 try:

@@ -1,26 +1,21 @@
-import ModelClass as MC
+import HydroWing
+import numpy as np
+caeFilePath = 'C:\Users\Jon\OneDrive\FleksProp\Scripts\HW.cae'
+inputFileLocation = 'C:\Users\Jon\OneDrive\FleksProp\InputFiles'
 
-stpFilePath = 'C:\Users\Jon\OneDrive\FleksProp\HW_2020_02\HydroWing.stp'
-loadTxtFilePath = 'C:\Users\Jon\OneDrive\FleksProp\Scripts\load.txt'
-inputFileLocation = 'C:\Users\Jon\Documents'
-
-propellerType = 'HW' # or propeller = 'A65C'
-plottedRadii = [0.5,0.6,0.7,0.8,0.9]
-partition = 'Fan' # or partition = 'Grid', partition = 'Horizontal', partition = 'Vertical'
-partitionRefinement = 5
+partition = 'AllOver' # or partition = 'Fan', partition = 'Grid', partition = 'Horizontal', partition = 'Vertical', partition = AllOver
+#partitionRefinement = 5
 shellOrSolid = 'Solid' # or shellOrSolid = 'Solid'
-cellOrFace = 'Cell' # or cellOrFace = 'Face'
-side = 'P' # or side = 'S', side = 'PS'
-plyAngleLimits = [-45,45], # or nothing
+#cellOrFace = 'Cell' # or cellOrFace = 'Face'
+#side = 'P' # or side = 'S', side = 'PS'
+plyAngleLimits = [-90,90], # or nothing
 plyAngleStep = 5 #
+plyThickness = 0.2
 
-inputFileLocation += '\' + propellerType + '-' + partition + str(partitionRefinement) + '-' + shellOrSolid + '-' + cellOrFace + '-' side
+propeller = HydroWing(caeFilePath)
 
-propeller = MC(propellerType,plottedRadii,partition,partitionRefinement,shellOrSolid,cellOrFace,side,inputFileLocation, plyAngleLimits, plyAngleStep)
+propeller.AllOver(np.linspace(plyAngleLimits,plyAngleStep), plyThickness, inputFileLocation)
 
-propeller.prep()
-propeller.partition()
-propeller.createInput()
 
 
 

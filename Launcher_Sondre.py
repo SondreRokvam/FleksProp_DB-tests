@@ -78,8 +78,14 @@ caeFilePath = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/L
 loadTxtFilePath = 'C:/Users/Jon/OneDrive/FleksProp/Scripts/load.txt'
 inputLocation = 'C:/Temp'
 #inputFileLocation += '/' + propellerType + '-' + partition + str(partitionRefinement) + '-' + shellOrSolid + '-' + cellOrFace + '-' side
+GitHubLoc= r"C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests"
 
-os.chdir(r"C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests")
+os.chdir(GitHubLoc)
+try:
+    os.remove('ClassTest.pyc')
+except:
+    pass
+
 from ClassTest import FleksProp as MC
 
 """Running the scripts"""
@@ -93,10 +99,33 @@ try:
     propeller = MC()#propellerType,plottedRadii,partition,partitionRefinement,shellOrSolid,cellOrFace,side,inputFileLocation, plyAngleLimits, plyAngleStep)
 except:
     pass
-propeller.prep()
-propeller.partition()
-propeller.createInput()
+propeller.SetUpAZP()
+#propeller.partition()
+#propeller.createInput()
 
+
+
+"""Sondre Tweeaked variabler
+Aba.Mdb()
+part_name = 'AzP65C'
+file_p = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
+pressure_fi_path = "C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
+inputFileLocation = 'C:/Users/Eivind/Documents/NTNU/FleksProp/Models'
+r_val = 650
+partition = 'Fan'
+partitionRefinement = 10
+shellOrSolid = 'solid'
+sid = 'P'
+ratio_li = [0.5,0.6,0.7,0.8,0.9]
+step_CAEimp ='step'#'CAE'
+
+p1 = FleksProp(file_p, 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt',
+                 inputLocation, name, r, partitionMethods,
+                 Refinement, shellOrSolidTest,
+                 sid, ratio_li, stepOrCAEimport)
+p1.SetUpAZP()
+p1.FullLaminateAZP()
+"""
 
 
 

@@ -24,8 +24,11 @@ class FleksProp():
     import connectorBehavior
     import numpy as np
 
-    def __init__(self, file_path, pressure_field_path, inputFileLocation, part_name, r_val, partition, partitionRefinement, shellOrSolid, side, ratio_list):
-        self.model = mdb.models['Model-1']
+    def __init__(self, file_path, pressure_field_path,
+                 inputFileLocation, part_name, r_val,
+                 partition, partitionRefinement, shellOrSolid,
+                 side, ratio_list, filtyp):
+        #self.model = mdb.models['Model-1']
         self.part_name = part_name
         self.file_path = file_path
         self.inputFileLocation = inputFileLocation

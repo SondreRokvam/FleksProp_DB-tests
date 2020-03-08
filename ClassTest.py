@@ -699,9 +699,6 @@ class FleksProp():
 """Sondre Tweeaked variabler"""
 Aba.Mdb()
 part_name = 'AzP65C'
-file_p = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
-pressure_fi_path = "C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
-inputFileLocation = 'C:/Users/Eivind/Documents/NTNU/FleksProp/Models'
 r_val = 650
 partition = 'Fan'
 partitionRefinement = 10
@@ -710,7 +707,12 @@ sid = 'P'
 ratio_li = [0.5,0.6,0.7,0.8,0.9]
 step_CAEimp ='step'#'CAE'
 
-p1 = FleksProp(file_p, 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt',
+file_p = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
+pressure_fi_path = "C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
+inputFileLocation = 'C:/Users/Eivind/Documents/NTNU/FleksProp/Models'
+stepfil ='C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt'
+
+p1 = FleksProp(file_p, stepfil,
                  inputLocation, name, r, partitionMethods,
                  Refinement, shellOrSolidTest,
                  sid, ratio_li, stepOrCAEimport)

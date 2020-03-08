@@ -1,0 +1,52 @@
+for i in range(0,18):
+
+    #-------------------------------LAYUP------------------------------------------------
+
+    plies = [23,43,2,16,45,36,69,60,4,13,-13,-4,-60,-69,-36,-45,-16,-2,-43,-23]
+    k = i*10
+    #print(i)
+    job ='Job-' + str(k)
+    #---------------------Layup-------------------------
+    layupOrientation= None
+    p = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root']
+    f = p.faces
+    faces = f.getSequenceFromMask(mask=('[#fffff ]', ), )
+    region1=regionToolset.Region(faces=faces)
+   
+    p = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root']
+    s = p.faces
+    side1Faces = s.getSequenceFromMask(mask=('[#fffff ]', ), )
+    normalAxisRegion = p.Surface(side1Faces=side1Faces, name='Surf-1')
+    p = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root']
+    e = p.edges
+    edges = e.getSequenceFromMask(mask=('[#20 ]', ), )
+    primaryAxisRegion = p.Set(edges=edges, name='Set-2')
+    if i == 0:
+        compositeLayup = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root'].CompositeLayup(
+            name='orientation0', description='', elementType=SHELL,
+            offsetType=MIDDLE_SURFACE, symmetric=False,
+            thicknessAssignment=FROM_SECTION)
+    else:
+        compositeLayup = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root'].compositeLayups['orientation0']
+        compositeLayup.deletePlies()
+
+    compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON,
+        thicknessType=UNIFORM, poissonDefinition=DEFAULT, temperature=GRADIENT,
+        useDensity=OFF)
+
+    for j in range(len(plies)):
+        compositeLayup.CompositePly(suppressed=False, plyName='Ply-'+str(j+1),
+            region=region1, material='CF-UD', thicknessType=SPECIFY_THICKNESS,
+            thickness=0.3, orientationType=SPECIFY_ORIENT, orientationValue=plies[0]+k,
+            additionalRotationType=ROTATION_NONE, additionalRotationField='',
+            axis=AXIS_3, angle=0.0, numIntPoints=3)
+    
+    compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None,
+        additionalRotationType=ROTATION_NONE, angle=0.0,
+        additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3,
+        normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion,
+        normalAxisDirection=AXIS_3, flipNormalDirection=False,
+        primaryAxisDefinition=EDGE, primaryAxisRegion=primaryAxisRegion,
+        primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)
+    p = mdb.models['Model-1'].parts['Azp65C-Propeller-Blade_No_Root']
+    session.viewports['Viewport: 1'].setValues(displayedObject=p)

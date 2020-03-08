@@ -1,31 +1,35 @@
-class FleksProp():
-    from abaqus import *
-    from abaqus import getInput
-    from abaqus import getInputs
-    from abaqusConstants import *
-    import __main__
-    import time
-    import section
-    import regionToolset
-    import displayGroupMdbToolset as dgm
-    import part
-    import material
-    import assembly
-    import step
-    import interaction
-    import load
-    import mesh
-    import optimization
-    import job
-    import sketch
-    import visualization
-    import xyPlot
-    import displayGroupOdbToolset as dgo
-    import connectorBehavior
-    import numpy as np
+import abaqus as Aba
+import abaqusConstants as AbaCon
+from abaqus import getInput
+from abaqus import getInputs
+from abaqusConstants import *
+import __main__
+import time
+import section
+import regionToolset
+import displayGroupMdbToolset as dgm
+import part
+import material
+import assembly
+import step
+import interaction
+import load
+import mesh
+import optimization
+import job
+import sketch
+import visualization
+import xyPlot
+import displayGroupOdbToolset as dgo
+import connectorBehavior
+import numpy as np
 
-    def __init__(self, file_path, pressure_field_path, inputFileLocation, part_name, r_val, partition, partitionRefinement, shellOrSolid, side, ratio_list):
-        self.model = mdb.models['Model-1']
+class FleksProp():
+    def __init__(self, file_path, pressure_field_path,
+                 inputFileLocation, part_name, r_val,
+                 partition, partitionRefinement, shellOrSolid,
+                 side, ratio_list, filtyp):
+        #self.model = mdb.models['Model-1']
         self.part_name = part_name
         self.file_path = file_path
         self.inputFileLocation = inputFileLocation
@@ -45,8 +49,8 @@ class FleksProp():
     def SetUpAZP(self):
 
         # --------------------Initial Variable Names and Settings--------------------
-        self.reply = getWarningReply(message='Press YES for sheet body \nPress NO for solid body',
-                                    buttons=(YES, NO))
+        #self.reply = Aba.getWarningReply(message='Press YES for sheet body \nPress NO for solid body',
+        #                           buttons=(AbaCon.YES, AbaCon.NO))
 
         self.r = float(getInput('Enter the propeller radius(mm):'))
 
@@ -77,10 +81,10 @@ class FleksProp():
             self.r_name.append('R_' + str(self.r_val[i])[2:])
             self.set_name.append('PROFILE-' + self.r_name[i])
         self.npz_name = 'parameters_for_plot.npz'
-        self.np.savez(self.npz_name,
+        np.savez(self.npz_name,
                  r_val=self.r_val,
                  set_name=self.set_name)
-        npzfile = self.np.load(self.npz_name)
+        npzfile = np.load(self.npz_name)
 
         # --------------------Import--------------------
         self.step = mdb.openStep(self.file_path,
@@ -692,19 +696,23 @@ class FleksProp():
             #mdb.jobs[job].submit(consistencyChecking=OFF)
             #mdb.jobs[job].waitForCompletion()
 
+"""Sondre Tweeaked variabler"""
+Aba.Mdb()
+part_name = 'AzP65C'
+file_p = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
+pressure_fi_path = "C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
+inputFileLocation = 'C:/Users/Eivind/Documents/NTNU/FleksProp/Models'
+r_val = 650
+partition = 'Fan'
+partitionRefinement = 10
+shellOrSolid = 'solid'
+sid = 'P'
+ratio_li = [0.5,0.6,0.7,0.8,0.9]
+step_CAEimp ='step'#'CAE'
 
-#Mdb()
-#part_name = 'A65C'
-#file_path = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Shell.stp'
-#pressure_field_path = "C:\Users\Eivind\Pres.25kn_561rpm__Aba.txt"
-#inputFileLocation = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models'
-#r_val = []
-#partition = 'Fan'
-#partitionRefinement = 10
-#shellOrSolid = 'shell'
-#side = 'P'
-#ratio_list = []
-
-#p1 = FleksProp(file_path, pressure_field_path, inputFileLocation, part_name, r_val, partition, partitionRefinement, shellOrSolid, side, ratio_list)
-#p1.SetUpAZP()
-#p1.FullLaminateAZP()
+p1 = FleksProp(file_p, 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt',
+                 inputLocation, name, r, partitionMethods,
+                 Refinement, shellOrSolidTest,
+                 sid, ratio_li, stepOrCAEimport)
+p1.SetUpAZP()
+p1.FullLaminateAZP()

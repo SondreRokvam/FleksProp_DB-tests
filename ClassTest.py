@@ -1,5 +1,6 @@
 import abaqus as Aba
 import abaqusConstants as AbaCon
+from abaqus import  *
 from abaqus import getInput
 from abaqus import getInputs
 from abaqusConstants import *
@@ -41,9 +42,10 @@ class FleksProp():
         self.partitionRefinement = partitionRefinement
         self.ratio_list = ratio_list
         if shellOrSolid == 'shell':
-            self.reply = YES
+            self.reply = 'sel'
+            #self.reply = AbaCon.YES
         elif shellOrSolid == 'solid':
-            self.reply = NO
+            self.reply = 'sol'
         self.side = side
 
     def SetUpAZP(self):
@@ -89,7 +91,7 @@ class FleksProp():
         # --------------------Import--------------------
         self.step = mdb.openStep(self.file_path,
                             scaleFromFile=OFF)
-        self.model.PartFromGeometryFile(name=self.part_name,
+        model.PartFromGeometryFile(name=self.part_name,
                                    geometryFile=self.step,
                                    combine=True,
                                    retainBoundary=True,
@@ -698,23 +700,24 @@ class FleksProp():
 
 """Sondre Tweeaked variabler"""
 Aba.Mdb()
-part_name = 'AzP65C'
-r_val = 650
-partition = 'Fan'
-partitionRefinement = 10
-shellOrSolid = 'solid'
+name = 'AzP65C'
+r = 650
+partitionMethods = 'Fan'
+Refinement = 10
+shellOrSolidTest = 'solid'
 sid = 'P'
 ratio_li = [0.5,0.6,0.7,0.8,0.9]
 step_CAEimp ='step'#'CAE'
 
-file_p = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
-pressure_fi_path = "C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
-inputFileLocation = 'C:/Users/Eivind/Documents/NTNU/FleksProp/Models'
-stepfil ='C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt'
+userP='C:/Users/sondreor/Dropbox/!PhD!/'
+file_p = userP+'Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
+pressure_fi_path = userP+"Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
+stepfil =userP+'/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt'
+inputLocation = 'C:/Temp'
 
 p1 = FleksProp(file_p, stepfil,
                  inputLocation, name, r, partitionMethods,
                  Refinement, shellOrSolidTest,
-                 sid, ratio_li, stepOrCAEimport)
+                 sid, ratio_li, step_CAEimp)
 p1.SetUpAZP()
 p1.FullLaminateAZP()

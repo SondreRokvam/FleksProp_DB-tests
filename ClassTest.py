@@ -710,7 +710,7 @@ ratio_li = [0.5,0.6,0.7,0.8,0.9]
 step_CAEimp ='step'#'CAE'
 
 userP='C:/Users/sondreor/Dropbox/!PhD!/'
-file_p = userP+'Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Solid.stp'
+file_p = userP+'Propeller Design and Production/LargeScale/0_Basic_3D-files .prt .stp .iges/Azp65C-PB_no_Fillet_Shell.stp'
 pressure_fi_path = userP+"Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt"
 stepfil =userP+'/Propeller Design and Production/LargeScale/0_Trykkfordelinger/P65C_25kn_561rpm__Aba.txt'
 inputLocation = 'C:/Temp'

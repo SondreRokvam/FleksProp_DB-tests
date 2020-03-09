@@ -47,14 +47,14 @@ if True:
         sides = sides[side]
         if propellerTypes=='HW':
             r=500
-            name= 'HW'
+            name= 'HydroWing_'
             if shellOrSolidTest=='Shell':
                 name= name+'Shell'
             else:
                 name = name + 'Solid'
         if propellerTypes=='AzP65C':
             r=650
-            name = 'Azp65C-PB_no_Fillet_Shell'
+            name = 'Azp65C-PB_no_Fillet_'
             if shellOrSolidTest=='Shell':
                 name= name+'Shell'
             else:
@@ -74,7 +74,7 @@ plyAngleStep = 5
 
 """ Computer specific paths """
 
-caeFilePath = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Propeller_3D-files .prt .stp .iges/HydroWing_'
+caeFilePath = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/0_Propeller_3D-files .prt .stp .iges/'
 loadTxtFilePath = 'C:/Users/Jon/OneDrive/FleksProp/Scripts/load.txt'
 inputLocation = 'C:/Temp'
 #inputFileLocation += '/' + propellerType + '-' + partition + str(partitionRefinement) + '-' + shellOrSolid + '-' + cellOrFace + '-' side

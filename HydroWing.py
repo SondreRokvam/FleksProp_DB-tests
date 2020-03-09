@@ -82,22 +82,16 @@ class HydroWing:
 
                 # ----------------- Orientation -------------------------------------
                 s = p.faces
-                edge = p.edges.getByBoundingBox(-1000,-1000,249,1000,1000,251)
+                p.DatumAxisByPrincipalAxis(principalAxis=ZAXIS)
+                primaryAxisDatum = p.datums[5]  # Don't know why this is 5, but it works
                 normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
-                primaryAxisRegion = p.Set(edges=edge, name='Primary_Axis_Region')
-                mdb.models['Model-1'].parts['HW'].MaterialOrientation(region=region,
-                    orientationType=GLOBAL, axis=AXIS_1,
-                    additionalRotationType=ROTATION_NONE, localCsys=None, fieldName='')
-
-                """
-                mdb.models['Model-1'].parts['HW'].MaterialOrientation(region=region,
-                    orientationType=DISCRETE, axis=AXIS_3, normalAxisDefinition=SURFACE,
-                    normalAxisRegion=normalAxisRegion, flipNormalDirection=False,
-                    normalAxisDirection=AXIS_3, primaryAxisDefinition=EDGE,
-                    primaryAxisRegion=primaryAxisRegion, primaryAxisDirection=AXIS_2,
-                    flipPrimaryDirection=False, additionalRotationType=ROTATION_NONE,
-                    angle=0.0, additionalRotationField='')
-                """
+                p.MaterialOrientation(region=region,
+                                      orientationType=DISCRETE, axis=AXIS_1, normalAxisDefinition=SURFACE,
+                                      normalAxisRegion=normalAxisRegion, flipNormalDirection=False,
+                                      normalAxisDirection=AXIS_3, primaryAxisDefinition=DATUM,
+                                      primaryAxisDatum=primaryAxisDatum, primaryAxisDirection=AXIS_1,
+                                      flipPrimaryDirection=False, additionalRotationType=ROTATION_NONE,
+                                      angle=0.0, additionalRotationField='', stackDirection=STACK_3)
 
                 # ----------------- Skin Mesh ----------------------------------------
 
@@ -121,5 +115,6 @@ class HydroWing:
                 mdb.jobs[name].writeInput(consistencyChecking=OFF)
                 mdb.close()
             except:
-                pass
+                print('ERROR IN CREATING INPUT FILE ' + name)
+
 

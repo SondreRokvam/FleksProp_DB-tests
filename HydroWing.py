@@ -25,7 +25,6 @@ class HydroWing:
         import connectorBehavior
         import os
         import numpy as np
-        import HWAllOver
 
     def __init__(self, cae_file_path):
         self.caeFilePath = cae_file_path

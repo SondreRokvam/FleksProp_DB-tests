@@ -30,7 +30,7 @@ class FleksProp():
                  inputFileLocation, part_name, r_val,
                  partition, partitionRefinement, shellOrSolid,
                  side, ratio_list, filtyp):
-        #self.model = mdb.models['Model-1']
+        self.model = mdb.models['Model-1']
         self.part_name = part_name
         self.file_path = file_path
         self.inputFileLocation = inputFileLocation
@@ -91,7 +91,7 @@ class FleksProp():
         # --------------------Import--------------------
         self.step = mdb.openStep(self.file_path,
                             scaleFromFile=OFF)
-        model.PartFromGeometryFile(name=self.part_name,
+        self.model.PartFromGeometryFile(name=self.part_name,
                                    geometryFile=self.step,
                                    combine=True,
                                    retainBoundary=True,

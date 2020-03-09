@@ -9,13 +9,12 @@ shellOrSolid = 'Solid' # or shellOrSolid = 'Solid'
 #cellOrFace = 'Cell' # or cellOrFace = 'Face'
 #side = 'P' # or side = 'S', side = 'PS'
 plyAngleLimits = [-90,90] # or nothing
-plyAngleNumber = 5 #
+plyAngleNumber = 3 #
 plyThickness = 0.2
 
 propeller = HydroWing(caeFilePath)
-print(plyAngleLimits[0])
-print(plyAngleLimits[1])
-propeller.all_over(np.linspace(plyAngleLimits[0],plyAngleLimits[1],3), plyThickness, inputFileLocation)
+
+propeller.all_over(np.linspace(plyAngleLimits[0],plyAngleLimits[1],plyAngleNumber), plyThickness, inputFileLocation)
 
 
 

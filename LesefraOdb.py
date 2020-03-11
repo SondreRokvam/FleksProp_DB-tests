@@ -1,66 +1,52 @@
 from abaqus import *
 from abaqusConstants import *
 from odbAccess import *
-import sys
-import visualization
-import xyPlot
-import section
-import regionToolset
-import displayGroupMdbToolset as dgm
-import part
-import material
-import assembly
-import step
-import interaction
-import load
-import mesh
-import optimization
-import job
-import sketch
-import visualization
-import xyPlot
-import displayGroupOdbToolset as dgo
-import connectorBehavior
-
 import numpy as np
 import math
-Parameters = np.load('Parameters_for_plots1.npz')
-print Parameters.files
+#ODB PATH
+gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
+odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
+#odb_path = gitHub
 
-odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct'
+#NPZ PATH
+npz_path='C:/temp/'
+
+# Hent
 odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
-odb.rootAssembly.nodeSets['PROFILE-R_5']
-Measurementes = [f for f in odb.rootAssembly.nodeSets if (f.startswith('PROFILE-R'))]
-for i in range(0,len(Jobbs)):
-    odb = session.openOdb(name='C:/Temp/'+Jobbs[i]+'.odb')
-    for profi in Measurementes:
-
-        #dots =[]
-        #dotsm = []
+for i in odb_names:
+    print i
+    odb = session.openOdb(name=odb_path+i)
+    Measurementes = [nodeset.name for nodeset in odb.rootAssembly.nodeSets.values() if (nodeset.name.startswith('PROFILE-R'))]
+    for profile in Measurementes:
         dots_cyl_langs_x = []
         dots_cyl_langs_xm =[]
 
-        AllNodes = odb.rootAssembly.nodeSets[profi].nodes[0]
-        Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.nodeSets[profi]).values
+        AllNodes = odb.rootAssembly.nodeSets[profile].nodes[0]
+        Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.nodeSets[profile]).values
+
         Acount= 0
         for nod in AllNodes:
-            x = float(nod.coordinates[0])
+            x = float(nod.coordinates[0])           #Initial position of node
             y = float(nod.coordinates[1])
             z = float(nod.coordinates[2])
-            xm = float(Disp[Acount].data[0])
+            xm = float(Disp[Acount].data[0])        #Displacement of node
             ym= float(Disp[Acount].data[1])
             zm= float(Disp[Acount].data[2])
-            Acount =Acount + 1
+            Acount =Acount + 1  # Manual counter
 
+            #Find angular value
             ang = math.atan2(y , z)
             angm = math.atan2((y+ym) , (z+zm))
+
+            #                        Angle        radius        Cylinder height
             dots_cyl_langs_x.append([ang, ((y) ** 2 + (z) ** 2) ** 0.5, x ])
+
             dots_cyl_langs_xm.append([angm, ((y+ym)**2+(z+zm)**2)**0.5, x+xm])
 
-
-
-        np.savez('C:/temp/Profile_w '+maal+Jobbs[i]+'_CylynderC_alongX', np.array(dots_cyl_langs_x))
-        np.savez('C:/temp/Profile_w '+maal+Jobbs[i]+'_CylynderC_alongX_def', np.array(dots_cyl_langs_xm))
-    print('worked')
-    #f.close()
+        #Save for plotting
+        np.savez(npz_path+'Cylinder view of '+profile+' for '+i[:-4],
+                 profile_undeformed = np.array( dots_cyl_langs_x),
+                 profile_deformed=np.array( dots_cyl_langs_xm) ,
+                 profile__id=i)
+    print('worked for '+i[:-4])
     odb.close()

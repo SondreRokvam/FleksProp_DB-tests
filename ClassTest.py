@@ -62,23 +62,23 @@ class FleksProp():
         self.Radius = 650
 
         # --------------------Prompt user for which radii to inspect--------------------
-        fields = (('R= ', '0.5'), ('R= ', '0.6'), ('R= ', '0.7'), ('R= ', '0.8'), ('R= ', '0.9'),
-                  ('R= ', ''), ('R= ', ''), ('R= ', ''),('R= ', ''), ('R= ', ''))
-        self.r_input = getInputs(fields=fields,
-                            label='Enter percentages of the propeller radius(0.5, 0.6,...etc.):',
-                            dialogTitle='Inspected radii', )
-
-        # filter out empty and duplicate inputs
-        self.r_val = []
-        for i in range(len(self.r_input)):
-            duplicate = 0
-            if self.r_input[i] != '':
-                self.r_val.append(float(self.r_input[i]))
-                for j in range(len(self.r_val) - 1):
-                    if self.r_val[-1] == self.r_val[j]:
-                        duplicate = 1
-            if duplicate == 1:
-                self.r_val.remove(self.r_val[-1])
+        # fields = (('R= ', '0.5'), ('R= ', '0.6'), ('R= ', '0.7'), ('R= ', '0.8'), ('R= ', '0.9'),
+        #           ('R= ', ''), ('R= ', ''), ('R= ', ''),('R= ', ''), ('R= ', ''))
+        # self.r_input = getInputs(fields=fields,
+        #                     label='Enter percentages of the propeller radius(0.5, 0.6,...etc.):',
+        #                     dialogTitle='Inspected radii', )
+        #
+        # # filter out empty and duplicate inputs
+        # self.r_val = []
+        # for i in range(len(self.r_input)):
+        #     duplicate = 0
+        #     if self.r_input[i] != '':
+        #         self.r_val.append(float(self.r_input[i]))
+        #         for j in range(len(self.r_val) - 1):
+        #             if self.r_val[-1] == self.r_val[j]:
+        #                 duplicate = 1
+        #     if duplicate == 1:
+        #         self.r_val.remove(self.r_val[-1])
         self.r_val.sort()
 
         # --------------------Save list of radii and set names to C:\temp--------------------
@@ -106,63 +106,239 @@ class FleksProp():
         p = self.model.parts[self.part_name]
         session.viewports['Viewport: 1'].setValues(displayedObject=p)
 
-        tol = 5
-        Setnames = []
-        p = self.model.parts[self.part_name]
-        # ---------- Specifying Partition Density Horizontal -----------------------------
-        partitiondensity = []
-        splits = (self.Radius - (self.Radius * 0.42)) / self.partitionRefinement
-        startpart = (self.Radius * 0.42) + splits
-        for y in range(int(startpart), int(self.Radius - tol), int(splits)):
-            partitiondensity.append(y)
 
-        if self.shellOrSolid == 'solid':
-            # ------------Creating Horizontal Partitions- -----------------------
 
-            c1 = p.cells
-            for x in partitiondensity:
-                p.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=-x)
-            d1 = p.datums
-            for z in range(2, len(d1) + 2, 1):
-                if z == 2:
-                    pickedCells = c1.getByBoundingBox(-1000, -int(self.Radius), -1000, 1000, self.Radius, 1000)
-                    p.PartitionCellByDatumPlane(datumPlane=d1[z], cells=pickedCells)
-                elif z > 2:
-                    pickedCells = c1.getByBoundingBox(-1000, -self.Radius, -1000, 1000, 0 + ((z - 2) * splits), 1000)
-                    p.PartitionCellByDatumPlane(datumPlane=d1[z], cells=pickedCells)
+        if self.partition =='horizontal':
+            tol = 5
+            Setnames = []
+            p = self.model.parts[self.part_name]
+            # ---------- Specifying Partition Density Horizontal -----------------------------
+            partitiondensity = []
+            splits = (self.Radius - (self.Radius * 0.2)) / self.partitionRefinement
+            startpart = (self.Radius * 0.2) + splits
+            for y in range(int(startpart), int(self.Radius - tol), int(splits)):
+                partitiondensity.append(y)
 
-            # ----------------------Create Section --------------------------------------------
+            if self.shellOrSolid == 'solid':
+                # ------------Creating Horizontal Partitions- -----------------------
 
-            # Create Material
-            Mat = ['Foam', 'Steel']
-            Modulus = [3000.0, 200000.0]
+                c1 = p.cells
+                for x in partitiondensity:
+                    p.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=-x)
+                d1 = p.datums
+                for z in range(2, len(d1) + 2, 1):
+                    if z == 2:
+                        pickedCells = c1.getByBoundingBox(-1000, -int(self.Radius), -1000, 1000, self.Radius, 1000)
+                        p.PartitionCellByDatumPlane(datumPlane=d1[z], cells=pickedCells)
+                    elif z > 2:
+                        pickedCells = c1.getByBoundingBox(-1000, -self.Radius, -1000, 1000, 0 + ((z - 2) * splits), 1000)
+                        p.PartitionCellByDatumPlane(datumPlane=d1[z], cells=pickedCells)
 
-            for i in range(0, len(Mat)):
-                self.model.Material(name=Mat[i])
-                self.model.materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
+                # ----------------------Create Section --------------------------------------------
 
-            sectionnames = []
-            # Create Section
-            for m1 in range(0, len(Mat)):
-                self.model.HomogeneousSolidSection(name=Mat[m1], material=Mat[m1],
-                                                   thickness=None)
-                sectionnames.append(str(Mat[m1]))
+                # Create Material
+                Mat = ['Foam', 'Steel']
+                Modulus = [3000.0, 200000.0]
 
-            # ----------------------Assign Section--------------------------------------------------
-            # --- Create Sets----
-            c = p.cells
-            for s1 in range(0, len(d1) + 1, 1):
-                s2 = s1 - 1
-                Setnames.append('Set-' + str(s1))
-                if s1 == 0:
-                    cells = c.getByBoundingBox(-1000, -startpart, -1000, 1000, s1 * splits, 1000)
-                    p.Set(cells=cells, name='Set-' + str(s1))
-                elif s1 > 0:
-                    cells = c.getByBoundingBox(-1000, -(startpart + (s1 * splits) + tol), -1000, 1000,
-                                               -(startpart + (s2 * splits) - 5), 1000)
-                    p.Set(cells=cells, name='Set-' + str(s1))
+                for i in range(0, len(Mat)):
+                    self.model.Material(name=Mat[i])
+                    self.model.materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
 
-            session.viewports['Viewport: 1'].setValues(displayedObject=p)
+                sectionnames = []
+                # Create Section
+                for m1 in range(0, len(Mat)):
+                    self.model.HomogeneousSolidSection(name=Mat[m1], material=Mat[m1],
+                                                       thickness=None)
+                    sectionnames.append(str(Mat[m1]))
+
+                # ----------------------Assign Section--------------------------------------------------
+                # --- Create Sets----
+                c = p.cells
+                for s1 in range(0, len(d1) + 1, 1):
+                    s2 = s1 - 1
+                    Setnames.append('Set-' + str(s1))
+                    if s1 == 0:
+                        cells = c.getByBoundingBox(-1000, -startpart, -1000, 1000, s1 * splits, 1000)
+                        p.Set(cells=cells, name='Set-' + str(s1))
+                    elif s1 > 0:
+                        cells = c.getByBoundingBox(-1000, -(startpart + (s1 * splits) + tol), -1000, 1000,
+                                                   -(startpart + (s2 * splits) - 5), 1000)
+                        p.Set(cells=cells, name='Set-' + str(s1))
+
+                session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+            elif self.shellOrSolid == 'shell':
+                # ------------Creating Horizontal Partitions- -----------------------
+
+                f1 = p.faces
+                for x in partitiondensity:
+                    p.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=-x)
+                d1 = p.datums
+                for z in range(2, len(d1) + 2, 1):
+                    if z == 2:
+                        pickedFaces = f1.getByBoundingBox(-1000, -int(self.Radius), -1000, 1000, self.Radius, 1000)
+                        p.PartitionFaceByDatumPlane(datumPlane=d1[z], faces=pickedFaces)
+                    elif z > 2:
+                        pickedFaces = f1.getByBoundingBox(-1000, -self.Radius, -1000, 1000, 0 + ((z - 2) * splits), 1000)
+                        p.PartitionFaceByDatumPlane(datumPlane=d1[z], faces=pickedFaces)
+
+                # ----------------------Create Section --------------------------------------------
+
+                # Create Material
+                Mat = ['Foam', 'Steel']
+                Modulus = [3000.0, 200000.0]
+
+                for i in range(0, len(Mat)):
+                    self.model.Material(name=Mat[i])
+                    self.model.materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
+
+                sectionnames = []
+                # Create Section
+                for m1 in range(0, len(Mat)):
+                    self.model.HomogeneousShellSection(name=Mat[m1],
+                                                       preIntegrate=OFF, material=Mat[m1], thicknessType=UNIFORM,
+                                                       thickness=5.0, thicknessField='', nodalThicknessField='',
+                                                       idealization=NO_IDEALIZATION, poissonDefinition=DEFAULT,
+                                                       thicknessModulus=None, temperature=GRADIENT, useDensity=OFF,
+                                                       integrationRule=SIMPSON, numIntPts=5)
+                    sectionnames.append(str(Mat[m1]))
+
+                # ----------------------Assign Section--------------------------------------------------
+                # --- Create Sets----
+                f = p.faces
+                for s1 in range(0, len(d1) + 1):
+                    s2 = s1 - 1
+                    Setnames.append('Set-' + str(s1))
+                    if s1 == 0:
+                        faces = f.getByBoundingBox(-1000, -startpart, -1000, 1000, s1 * splits, 1000)
+                        p.Set(faces=faces, name='Set-' + str(s1))
+                    elif s1 > 0:
+                        faces = f.getByBoundingBox(-1000, -(startpart + (s1 * splits) + tol), -1000, 1000,
+                                                   -(startpart + (s2 * splits) - 5), 1000)
+                        p.Set(faces=faces, name='Set-' + str(s1))
+
+        elif self.partition == 'vertical':
+            # ---------- Specifying Partition Density Vertical -----------------------------
+            p = self.model.parts[self.part_name]
+            Setnames = []
+            partitiondensityv = []
+            maxwidth = 300  # Later make this a user defined input
+            minwidth = -125  # Later make this a user defined input
+            rangev = maxwidth - minwidth
+            splitsv = rangev / self.partitionRefinement
+            startpartv = minwidth + splitsv
+            for y1 in range(int(startpartv), (maxwidth - splitsv), int(splitsv)):
+                partitiondensityv.append(y1)
+
+            if self.shellOrSolid == 'solid':
+                # ------------Creating Vertical Partitions- -----------------------
+
+                d2 = p.datums
+                tol = 5
+                c2 = p.cells
+                for xv in partitiondensityv:
+                    p.DatumPlaneByPrincipalPlane(principalPlane=XYPLANE, offset=xv)
+                for yv in range(2, len(d2) + 2, 1):
+                    z11 = yv - 2
+                    if yv == 2:
+                        pickedCellsz = c2.getByBoundingBox(-1000, -1000, -1000, 1000, 0, 1000)
+                        p.PartitionCellByDatumPlane(datumPlane=d2[yv], cells=pickedCellsz)
+                    elif yv > 2:
+                        pickedCellsz = c2.getByBoundingBox(-1000, -1000, minwidth + (z11 * splitsv) - 20, 1000, 0, 1000)
+                        p.PartitionCellByDatumPlane(datumPlane=d2[yv], cells=pickedCellsz)
+
+                    # ----------------------Create Section Vertical --------------------------------------------
+
+                # Create Material
+                Mat = ['Foam', 'Steel']
+                Modulus = [3000.0, 200000.0]
+
+                for i in range(len(Mat)):
+                    self.model.Material(name=Mat[i])
+                    self.model.materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
+
+                sectionnames = []
+                # Create Section
+                for m1 in range(len(Mat)):
+                    self.model.HomogeneousSolidSection(name=Mat[m1],
+                                                       material=Mat[m1],
+                                                       thickness=None)
+                    sectionnames.append(str(Mat[m1]))
+
+                # ----------------------Assign Section Vertical --------------------------------------------------
+                # --- Create Sets----
+                for s1v in range(0, len(d2) + 1, 1):
+                    s2v = s1v - 1
+                    Setnames.append('Set-' + str(s1v))
+                    if s1v == 0:
+                        cellsz = c2.getByBoundingBox(-1000, -1000, -1000, 1000, 1000, startpartv + tol)
+                        p.Set(cells=cellsz, name='Set-' + str(s1v))
+                    elif s1v > 0:
+                        cellsz = c2.getByBoundingBox(-1000, -1000, startpartv + (s2v * splitsv) - tol, 1000, 0,
+                                                     startpartv + (s1v * splitsv) + tol)
+                        p.Set(cells=cellsz, name='Set-' + str(s1v))
+                session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+            elif self.shellOrSolid == 'shell':
+                # ------------Creating Vertical Partitions- -----------------------
+
+                d = p.datums
+                tol = 5
+                f = p.faces
+                for xv in partitiondensityv:
+                    p.DatumPlaneByPrincipalPlane(principalPlane=XYPLANE, offset=xv)
+                for yv in range(2, len(d) + 2, 1):
+                    z11 = yv - 2
+                    if yv == 2:
+                        pickedFaces = f.getByBoundingBox(-1000, -1000, -1000, 1000, 0, 1000)
+                        p.PartitionFaceByDatumPlane(datumPlane=d[yv], faces=pickedFaces)
+                    elif yv > 2:
+                        pickedFaces = f.getByBoundingBox(-1000, -1000, minwidth + (z11 * splitsv) - 20, 1000, 0, 1000)
+                        p.PartitionFaceByDatumPlane(datumPlane=d[yv], faces=pickedFaces)
+
+                    # ----------------------Create Section Vertical --------------------------------------------
+
+                # Create Material
+                Mat = ['Foam', 'Steel']
+                Modulus = [3000.0, 200000.0]
+
+                for i in range(0, len(Mat)):
+                    self.model.Material(name=Mat[i])
+                    self.model.materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
+
+                sectionnames = []
+                # Create Section
+                for m1 in range(0, len(Mat)):
+                    self.model.HomogeneousShellSection(name=Mat[m1],
+                                                       preIntegrate=OFF, material=Mat[m1], thicknessType=UNIFORM,
+                                                       thickness=5.0, thicknessField='', nodalThicknessField='',
+                                                       idealization=NO_IDEALIZATION, poissonDefinition=DEFAULT,
+                                                       thicknessModulus=None, temperature=GRADIENT, useDensity=OFF,
+                                                       integrationRule=SIMPSON, numIntPts=5)
+                    sectionnames.append(str(Mat[m1]))
+
+                # ----------------------Assign Section Vertical --------------------------------------------------
+                # --- Create Sets----
+                for s1v in range(0, len(d) + 1, 1):
+                    s2v = s1v - 1
+                    Setnames.append('Set-' + str(s1v))
+                    if s1v == 0:
+                        faces = f.getByBoundingBox(-1000, -1000, -1000, 1000, 1000, startpartv + tol)
+                        p.Set(faces=faces, name='Set-' + str(s1v))
+                    elif s1v > 0:
+                        faces = f.getByBoundingBox(-1000, -1000, startpartv + (s2v * splitsv) - tol, 1000, 0,
+                                                   startpartv + (s1v * splitsv) + tol)
+                        p.Set(faces=faces, name='Set-' + str(s1v))
+                session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+
+        # elif self.partition =='full':
+        #     if self.shellOrSolid == 'solid':
+        #         asdasdap = 'hei'
+        #
+        #     elif self.shellOrSolid == 'shell':
+
+
 
         # --------------------Make instance--------------------
         a = self.model.rootAssembly
@@ -370,37 +546,208 @@ class FleksProp():
 
         session.viewports['Viewport: 1'].setValues(displayedObject=p)
         session.viewports['Viewport: 1'].setValues(displayedObject=a)
-        #
-        # Jobb = []
-        # previousset = []
-        # p = self.model.parts[self.part_name]
-        # print(Setnames)
-        # for y in range(0, len(Setnames)):
-        #     currentset = Setnames[y]
-        #     Jobb.append('Test' + str(y))
-        #     for x in Setnames:
-        #         if x == currentset:
-        #             section = Mat[1]
-        #         elif x in previousset:
-        #             section = Mat[1]
-        #         else:
-        #             section = Mat[0]
-        #         region = p.sets[x]
-        #         p.SectionAssignment(region=region, sectionName=section, offset=0.0,
-        #                             offsetType=MIDDLE_SURFACE, offsetField='',
-        #                             thicknessAssignment=FROM_SECTION)
-        #
-        #     mdb.Job(name=Jobb[y], model='Model-1', description='', type=ANALYSIS,
-        #             atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
-        #             memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
-        #             explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
-        #             modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='',
-        #             scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1,
-        #             numGPUs=0)
-        #     mdb.jobs[Jobb[y]].writeInput(consistencyChecking=OFF)  # Creating job .inp file
-        #     previousset.append(Setnames[y])
-        #     for s in range(0, len(Setnames)):  # Remove previous loop section assignments
-        #         del self.model.parts[self.part_name].sectionAssignments[0]
+
+        if self.partition == 'horizontal' or self.partition == 'vertical':
+            Jobb = []
+            previousset = []
+            p = self.model.parts[self.part_name]
+            print(Setnames)
+            for y in range(0, len(Setnames)):
+                currentset = Setnames[y]
+                Jobb.append('Test' + str(y))
+                for x in Setnames:
+                    if x == currentset:
+                        section = Mat[1]
+                    elif x in previousset:
+                        section = Mat[1]
+                    else:
+                        section = Mat[0]
+                    region = p.sets[x]
+                    p.SectionAssignment(region=region, sectionName=section, offset=0.0,
+                                        offsetType=MIDDLE_SURFACE, offsetField='',
+                                        thicknessAssignment=FROM_SECTION)
+
+                mdb.Job(name=Jobb[y], model='Model-1', description='', type=ANALYSIS,
+                        atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
+                        memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
+                        explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
+                        modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='',
+                        scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1,
+                        numGPUs=0)
+                mdb.jobs[Jobb[y]].writeInput(consistencyChecking=OFF)  # Creating job .inp file
+                previousset.append(Setnames[y])
+                for s in range(0, len(Setnames)):  # Remove previous loop section assignments
+                    del self.model.parts[self.part_name].sectionAssignments[0]
+
+
+
+        elif self.partition == 'full':
+            for i in range(len(self.ratio_list)):
+                if i > 0:
+                    self.model.parts[self.part_name].compositeLayups['Layup-' + material_name].suppress()
+                # --------------------Material--------------------
+                ratio = self.ratio_list[i]
+                if i <= (len(self.ratio_list) - 1) / 2:
+                    E1 = 140000
+                    E2 = E1 / ratio
+                    material_name = 'CF-R-E1_E2_' + str(ratio)
+                elif i > (len(self.ratio_list) - 1) / 2:
+                    E2 = 140000
+                    E1 = E2 / ratio
+
+                    material_name = 'CF-R-E2_E1_' + str(ratio)
+
+                self.model.Material(name=material_name)
+                self.model.materials[material_name].Elastic(type=ENGINEERING_CONSTANTS,
+                                                            table=((E1, E2, 10000,  # E1, E2, E3
+                                                                    0.02, 0.3, 0.3,  # v12, v13, v23
+                                                                    3500, 3300, 3300),))  # G12, G13, G23
+                if self.shellOrSolid == 'shell':
+
+                    # -------------------------------LAYUP------------------------------------------------
+
+                    # ---------------------Layup-------------------------
+                    layupOrientation = None
+                    p = self.model.parts[self.part_name]
+                    f = p.faces
+                    region1 = regionToolset.Region(faces=f)
+
+                    p = self.model.parts[self.part_name]
+                    s = p.faces
+                    normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
+                    p = self.model.parts[self.part_name]
+                    e = p.edges
+                    edges = e.getSequenceFromMask(mask=('[#20 ]',), )
+                    primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
+                    compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
+                                                                                     description='',
+                                                                                     elementType=SHELL,
+                                                                                     offsetType=TOP_SURFACE,
+                                                                                     symmetric=False,
+                                                                                     thicknessAssignment=FROM_SECTION)
+                    compositeLayup.Section(preIntegrate=OFF,
+                                           integrationRule=SIMPSON,
+                                           thicknessType=UNIFORM,
+                                           poissonDefinition=DEFAULT,
+                                           temperature=GRADIENT,
+                                           useDensity=OFF)
+
+                    compositeLayup.CompositePly(suppressed=False,
+                                                plyName='Ply-1',
+                                                region=region1,
+                                                material=material_name,
+                                                thicknessType=SPECIFY_THICKNESS,
+                                                thickness=5.0,
+                                                orientationType=SPECIFY_ORIENT,
+                                                orientationValue=0.0,
+                                                additionalRotationType=ROTATION_NONE,
+                                                additionalRotationField='',
+                                                axis=AXIS_3,
+                                                angle=0.0,
+                                                numIntPoints=3)
+                    compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
+                                                        localCsys=None,
+                                                        additionalRotationType=ROTATION_NONE,
+                                                        angle=0.0,
+                                                        additionalRotationField='',
+                                                        axis=AXIS_3,
+                                                        stackDirection=STACK_3,
+                                                        normalAxisDefinition=SURFACE,
+                                                        normalAxisRegion=normalAxisRegion,
+                                                        normalAxisDirection=AXIS_3,
+                                                        flipNormalDirection=False,
+                                                        primaryAxisDefinition=EDGE,
+                                                        primaryAxisRegion=primaryAxisRegion,
+                                                        primaryAxisDirection=AXIS_1,
+                                                        flipPrimaryDirection=True)
+
+                    p = self.model.parts[self.part_name]
+                    session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+
+                elif self.shellOrSolid == 'solid':
+                    # -------------------------------LAYUP------------------------------------------------
+
+                    # ---------------------Layup-------------------------
+                    layupOrientation = None
+                    p = self.model.parts[self.part_name]
+                    s = p.faces
+                    normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
+                    e = p.edges
+                    edges = e.getSequenceFromMask(mask=('[#20 ]',), )
+                    primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
+                    compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
+                                                                                     description='',
+                                                                                     elementType=SOLID,
+                                                                                     offsetType=TOP_SURFACE,
+                                                                                     symmetric=False,
+                                                                                     thicknessAssignment=FROM_SECTION)
+                    region1 = p.cells
+                    compositeLayup.CompositePly(suppressed=False,
+                                                plyName='Ply-1',
+                                                region=region1,
+                                                material=material_name,
+                                                thicknessType=SPECIFY_THICKNESS,
+                                                thickness=1.0,
+                                                orientationType=SPECIFY_ORIENT,
+                                                orientationValue=0.0,
+                                                additionalRotationType=ROTATION_NONE,
+                                                additionalRotationField='',
+                                                axis=AXIS_3,
+                                                angle=0.0,
+                                                numIntPoints=1)
+                    compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
+                                                        localCsys=None,
+                                                        additionalRotationType=ROTATION_NONE,
+                                                        angle=0.0,
+                                                        additionalRotationField='',
+                                                        axis=AXIS_3,
+                                                        stackDirection=STACK_3,
+                                                        normalAxisDefinition=SURFACE,
+                                                        normalAxisRegion=normalAxisRegion,
+                                                        normalAxisDirection=AXIS_3,
+                                                        flipNormalDirection=False,
+                                                        primaryAxisDefinition=EDGE,
+                                                        primaryAxisRegion=primaryAxisRegion,
+                                                        primaryAxisDirection=AXIS_1,
+                                                        flipPrimaryDirection=True)
+
+                p = self.model.parts[self.part_name]
+                session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+                # -----------------Load--------------------------------------
+                self.model.loads['Load-1'].setValues(distributionType=FIELD)
+
+                # ------------------JOB------------------------------------
+                job = 'Job-' + material_name
+                session.viewports['Viewport: 1'].assemblyDisplay.setValues(mesh=OFF)
+                session.viewports['Viewport: 1'].assemblyDisplay.meshOptions.setValues(
+                    meshTechnique=OFF)
+
+                mdb.Job(name=job,
+                        model='Model-1',
+                        description='',
+                        type=ANALYSIS,
+                        atTime=None,
+                        waitMinutes=0,
+                        waitHours=0,
+                        queue=None,
+                        memory=90,
+                        memoryUnits=PERCENTAGE,
+                        getMemoryFromAnalysis=True,
+                        explicitPrecision=SINGLE,
+                        nodalOutputPrecision=SINGLE,
+                        echoPrint=OFF,
+                        modelPrint=OFF,
+                        contactPrint=OFF,
+                        historyPrint=OFF,
+                        userSubroutine='',
+                        scratch='',
+                        resultsFormat=ODB,
+                        multiprocessingMode=DEFAULT,
+                        numCpus=1,
+                        numGPUs=0)
+                mdb.jobs[job].writeInput(consistencyChecking=OFF)
 
     def SetUpHW(self):
         # --------------------Initial Variable Names and Settings--------------------
@@ -713,8 +1060,7 @@ class FleksProp():
             primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
             compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
                                                                    description='',
-                                                                   elementType=SHELL,
-                                                                   offsetType=TOP_SURFACE,
+                                                                   elementType=SOLID,
                                                                    symmetric=False,
                                                                    thicknessAssignment=FROM_SECTION)
             compositeLayup.Section(preIntegrate=OFF,
@@ -723,7 +1069,7 @@ class FleksProp():
                                    poissonDefinition=DEFAULT,
                                    temperature=GRADIENT,
                                    useDensity=OFF)
-
+            region1 = p.cells
             compositeLayup.CompositePly(suppressed=False,
                                         plyName='Ply-1',
                                         region=region1,
@@ -1108,19 +1454,19 @@ class FleksProp():
                 del self.model.parts[self.part_name].sectionAssignments[0]
 
 
-"""Sondre Tweeaked variabler"""
+"""Tweeked variabler"""
 Aba.Mdb()
 name = 'AzP65C'
 r = 650
 r_val = [0.5,0.6,0.7,0.8,0.9]
-partitionMethods = ''
+partitionMethods = 'full' # 'vertical'  ,  'horizontal'   ,   'full'
 Refinement = 10
-shellOrSolidTest = 'solid'
+shellOrSolidTest = 'shell' # 'shell' or 'solid'
 sid = 'P'
 ratio_li = [100, 75, 50, 25, 10, 1, 10, 25, 50, 75, 100]
 
 #userP='C:/Users/sondreor/Dropbox/!PhD!/'
-file_p = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Solid.stp'
+file_p = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Shell.stp'
 pressure_fi_path = "C:\Users\Eivind\Pres.25kn_561rpm__Aba.txt"
 inputLocation = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models'
 

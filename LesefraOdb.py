@@ -5,11 +5,12 @@ import numpy as np
 import math
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
+Azp = 'C:/Users/sondreor/Desktop/Azp'
 odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
-#odb_path = gitHub
+odb_path = Azp
 
 #NPZ PATH
-npz_path='C:/temp/'
+npz_path=odb_path+'npz_files/'
 
 # Hent
 odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]

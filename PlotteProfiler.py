@@ -1,10 +1,9 @@
 """
-Plot charts describing deformation behaviour
-
+Plot charts illustrationg deformation behaviour
 Created on Wed Feb 19 02:36:36 2020
+
 @author: Sondre
 """
-
 import matplotlib.pyplot as plt
 import numpy as np
 import math

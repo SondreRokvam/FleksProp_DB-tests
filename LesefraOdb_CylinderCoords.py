@@ -6,17 +6,20 @@ import math
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 Azp = 'C:/Users/sondreor/Desktop/Azp/'
-odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
-for g in os.listdir(Azp):
-    odb_path = Azp
-    odb_path =odb_path+g+'/'
+ini_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
+gofor = Azp
+print os.listdir(gofor)
+for g in os.listdir(gofor): #for many folders
+    #for g in [gofor]:
+    odb_path = gofor
+    odb_path =odb_path+g+'/' #for many folders
+    
     #NPZ PATH
-    npz_path=odb_path+'npz_files/'
-        
+    npz_path=odb_path+'npz_files/' 
     try:
         os.mkdir(npz_path) # Create target Directory
         print("Directory " , npz_path ,  " Created ") 
-    except FileExistsError:
+    except:
         print("Directory " , npz_path ,  " already exists")
     # Hent
     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]

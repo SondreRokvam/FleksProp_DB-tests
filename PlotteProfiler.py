@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import operator
+import os
 
 def addcolum(li):
      #legg til rader 
@@ -41,28 +42,35 @@ def sortbyangle(dt):
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 Azp = 'C:/Users/sondreor/Desktop/Azp/'
-odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
-"""
-for g in os.listdir(Azp):
-    odb_path = Azp
-    odb_path =odb_path+g+'/'
+ini_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
+gofor = Azp
+for g in os.listdir(gofor): #for many folders
+    #for g in [gofor]:
+    odb_path = gofor
+    odb_path =odb_path+g+'/' #for many folders
+    
     #NPZ PATH
-"""
-if True:
-    npz_path=odb_path+'npz_files/'
-            
+    npz_path=odb_path+'npz_files/' 
+           
+    #Plot_Paths
+    plot_path= odb_path+'plots/'
+    try:
+        os.mkdir(plot_path) # Create target Directory
+        print("Directory " , plot_path ,  " Created ") 
+    except:
+        print("Directory " , plot_path ,  " already exists")
     # Hent
     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz'))]
     for i in odb_names:
-        print( i)
+        print(i)
+        for j in npz_files:
+            print(j)
         #Measurementes = [nodeset.name for nodeset in odb.rootAssembly.nodeSets.values() if (nodeset.name.startswith('PROFILE-R'))]
         #for profile in Measurementes:
-    #Para   =  np.load(gitHub+'parameters_for_plot.npz')
-    #print(Para.files)
-    #Jobbs= ['Hollow_Thick', 'Hollow_Thin', 'Pressure_Thick', 'Pressure_Thin', 'Pressure_Thin-w-Ridge', 'Suction_Thick','Suction_Thin','Suction_Thin-w-Ridge','FEA One-by-one']
-    Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9',
-     'PROFILE-R_95']
+    Para   =  np.load(gitHub+'parameters_for_plot.npz')
+    print(Para.files)
+    Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
     print (Measurementes)
     radius= 650
     Radi=Para['r_val']
@@ -72,26 +80,26 @@ if True:
     
     #Start plotting
     
-    for i in range(0,len(Jobbs)-1):
+    for i in range(0,len(odb_names)):
          #Logging deltas
          delta_U=[]
          delta_A=[]
          delta_W=[]
-         fig, axs = plt.subplots(2,6,figsize = (21,7))
-         fig.suptitle('Simulation: '+Jobbs[i]+', Series: '+Jobbs[-1], fontsize=16)
+         fig, axs = plt.subplots(2,5,figsize = (22,10))
+         
+         fig.suptitle('Simulation: '+odb_names[i]+', Series: '+odb_names[-1], fontsize=16)
          #fig, axs = plt.subplots(2,3,figsize = (14,8))
          axs[0, 0].set_ylabel('Propeller axis')
          for maal in range(0,len(Measurementes)):
-              CylX   =  np.load('C:/temp/Profile_w '+Measurementes[maal]+Jobbs[i]+'_CylynderC_alongX.npz')
-              CylX_m =  np.load('C:/temp/Profile_w '+Measurementes[maal]+Jobbs[i]+'_CylynderC_alongX_def.npz')
-              dotCyl,dotCylm = CylX['arr_0'],CylX_m['arr_0']
+              CylX   =  np.load(npz_path+ 'Cylinder view of '+ Measurementes[maal]+' for Job-CF-R-E1_E2_100.npz')
+              dotCyl,dotCylm = CylX['profile_undeformed'],CylX['profile_deformed']
               
               #Logging
               Centers= []
               Alphas= []
               Warping = []
               
-              #Prepare for plotting                 """Plot Cylinder"""
+              #Prepare for plotting                 #Plot Cylinder
               Plotting=[dotCyl,dotCylm]
               for plo in range(0,len(Plotting)):
                   Plotting[plo]= addcolum(Plotting[plo])
@@ -103,16 +111,16 @@ if True:
               #Plotting
               for plo in range(0,len(Plotting)):
                    #Plot profile
-                   axs[0, maal].plot((Plotting[plo][:,0])*Radi[maal],Plotting[plo][:,2],'-')   
+                   axs[0, maal].plot((Plotting[plo][:,0])*Radi[maal]*radius,Plotting[plo][:,2],'x')   
                    axs[0, maal].set_xlabel('Cylinder length')
                    
                    #Linear regression for chordline
-                   m,y = np.polyfit(Plotting[plo][:,0]*Radi[maal],Plotting[plo][:,2],1)
+                   m,y = np.polyfit(Plotting[plo][:,0]*Radi[maal]*radius,Plotting[plo][:,2],1)
                    
                    #2nd order regression for warp
-                   a,b,c = np.polyfit(Plotting[plo][:,0]*Radi[maal],Plotting[plo][:,2],2)
+                   a,b,c = np.polyfit(Plotting[plo][:,0]*Radi[maal]*radius,Plotting[plo][:,2],2)
                    #Lag X-axis for choordline
-                   x= np.array([np.min(Plotting[plo][:,0]*Radi[maal])-0.1*abs(np.min(Plotting[plo][:,0]*Radi[maal])),np.max(Plotting[plo][:,0]*Radi[maal])+abs(0.1*np.min(Plotting[plo][:,0]*Radi[maal]))])
+                   x= np.array([np.min(Plotting[plo][:,0]*Radi[maal])*radius-0.1*abs(np.min(Plotting[plo][:,0]*Radi[maal]*radius)),np.max(Plotting[plo][:,0]*Radi[maal]*radius)+abs(0.1*np.min(Plotting[plo][:,0]*Radi[maal]*radius))])
                    
                    
                    #Plot chordline
@@ -134,20 +142,24 @@ if True:
               delta_W.append(deltaWarp)
          
          #Print data for dette designet
-         print('\n\n', Jobbs[i],'\n')
-         for maal in range(0,6):
+         print('\n\n', odb_names[i],'\n')
+         for maal in range(0,5):
              print('deltaDeflection \t',Measurementes[maal],'\t = ', delta_U[maal])
-         for maal in range(0,6):
+         for maal in range(0,5):
              print('deltaAlpha     \t',Measurementes[maal],'\t = ', delta_A[maal])
-         for maal in range(0,6):
+         for maal in range(0,5  ):
              print('deltaWarp      \t',Measurementes[maal],'\t = ', delta_W[maal])
              
          ploo=[delta_U,delta_A,delta_W]
-         pli= ['deltaDeflection','deltaAlpha','deltaWarp']
+         pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Warp of propeller faces']
          for plo in range(0,3):
               #Plot profile
               axs[1, plo].plot(Radi,ploo[plo])  
               axs[1, plo].set_xlabel('Radius length')
               axs[1, plo].set_ylabel(pli[plo])
+              #Subplot title
+              axs[1, plo].title.set_text(pli[plo])
               
-              
+         
+         fig.tight_layout()
+         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)        

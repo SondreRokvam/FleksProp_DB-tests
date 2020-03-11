@@ -27,21 +27,21 @@ import math
 Parameters = np.load('Parameters_for_plots1.npz')
 print Parameters.files
 
-#f = open('C:/temp/dosradx.txt','w')
-Jobbs= ['Hollow_Thick', 'Hollow_Thin', 'Pressure_Thick', 'Pressure_Thin', 'Pressure_Thin-w-Ridge', 'Suction_Thick','Suction_Thin','Suction_Thin-w-Ridge']
-Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9',
- 'PROFILE-R_95']
+odb_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct'
+odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
+odb.rootAssembly.nodeSets['PROFILE-R_5']
+Measurementes = [f for f in odb.rootAssembly.nodeSets if (f.startswith('PROFILE-R'))]
 for i in range(0,len(Jobbs)):
     odb = session.openOdb(name='C:/Temp/'+Jobbs[i]+'.odb')
-    for maal in Measurementes:
+    for profi in Measurementes:
 
         #dots =[]
         #dotsm = []
         dots_cyl_langs_x = []
         dots_cyl_langs_xm =[]
 
-        AllNodes = odb.rootAssembly.nodeSets[maal].nodes[0]
-        Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.nodeSets[maal]).values
+        AllNodes = odb.rootAssembly.nodeSets[profi].nodes[0]
+        Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.nodeSets[profi]).values
         Acount= 0
         for nod in AllNodes:
             x = float(nod.coordinates[0])
@@ -51,8 +51,6 @@ for i in range(0,len(Jobbs)):
             ym= float(Disp[Acount].data[1])
             zm= float(Disp[Acount].data[2])
             Acount =Acount + 1
-            #dots.append([x,y,z])
-            #dotsm.append([x+xm,y+ym,z+zm])
 
             ang = math.atan2(y , z)
             angm = math.atan2((y+ym) , (z+zm))
@@ -60,13 +58,7 @@ for i in range(0,len(Jobbs)):
             dots_cyl_langs_xm.append([angm, ((y+ym)**2+(z+zm)**2)**0.5, x+xm])
 
 
-            #f.write(str(math.tan(y/z))+'\t'+str((y**2+z**2)**0.5)+'\t'+str(x)+'\n')
 
-
-
-
-        #np.savez('C:/temp/Profile_w'+maal+'_xyz', np.array(dots))
-        #np.savez('C:/temp/Profile_w'+maal+'_xyz_def', np.array(dotsm))
         np.savez('C:/temp/Profile_w '+maal+Jobbs[i]+'_CylynderC_alongX', np.array(dots_cyl_langs_x))
         np.savez('C:/temp/Profile_w '+maal+Jobbs[i]+'_CylynderC_alongX_def', np.array(dots_cyl_langs_xm))
     print('worked')

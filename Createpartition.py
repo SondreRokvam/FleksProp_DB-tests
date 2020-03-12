@@ -225,7 +225,7 @@ def SweepAssignSectionGrid(division):
 
     partitiondensityv = []
     maxwidth = 300  # Later make this a user defined input
-    minwidth = -125  # Later make this a user defined input
+    minwidth = -130  # Later make this a user defined input
     rangev = maxwidth - minwidth
     splitsv = rangev / division
     startpartv = minwidth + splitsv
@@ -268,6 +268,41 @@ def SweepAssignSectionGrid(division):
             mdb.models['Model-1'].materials[Mat[i]].Elastic(table=((Modulus[i], 0.3),))
 
     # ------------Assigning Sets to All Cells -------------##
+        # ------Assign Sets to Cells
+
+        Gridsetnames = [{'row': [], 'cell': []}]
+        cell = p.cells
+        d = Gridsetnames
+        print(Gridsetnames[0])
+        from copy import deepcopy
+        for c in range(0, division):
+            rowname = 'row-' + str(c)
+            if c == 0:
+                d[c]['row'] = rowname
+            else:
+                d.append(deepcopy(Gridsetnames[0]))
+                d[c]['cell'] = []
+                d[c]['row'] = rowname
+            for c2 in range(0, division):
+                cellname = 'Gridcell-' + str(c) + str(c2)
+                verticalleftlimit = maxwidth - splitsv * (c2 + 1) - tol
+                verticalrightlimit = maxwidth - (splitsv * c2) + tol
+                horizontaltoplimit = -(Radius * 0.1) - splits * (c + 1) - tol
+                horizontalbottomlimit = -(Radius * 0.1) - splits * c + tol
+                pickedcells = cell.getByBoundingBox(-1000, horizontaltoplimit, verticalleftlimit,
+                                                    1000, horizontalbottomlimit, verticalrightlimit)
+                if pickedcells:
+                    p.Set(cells=pickedcells, name='Gridcell-' + str(c) + str(c2))
+                    d[c]['cell'].append(cellname)
+        print(Gridsetnames)
+
+    session.viewports['Viewport: 1'].setValues(displayedObject=p)
+
+
+
+
+
+
 session.viewports['Viewport: 1'].setValues(displayedObject=p)
 
 

@@ -24,7 +24,7 @@ from abaqus import *
 
 def sweepingsections():
 
-    Sections = ['Foam', 'Aluminium', 'Bronze', 'Steel']
+    Sections = ['Foam', 'Aluminium']
     Sets = ['Set-1', 'Set-2', 'Set-3', 'Set-4', 'Set-5', 'Set-6', 'Set-7', 'Set-8', 'Set-9', 'Set-10', 'Set-11',
             'Set-12','Set-13', 'Set-14', 'Set-15', 'Set-16']
 
@@ -38,7 +38,6 @@ def sweepingsections():
         for x in Sets:
             Jobb = ['Test' + str(n)] # Job label maker
             d.insert(0, Jobb)
-            region = p.sets[x]
             if x == currentset:
                 section = Sections[1]
             elif x in previousset:

@@ -1,5 +1,5 @@
 """
-Plot charts illustrationg deformation behaviour
+Plot/charts illustrationg deformation behaviour
 Created on Wed Feb 19 02:36:36 2020
 
 @author: Sondre
@@ -9,43 +9,24 @@ import numpy as np
 import math
 import operator
 import os
+from PlottingClass import plottts
 
-def addrow(lo):
-    N=1
-    cols=len(lo[0])
-    rows=len(lo)
-    Dots_data =  np.zeros((rows+N,cols))
-    Dots_data[:-N,:] = lo
-    return Dots_data
-     
-def sortbyangle(dt):
-    dt =np.array(sorted(dt, key=operator.itemgetter(5)))
-    dt= addrow(dt)  #Adds row to the array
-    dt[-1]=dt[0]    #sets last row= first row for complete profile
-    return dt
+print (plottts)
 
 
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 Azp = 'C:/Users/sondreor/Desktop/Azp/'
-ini_path = 'C:/Users/sondreor/Dropbox/!PhD!/Propeller Design and Production/LargeScale/2_Material-layup-check/0_InitialConstruct/'
+HW = 'C:/Users/sondreor/Desktop/HW/'
 gofor = Azp
-for g in os.listdir(gofor): #for many folders
-    #for g in [gofor]:
+for g in os.listdir(gofor)[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
     
-    #NPZ PATH
+    #NPZ PATH #Plot_Paths
     npz_path=odb_path+'npz_files/' 
-           
-    #Plot_Paths
     plot_path= odb_path+'plots/'
-    try:
-        os.mkdir(plot_path) # Create target Directory
-        print("Directory " , plot_path ,  " Created ") 
-    except:
-        print("Directory " , plot_path ,  " already exists")
-        
+    plottts.new_folder(plot_path)
     # Hent
     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz'))]
@@ -54,10 +35,11 @@ for g in os.listdir(gofor): #for many folders
     radius= 650
     Radi=Para['r_val']
     print (Radi)
-    
     #Start plotting
-    
-    for u in odb_names:
+    spenn_delU=[]
+    spenn_delA=[]
+    spenn_delW=[]
+    for u in odb_names[0:1]:
         #Logging deltas
         delta_U=[]
         delta_A=[]
@@ -88,7 +70,7 @@ for g in os.listdir(gofor): #for many folders
                 Plotting[10][i]= Plotting[8][i]-np.average(Plotting[8,:])
                 ang = math.atan2(Plotting[10][i] , Plotting[9][i])
                 Plotting[11][i]= ang
-            Plotting=sortbyangle(np.transpose(Plotting))
+            Plotting=plottts.sortbyangle(np.transpose(Plotting))
             pl3D.append([Plotting[:][0:3],Plotting[:][6:9]])
             #Subplot title
             axs[0, maal].title.set_text(Measurementes[maal])
@@ -122,6 +104,9 @@ for g in os.listdir(gofor): #for many folders
             delta_U.append(deltaDeflec)
             delta_A.append(deltaAlfa)
             delta_W.append(deltaWarp)
+        spenn_delU.append(delta_U)
+        spenn_delA.append(delta_A)
+        spenn_delW.append(delta_W)
         #Print data for dette designet
         print('\n\n', u,'\n')
         for maal in range(0,5):
@@ -147,5 +132,12 @@ for g in os.listdir(gofor): #for many folders
         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
         plt.savefig(plot_path+g+u+'.png')
         plt.savefig('C:/Users/sondreor/Desktop/Azp_plots/'+g+u+'.png')
-        plt.close()
-    #del tull
+        #plt.close()
+        """
+    #fig, axs = plt.subplots(1,3,figsize = (22,10))
+    #fig.suptitle('Series: '+g, fontsize=16)
+    #axs[0].set_ylabel('Propeller axis')
+    #measu = [ spenn_delU, spenn_delA, spenn_delW]
+    #for e in range(0,len(measu)):
+    #    for maal in range(0,len(Measurementes)):
+    #        print('\n\n',e, maal,e[maal])"""

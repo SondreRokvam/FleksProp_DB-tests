@@ -547,207 +547,207 @@ class FleksProp():
         session.viewports['Viewport: 1'].setValues(displayedObject=p)
         session.viewports['Viewport: 1'].setValues(displayedObject=a)
 
-        if self.partition == 'horizontal' or self.partition == 'vertical':
-            Jobb = []
-            previousset = []
-            p = self.model.parts[self.part_name]
-            print(Setnames)
-            for y in range(0, len(Setnames)):
-                currentset = Setnames[y]
-                Jobb.append('Test' + str(y))
-                for x in Setnames:
-                    if x == currentset:
-                        section = Mat[1]
-                    elif x in previousset:
-                        section = Mat[1]
-                    else:
-                        section = Mat[0]
-                    region = p.sets[x]
-                    p.SectionAssignment(region=region, sectionName=section, offset=0.0,
-                                        offsetType=MIDDLE_SURFACE, offsetField='',
-                                        thicknessAssignment=FROM_SECTION)
-
-                mdb.Job(name=Jobb[y], model='Model-1', description='', type=ANALYSIS,
-                        atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
-                        memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
-                        explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
-                        modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='',
-                        scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1,
-                        numGPUs=0)
-                mdb.jobs[Jobb[y]].writeInput(consistencyChecking=OFF)  # Creating job .inp file
-                previousset.append(Setnames[y])
-                for s in range(0, len(Setnames)):  # Remove previous loop section assignments
-                    del self.model.parts[self.part_name].sectionAssignments[0]
-
-
-
-        elif self.partition == 'full':
-            for i in range(len(self.ratio_list)):
-                if i > 0:
-                    self.model.parts[self.part_name].compositeLayups['Layup-' + material_name].suppress()
-                # --------------------Material--------------------
-                ratio = self.ratio_list[i]
-                if i <= (len(self.ratio_list) - 1) / 2:
-                    E1 = 140000
-                    E2 = E1 / ratio
-                    material_name = 'CF-R-E1_E2_' + str(ratio)
-                elif i > (len(self.ratio_list) - 1) / 2:
-                    E2 = 140000
-                    E1 = E2 / ratio
-
-                    material_name = 'CF-R-E2_E1_' + str(ratio)
-
-                self.model.Material(name=material_name)
-                self.model.materials[material_name].Elastic(type=ENGINEERING_CONSTANTS,
-                                                            table=((E1, E2, 10000,  # E1, E2, E3
-                                                                    0.02, 0.3, 0.3,  # v12, v13, v23
-                                                                    3500, 3300, 3300),))  # G12, G13, G23
-                if self.shellOrSolid == 'shell':
-
-                    # -------------------------------LAYUP------------------------------------------------
-
-                    # ---------------------Layup-------------------------
-                    layupOrientation = None
-                    p = self.model.parts[self.part_name]
-                    f = p.faces
-                    region1 = regionToolset.Region(faces=f)
-
-                    p = self.model.parts[self.part_name]
-                    s = p.faces
-                    normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
-                    p = self.model.parts[self.part_name]
-                    e = p.edges
-                    edges = e.getSequenceFromMask(mask=('[#20 ]',), )
-                    primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
-                    compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
-                                                                                     description='',
-                                                                                     elementType=SHELL,
-                                                                                     offsetType=TOP_SURFACE,
-                                                                                     symmetric=False,
-                                                                                     thicknessAssignment=FROM_SECTION)
-                    compositeLayup.Section(preIntegrate=OFF,
-                                           integrationRule=SIMPSON,
-                                           thicknessType=UNIFORM,
-                                           poissonDefinition=DEFAULT,
-                                           temperature=GRADIENT,
-                                           useDensity=OFF)
-
-                    compositeLayup.CompositePly(suppressed=False,
-                                                plyName='Ply-1',
-                                                region=region1,
-                                                material=material_name,
-                                                thicknessType=SPECIFY_THICKNESS,
-                                                thickness=5.0,
-                                                orientationType=SPECIFY_ORIENT,
-                                                orientationValue=0.0,
-                                                additionalRotationType=ROTATION_NONE,
-                                                additionalRotationField='',
-                                                axis=AXIS_3,
-                                                angle=0.0,
-                                                numIntPoints=3)
-                    compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
-                                                        localCsys=None,
-                                                        additionalRotationType=ROTATION_NONE,
-                                                        angle=0.0,
-                                                        additionalRotationField='',
-                                                        axis=AXIS_3,
-                                                        stackDirection=STACK_3,
-                                                        normalAxisDefinition=SURFACE,
-                                                        normalAxisRegion=normalAxisRegion,
-                                                        normalAxisDirection=AXIS_3,
-                                                        flipNormalDirection=False,
-                                                        primaryAxisDefinition=EDGE,
-                                                        primaryAxisRegion=primaryAxisRegion,
-                                                        primaryAxisDirection=AXIS_1,
-                                                        flipPrimaryDirection=True)
-
-                    p = self.model.parts[self.part_name]
-                    session.viewports['Viewport: 1'].setValues(displayedObject=p)
-
-
-                elif self.shellOrSolid == 'solid':
-                    # -------------------------------LAYUP------------------------------------------------
-
-                    # ---------------------Layup-------------------------
-                    layupOrientation = None
-                    p = self.model.parts[self.part_name]
-                    s = p.faces
-                    normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
-                    e = p.edges
-                    edges = e.getSequenceFromMask(mask=('[#20 ]',), )
-                    primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
-                    compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
-                                                                                     description='',
-                                                                                     elementType=SOLID,
-                                                                                     offsetType=TOP_SURFACE,
-                                                                                     symmetric=False,
-                                                                                     thicknessAssignment=FROM_SECTION)
-                    region1 = p.cells
-                    compositeLayup.CompositePly(suppressed=False,
-                                                plyName='Ply-1',
-                                                region=region1,
-                                                material=material_name,
-                                                thicknessType=SPECIFY_THICKNESS,
-                                                thickness=1.0,
-                                                orientationType=SPECIFY_ORIENT,
-                                                orientationValue=0.0,
-                                                additionalRotationType=ROTATION_NONE,
-                                                additionalRotationField='',
-                                                axis=AXIS_3,
-                                                angle=0.0,
-                                                numIntPoints=1)
-                    compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
-                                                        localCsys=None,
-                                                        additionalRotationType=ROTATION_NONE,
-                                                        angle=0.0,
-                                                        additionalRotationField='',
-                                                        axis=AXIS_3,
-                                                        stackDirection=STACK_3,
-                                                        normalAxisDefinition=SURFACE,
-                                                        normalAxisRegion=normalAxisRegion,
-                                                        normalAxisDirection=AXIS_3,
-                                                        flipNormalDirection=False,
-                                                        primaryAxisDefinition=EDGE,
-                                                        primaryAxisRegion=primaryAxisRegion,
-                                                        primaryAxisDirection=AXIS_1,
-                                                        flipPrimaryDirection=True)
-
-                p = self.model.parts[self.part_name]
-                session.viewports['Viewport: 1'].setValues(displayedObject=p)
-
-                # -----------------Load--------------------------------------
-                self.model.loads['Load-1'].setValues(distributionType=FIELD)
-
-                # ------------------JOB------------------------------------
-                job = 'Job-' + material_name
-                session.viewports['Viewport: 1'].assemblyDisplay.setValues(mesh=OFF)
-                session.viewports['Viewport: 1'].assemblyDisplay.meshOptions.setValues(
-                    meshTechnique=OFF)
-
-                mdb.Job(name=job,
-                        model='Model-1',
-                        description='',
-                        type=ANALYSIS,
-                        atTime=None,
-                        waitMinutes=0,
-                        waitHours=0,
-                        queue=None,
-                        memory=90,
-                        memoryUnits=PERCENTAGE,
-                        getMemoryFromAnalysis=True,
-                        explicitPrecision=SINGLE,
-                        nodalOutputPrecision=SINGLE,
-                        echoPrint=OFF,
-                        modelPrint=OFF,
-                        contactPrint=OFF,
-                        historyPrint=OFF,
-                        userSubroutine='',
-                        scratch='',
-                        resultsFormat=ODB,
-                        multiprocessingMode=DEFAULT,
-                        numCpus=1,
-                        numGPUs=0)
-                mdb.jobs[job].writeInput(consistencyChecking=OFF)
+        # if self.partition == 'horizontal' or self.partition == 'vertical':
+        #     Jobb = []
+        #     previousset = []
+        #     p = self.model.parts[self.part_name]
+        #     print(Setnames)
+        #     for y in range(0, len(Setnames)):
+        #         currentset = Setnames[y]
+        #         Jobb.append('Test' + str(y))
+        #         for x in Setnames:
+        #             if x == currentset:
+        #                 section = Mat[1]
+        #             elif x in previousset:
+        #                 section = Mat[1]
+        #             else:
+        #                 section = Mat[0]
+        #             region = p.sets[x]
+        #             p.SectionAssignment(region=region, sectionName=section, offset=0.0,
+        #                                 offsetType=MIDDLE_SURFACE, offsetField='',
+        #                                 thicknessAssignment=FROM_SECTION)
+        #
+        #         mdb.Job(name=Jobb[y], model='Model-1', description='', type=ANALYSIS,
+        #                 atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
+        #                 memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
+        #                 explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
+        #                 modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='',
+        #                 scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1,
+        #                 numGPUs=0)
+        #         mdb.jobs[Jobb[y]].writeInput(consistencyChecking=OFF)  # Creating job .inp file
+        #         previousset.append(Setnames[y])
+        #         for s in range(0, len(Setnames)):  # Remove previous loop section assignments
+        #             del self.model.parts[self.part_name].sectionAssignments[0]
+        #
+        #
+        #
+        # elif self.partition == 'full':
+        #     for i in range(len(self.ratio_list)):
+        #         if i > 0:
+        #             self.model.parts[self.part_name].compositeLayups['Layup-' + material_name].suppress()
+        #         # --------------------Material--------------------
+        #         ratio = self.ratio_list[i]
+        #         if i <= (len(self.ratio_list) - 1) / 2:
+        #             E1 = 140000
+        #             E2 = E1 / ratio
+        #             material_name = 'CF-R-E1_E2_' + str(ratio)
+        #         elif i > (len(self.ratio_list) - 1) / 2:
+        #             E2 = 140000
+        #             E1 = E2 / ratio
+        #
+        #             material_name = 'CF-R-E2_E1_' + str(ratio)
+        #
+        #         self.model.Material(name=material_name)
+        #         self.model.materials[material_name].Elastic(type=ENGINEERING_CONSTANTS,
+        #                                                     table=((E1, E2, 10000,  # E1, E2, E3
+        #                                                             0.02, 0.3, 0.3,  # v12, v13, v23
+        #                                                             3500, 3300, 3300),))  # G12, G13, G23
+        #         if self.shellOrSolid == 'shell':
+        #
+        #             # -------------------------------LAYUP------------------------------------------------
+        #
+        #             # ---------------------Layup-------------------------
+        #             layupOrientation = None
+        #             p = self.model.parts[self.part_name]
+        #             f = p.faces
+        #             region1 = regionToolset.Region(faces=f)
+        #
+        #             p = self.model.parts[self.part_name]
+        #             s = p.faces
+        #             normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
+        #             p = self.model.parts[self.part_name]
+        #             e = p.edges
+        #             edges = e.getSequenceFromMask(mask=('[#20 ]',), )
+        #             primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
+        #             compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
+        #                                                                              description='',
+        #                                                                              elementType=SHELL,
+        #                                                                              offsetType=TOP_SURFACE,
+        #                                                                              symmetric=False,
+        #                                                                              thicknessAssignment=FROM_SECTION)
+        #             compositeLayup.Section(preIntegrate=OFF,
+        #                                    integrationRule=SIMPSON,
+        #                                    thicknessType=UNIFORM,
+        #                                    poissonDefinition=DEFAULT,
+        #                                    temperature=GRADIENT,
+        #                                    useDensity=OFF)
+        #
+        #             compositeLayup.CompositePly(suppressed=False,
+        #                                         plyName='Ply-1',
+        #                                         region=region1,
+        #                                         material=material_name,
+        #                                         thicknessType=SPECIFY_THICKNESS,
+        #                                         thickness=5.0,
+        #                                         orientationType=SPECIFY_ORIENT,
+        #                                         orientationValue=0.0,
+        #                                         additionalRotationType=ROTATION_NONE,
+        #                                         additionalRotationField='',
+        #                                         axis=AXIS_3,
+        #                                         angle=0.0,
+        #                                         numIntPoints=3)
+        #             compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
+        #                                                 localCsys=None,
+        #                                                 additionalRotationType=ROTATION_NONE,
+        #                                                 angle=0.0,
+        #                                                 additionalRotationField='',
+        #                                                 axis=AXIS_3,
+        #                                                 stackDirection=STACK_3,
+        #                                                 normalAxisDefinition=SURFACE,
+        #                                                 normalAxisRegion=normalAxisRegion,
+        #                                                 normalAxisDirection=AXIS_3,
+        #                                                 flipNormalDirection=False,
+        #                                                 primaryAxisDefinition=EDGE,
+        #                                                 primaryAxisRegion=primaryAxisRegion,
+        #                                                 primaryAxisDirection=AXIS_1,
+        #                                                 flipPrimaryDirection=True)
+        #
+        #             p = self.model.parts[self.part_name]
+        #             session.viewports['Viewport: 1'].setValues(displayedObject=p)
+        #
+        #
+        #         elif self.shellOrSolid == 'solid':
+        #             # -------------------------------LAYUP------------------------------------------------
+        #
+        #             # ---------------------Layup-------------------------
+        #             layupOrientation = None
+        #             p = self.model.parts[self.part_name]
+        #             s = p.faces
+        #             normalAxisRegion = p.Surface(side1Faces=s, name='Normal_Axis_Region')
+        #             e = p.edges
+        #             edges = e.getSequenceFromMask(mask=('[#20 ]',), )
+        #             primaryAxisRegion = p.Set(edges=edges, name='Primary_Axis_Region')
+        #             compositeLayup = self.model.parts[self.part_name].CompositeLayup(name='Layup-' + material_name,
+        #                                                                              description='',
+        #                                                                              elementType=SOLID,
+        #                                                                              offsetType=TOP_SURFACE,
+        #                                                                              symmetric=False,
+        #                                                                              thicknessAssignment=FROM_SECTION)
+        #             region1 = p.cells
+        #             compositeLayup.CompositePly(suppressed=False,
+        #                                         plyName='Ply-1',
+        #                                         region=region1,
+        #                                         material=material_name,
+        #                                         thicknessType=SPECIFY_THICKNESS,
+        #                                         thickness=1.0,
+        #                                         orientationType=SPECIFY_ORIENT,
+        #                                         orientationValue=0.0,
+        #                                         additionalRotationType=ROTATION_NONE,
+        #                                         additionalRotationField='',
+        #                                         axis=AXIS_3,
+        #                                         angle=0.0,
+        #                                         numIntPoints=1)
+        #             compositeLayup.ReferenceOrientation(orientationType=DISCRETE,
+        #                                                 localCsys=None,
+        #                                                 additionalRotationType=ROTATION_NONE,
+        #                                                 angle=0.0,
+        #                                                 additionalRotationField='',
+        #                                                 axis=AXIS_3,
+        #                                                 stackDirection=STACK_3,
+        #                                                 normalAxisDefinition=SURFACE,
+        #                                                 normalAxisRegion=normalAxisRegion,
+        #                                                 normalAxisDirection=AXIS_3,
+        #                                                 flipNormalDirection=False,
+        #                                                 primaryAxisDefinition=EDGE,
+        #                                                 primaryAxisRegion=primaryAxisRegion,
+        #                                                 primaryAxisDirection=AXIS_1,
+        #                                                 flipPrimaryDirection=True)
+        #
+        #         p = self.model.parts[self.part_name]
+        #         session.viewports['Viewport: 1'].setValues(displayedObject=p)
+        #
+        #         # -----------------Load--------------------------------------
+        #         self.model.loads['Load-1'].setValues(distributionType=FIELD)
+        #
+        #         # ------------------JOB------------------------------------
+        #         job = 'Job-' + material_name
+        #         session.viewports['Viewport: 1'].assemblyDisplay.setValues(mesh=OFF)
+        #         session.viewports['Viewport: 1'].assemblyDisplay.meshOptions.setValues(
+        #             meshTechnique=OFF)
+        #
+        #         mdb.Job(name=job,
+        #                 model='Model-1',
+        #                 description='',
+        #                 type=ANALYSIS,
+        #                 atTime=None,
+        #                 waitMinutes=0,
+        #                 waitHours=0,
+        #                 queue=None,
+        #                 memory=90,
+        #                 memoryUnits=PERCENTAGE,
+        #                 getMemoryFromAnalysis=True,
+        #                 explicitPrecision=SINGLE,
+        #                 nodalOutputPrecision=SINGLE,
+        #                 echoPrint=OFF,
+        #                 modelPrint=OFF,
+        #                 contactPrint=OFF,
+        #                 historyPrint=OFF,
+        #                 userSubroutine='',
+        #                 scratch='',
+        #                 resultsFormat=ODB,
+        #                 multiprocessingMode=DEFAULT,
+        #                 numCpus=1,
+        #                 numGPUs=0)
+        #         mdb.jobs[job].writeInput(consistencyChecking=OFF)
 
     def SetUpHW(self):
         # --------------------Initial Variable Names and Settings--------------------
@@ -1459,14 +1459,14 @@ Aba.Mdb()
 name = 'AzP65C'
 r = 650
 r_val = [0.5,0.6,0.7,0.8,0.9]
-partitionMethods = 'full' # 'vertical'  ,  'horizontal'   ,   'full'
+partitionMethods = 'vertical' # 'vertical'  ,  'horizontal'   ,   'full'
 Refinement = 10
-shellOrSolidTest = 'shell' # 'shell' or 'solid'
+shellOrSolidTest = 'solid' # 'shell' or 'solid'
 sid = 'P'
 ratio_li = [100, 75, 50, 25, 10, 1, 10, 25, 50, 75, 100]
 
 #userP='C:/Users/sondreor/Dropbox/!PhD!/'
-file_p = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Shell.stp'
+file_p = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models\Azp65C-PB_no_Fillet_Solid.stp'
 pressure_fi_path = "C:\Users\Eivind\Pres.25kn_561rpm__Aba.txt"
 inputLocation = 'C:\Users\Eivind\Documents\NTNU\FleksProp\Models'
 

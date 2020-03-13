@@ -5,7 +5,7 @@ Created on Wed Mar 11 16:39:31 2020
 """
 import os
 
-os.chdir('C:/Users/sondreor/Desktop/Azp/')
+os.chdir('C:/Users/sondreor/Desktop/HW/')
 
 current=os.getcwd()
 print(current+'\\')

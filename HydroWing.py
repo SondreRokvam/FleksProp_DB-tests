@@ -135,7 +135,6 @@ class HydroWing:
 
     def partitionHorizontal(self,division,grid=0):
         if not grid:
-            self.openCAE()
             self.sets = []
         p = mdb.models['Model-1'].parts['HW']
         tol = 5
@@ -182,7 +181,6 @@ class HydroWing:
 
     def partitionVertical(self,division,grid=0):
         if not grid:
-            self.openCAE()
             self.sets = []
         p = mdb.models['Model-1'].parts['HW']
         tol = 5
@@ -225,7 +223,6 @@ class HydroWing:
             p.Set(cells=pickedCells, name='Cell-'+str(i+1))
 
     def partitionGrid(self,division):
-        self.openCAE()
         p = mdb.models['Model-1'].parts['HW']
         partitiondensity = []
         tol = 30/division
@@ -474,6 +471,37 @@ class HydroWing:
         a.generateMesh(regions=partInstances)
         e1 = a.instances['HW'].edges
 
+    def applyLoad(self):
+        model = mdb.models['Model-1']
+        readfile = open(self.load_file_path,"r")
+        reading = readfile.read()
+        pressuredist = reading.split('\n')
+        len_s = len(pressuredist)
+
+        for i in range(len_s):
+            t = pressuredist[i].split('\t')
+            for j in range(len(t)):
+                t[j] = float(t[j])
+            pressuredist[i] = t
+        model.MappedField(name='AnalyticalField-1',
+                          description='',
+                          regionType=POINT,
+                          partLevelData=False,
+                          localCsys=None,
+                          pointDataFormat=XYZ,
+                          fieldDataType=SCALAR,
+                          xyzPointData=pressuredist)
+        a = model.rootAssembly
+        s1 = a.instances['HW'].faces.getByBoundingBox(-1000,-1000,-1000,1000,1000,1000)
+        region = a.Surface(side1Faces=s1, name='Surf-1')
+        model.Pressure(name='Load-1',
+                       createStepName='Step-1',
+                       region=region,
+                       distributionType=FIELD,
+                       field='AnalyticalField-1',
+                       magnitude=1.0,
+                       amplitude=UNSET)
+
     def writeInput(self,partition,stiffSection):
 
         name = 'HW' + partition + stiffSection
@@ -491,6 +519,7 @@ class HydroWing:
         input_file_location = self.input_file_path
         os.chdir(input_file_location)
         input_folder_name = getInput('Enter name for folder containing input files: ')
+        self.input_file_path += '\\' + input_folder_name
         if not os.path.exists(input_folder_name):
             os.mkdir(input_folder_name)
             print("Directory " , input_folder_name ,  " Created ")
@@ -500,6 +529,16 @@ class HydroWing:
             os.chdir(input_folder_name)
             return
 
+    def createBatch(self):
+        os.chdir(self.input_file_path)
+        current=os.getcwd()
+        print(current+'\\')
+        # Hent
+        odb_names = [f for f in os.listdir(current) if (f.endswith('.inp')) ]
+        s=open(current+'\\'+'run_inputs.bat',"w+")
+        for od in odb_names:
+            s.write('call abq2017 job='+od[:-4]+ ' int\n')
+        s.close()
 
 caeFilePath = 'C:\Users\Jon\OneDrive\FleksProp\Scripts\HW.cae'
 inputFileLocation = 'C:\Users\Jon\OneDrive\FleksProp\InputFiles'
@@ -515,17 +554,18 @@ plyAngleNumber = 20 #
 plyThickness = 0.2
 stiffSection='Cell-15'
 
+
 propeller = HydroWing(caeFilePath,inputFileLocation,pressure_field_path)
-#propeller.openCAE()
-#propeller.partitionHorizontal(7)
-#propeller.all_over(np.linspace(plyAngleLimits[0],plyAngleLimits[1],plyAngleNumber), plyThickness)
-propeller.createFolder()
+propeller.openCAE()
+#propeller.createFolder()
 propeller.partitionGrid(partitionRefinement)
+propeller.applyLoad()
 propeller.mesh(10)
+"""
 for sets in propeller.sets:
     propeller.assignSections(sets)
     propeller.writeInput(partition,sets)
     propeller.removeSections()
+propeller.createBatch()
 
-
-
+"""

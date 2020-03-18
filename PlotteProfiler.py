@@ -13,12 +13,11 @@ from PlottingClass import plottts
 
 print (plottts)
 
-
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 Azp = 'C:/Users/sondreor/Desktop/Azp/'
 HW = 'C:/Users/sondreor/Desktop/HW/'
-gofor = Azp
+gofor = HW                                        # folder of folders of ODBs
 for g in os.listdir(gofor)[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
@@ -44,20 +43,19 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         delta_U=[]
         delta_A=[]
         delta_W=[]
-        pl3D = []
+        
+        
         fig, axs = plt.subplots(2,5,figsize = (22,10))
         
         fig.suptitle('Simulation: '+u+', Series: '+g, fontsize=16)
         axs[0, 0].set_ylabel('Propeller axis')
+        
+        
         for maal in range(0,len(Measurementes)):
             CylX   =  np.load(npz_path+'Cylinder view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
             dotCyl,dotCylm = CylX['profile_undeformed'],CylX['profile_deformed']
             
-            #Logging
-            Centers= []
-            Alphas= []
-            Warping = []
-            
+            # Sort stuff
             Plotting=np.zeros((12, len(dotCyl)))
             Plotting[0:3]=np.transpose(np.array(dotCyl))
             Plotting[6:9]=np.transpose(np.array(dotCylm))
@@ -71,10 +69,19 @@ for g in os.listdir(gofor)[0:1]: #for many folders
                 ang = math.atan2(Plotting[10][i] , Plotting[9][i])
                 Plotting[11][i]= ang
             Plotting=plottts.sortbyangle(np.transpose(Plotting))
-            pl3D.append([Plotting[:][0:3],Plotting[:][6:9]])
-            #Subplot title
+
+            
+            
+            #Logging
+            Centers= []
+            Alphas= []
+            Warping = []
+            
+            
+            #Profile Subplot title
             axs[0, maal].title.set_text(Measurementes[maal])
             Inter=[[0,2],[6,8]]
+            
             #Plot profile
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
@@ -133,11 +140,3 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         plt.savefig(plot_path+g+u+'.png')
         plt.savefig('C:/Users/sondreor/Desktop/Azp_plots/'+g+u+'.png')
         #plt.close()
-        """
-    #fig, axs = plt.subplots(1,3,figsize = (22,10))
-    #fig.suptitle('Series: '+g, fontsize=16)
-    #axs[0].set_ylabel('Propeller axis')
-    #measu = [ spenn_delU, spenn_delA, spenn_delW]
-    #for e in range(0,len(measu)):
-    #    for maal in range(0,len(Measurementes)):
-    #        print('\n\n',e, maal,e[maal])"""

@@ -31,3 +31,5 @@ class plottts:
             print("Directory " , path ,  " Created ") 
         except:
             print("Directory " , path ,  " already exists")
+            
+    

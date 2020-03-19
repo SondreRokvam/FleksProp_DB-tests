@@ -5,6 +5,7 @@ Created on Wed Feb 19 02:36:36 2020
 @author: Sondre
 """
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import math
 import os
@@ -83,9 +84,11 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             Inter=[[0,2],[6,8]]
             s='gr'
             #Plot profile
+            handle = ['Undeformed', 'Deformed']
+            count = 0
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-')   
+                axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-',label=handle[count])
                
                 #Linear regression for chordline
                 m,y = np.polyfit(Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
@@ -114,6 +117,13 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             delta_U.append(deltaDeflec)
             delta_A.append(deltaAlfa)
             delta_W.append(deltaWarp)
+
+            # Legend
+            extraString = '\u0394' + '\u03B1' + '=' + str("%.4f" % deltaAlfa)
+            handles, labels = axs[0, maal].get_legend_handles_labels()
+            handles.append(mpatches.Patch(color='none', label=extraString))
+            axs[0, maal].legend(handles=handles, loc='upper left', fontsize=10)
+            
         spenn_delU.append(delta_U)
         spenn_delA.append(delta_A)
         spenn_delW.append(delta_W)

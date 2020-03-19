@@ -7,7 +7,6 @@ Created on Wed Feb 19 02:36:36 2020
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import operator
 import os
 from PlottingClass import plottts
 
@@ -16,11 +15,10 @@ print (plottts)
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-Azp = 'C:/Users/sondreor/Desktop/Azp/'
 HW = 'C:/Users/sondre/Desktop/HW/'
 gofor = HW   
 print (os.listdir(gofor))                                     # folder of folders of ODBs
-for g in os.listdir(gofor):#[0:1]: #for many folders
+for g in os.listdir(gofor)[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
     
@@ -40,7 +38,7 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
     spenn_delU=[]
     spenn_delA=[]
     spenn_delW=[]
-    for u in odb_names:#[0:1]:
+    for u in odb_names[0:1]:
         #Logging deltas
         delta_U=[]
         delta_A=[]
@@ -54,10 +52,11 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
        
         
         for maal in range(0,len(Measurementes)):
-            #CylX   =  np.load(npz_path+'Cylinder view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
             CylX   =  np.load( npz_path+'Cartesian view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
-            print( CylX)
+            
+            Coordline = [CylX['profile_undefcoordline'],CylX['profile_defcoordline']]
             dotCyl,dotCylm = CylX['profile_undeformed'],CylX['profile_deformed']
+            
             
             # Sort stuff
             Plotting=np.zeros((12, len(dotCyl)))
@@ -73,14 +72,11 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 ang = math.atan2(Plotting[10][i] , Plotting[9][i])
                 Plotting[11][i]= ang
             Plotting=plottts.sortbyangle(np.transpose(Plotting))
-
             
-            
-            #Logging
+            #ProfileLogging
             Centers= []
             Alphas= []
             Warping = []
-            
             
             #Profile Subplot title
             axs[0, maal].title.set_text(Measurementes[maal])
@@ -89,25 +85,29 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             #Plot profile
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Plotting[:,p[1]])*Radi[maal]*radius,Plotting[:,p[0]],'r-')   
-               
+                axs[0, maal].plot((Plotting[:,p[1]])*Radi[maal]*radius,Plotting[:,p[0]],'-')   
+                
                 #Linear regression for chordline
-                #m,y = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,p[1]],1)
-                   
+                m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,1],Coordline[Inter.index(p)][:,0],1)
+                
                 #2nd order regression for warp
                 #a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
             
                 #Lag X-axis for choordline
-                #x= np.array([np.min(Plotting[:,p[0]]*Radi[maal])*radius-0.05*abs(np.min(Plotting[:,p[0]]*Radi[maal]*radius)),np.max(Plotting[:,p[0]]*Radi[maal]*radius)+abs(0.05*np.min(Plotting[:,p[0]]*Radi[maal]*radius))])
-                   
+                xmin=np.min(Coordline[Inter.index(p)][:,1])
+                xmax=np.max(Coordline[Inter.index(p)][:,1])
+                ext = 5
+                x= np.linspace(xmin-abs(ext/100)*xmin,xmax+abs(ext/100)*xmax)
                 #Plot chordline
-                #axs[0, maal].plot(x, m*x + y,'--') 
+                axs[0, maal].plot(x, m*x + y,'--') 
                 #Save chordline angle
                 #if m<0.0:
                 #    del koko
-                Alphas.append(math.atan2(1,1)*180/math.pi)
-                Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
+                Alphas.append(math.atan2(m,1)*180/math.pi)
+                Centers.append([np.average(Plotting[:,p[1]]),np.average(Plotting[:,p[0]])])
                 Warping.append(1)
+            axs[0, maal].set_xlim([-250, 250])
+            axs[0, maal].set_ylim([-50, 50])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]

@@ -15,9 +15,9 @@ print (plottts)
 
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
-Azp = 'C:/Users/sondreor/Desktop/Azp/'
-HW = 'C:/Users/sondreor/Desktop/HW/'
-gofor = HW                                        # folder of folders of ODBs
+gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
+Azp = 'C:/Users/sondre/Desktop/Azp/'
+gofor = Azp                                        # folder of folders of ODBs
 for g in os.listdir(gofor)[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
@@ -33,7 +33,6 @@ for g in os.listdir(gofor)[0:1]: #for many folders
     Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
     radius= 650
     Radi=Para['r_val']
-    print (Radi)
     #Start plotting
     spenn_delU=[]
     spenn_delA=[]
@@ -45,7 +44,7 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         delta_W=[]
         
         
-        fig, axs = plt.subplots(2,5,figsize = (22,10))
+        fig, axs = plt.subplots(2,5,figsize = (18,8))
         
         fig.suptitle('Simulation: '+u+', Series: '+g, fontsize=16)
         axs[0, 0].set_ylabel('Propeller axis')
@@ -53,6 +52,8 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         
         for maal in range(0,len(Measurementes)):
             CylX   =  np.load(npz_path+'Cylinder view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
+            
+            Coordline = [CylX['profile_undefcoordline'],CylX['profile_defcoordline']]
             dotCyl,dotCylm = CylX['profile_undeformed'],CylX['profile_deformed']
             
             # Sort stuff
@@ -85,25 +86,28 @@ for g in os.listdir(gofor)[0:1]: #for many folders
             #Plot profile
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Plotting[:,p[0]])*Radi[maal]*radius,Plotting[:,p[1]],'r-')   
+                axs[0, maal].plot((Plotting[:,p[0]])*Radi[maal]*radius,Plotting[:,p[1]],'-')   
                
                 #Linear regression for chordline
-                m,y = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,p[1]],1)
-                   
+                m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,0]*Radi[maal]*radius,Coordline[Inter.index(p)][:,2],1)
+                #print(m,y)
                 #2nd order regression for warp
-                a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
+                #a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
             
                 #Lag X-axis for choordline
-                x= np.array([np.min(Plotting[:,p[0]]*Radi[maal])*radius-0.05*abs(np.min(Plotting[:,p[0]]*Radi[maal]*radius)),np.max(Plotting[:,p[0]]*Radi[maal]*radius)+abs(0.05*np.min(Plotting[:,p[0]]*Radi[maal]*radius))])
-                   
+                xmin=np.min(Coordline[Inter.index(p)][:,0])*Radi[maal]*radius
+                xmax=np.max(Coordline[Inter.index(p)][:,0])*Radi[maal]*radius
+                ext = 5.0
+                x= np.linspace(xmin-abs(ext*xmin/100),xmax+abs(ext*xmax/100),10)
                 #Plot chordline
                 axs[0, maal].plot(x, m*x + y,'--') 
                 #Save chordline angle
-                if m<0.0:
-                    del koko
+                
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
-                Warping.append(a)
+                Warping.append(1)
+            axs[0, maal].set_xlim([-1100, -200])
+            axs[0, maal].set_ylim([-350, 100])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]
@@ -137,6 +141,6 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         #axs[1,4].scatter(pl3D[1])
         fig.tight_layout()
         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
-        plt.savefig(plot_path+g+u+'.png')
-        plt.savefig('C:/Users/sondreor/Desktop/Azp_plots/'+g+u+'.png')
+        plt.savefig(plot_path+g+'/'+u+'.png')
+        plt.savefig('C:/Users/sondreor/Desktop/Azp_plots/'+g+'/'+u+'.png')
         #plt.close()

@@ -41,16 +41,15 @@ for g in os.listdir(gofor): #for many folders
     for i in odb_names:
         print 'Extracting from: ', i
         odb = session.openOdb(name=odb_path+i)
-        Measurementes = [nodeset.name for nodeset in odb.rootAssembly.nodeSets.values() if (nodeset.name.startswith('PROFILE-R'))]
-        print('Extracting at: ',Measurementes)
-
+        #Measurementes = [nodeset.name for nodeset in odb.rootAssembly.nodeSets.values() if (nodeset.name.startswith('PROFILE-R'))]
+        Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+        print 'Extracting at: ',Measurementes
         for profile in Measurementes:
             dots_XY_langs_Z = []
             dots_XY_langs_Zm =[]
 
             AllNodes = odb.rootAssembly.nodeSets[profile].nodes[0]
             Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.nodeSets[profile]).values
-
 
             find_dis_trail_nodes = []
             find_dis_lead_nodes = []
@@ -63,21 +62,23 @@ for g in os.listdir(gofor): #for many folders
                 xm = float(Disp[Acount].data[0])        #Displacement of node
                 ym= float(Disp[Acount].data[1])
                 zm= float(Disp[Acount].data[2])
+
+                #measure coordline nodes
                 trailpoint=Trailnodes[Measurementes.index(profile)]
                 leadpoint=Leadnodes[Measurementes.index(profile)]
                 find_dis_trail_nodes.append(round(math.sqrt( (x - trailpoint[0]) ** 2 + (y - trailpoint[1]) ** 2 + (z - trailpoint[2]) ** 2),5))
                 find_dis_lead_nodes.append(round(math.sqrt((x - leadpoint[0]) ** 2 + (y - leadpoint[1]) ** 2 + (z - leadpoint[2]) ** 2),5))
 
                 Acount =Acount + 1  # Manual counter
-                dots_XY_langs_Z.append([x, y , z ])
 
+                dots_XY_langs_Z.append([x, y , z ])
                 dots_XY_langs_Zm.append([xm, ym,zm])
+
+            #Identify coordline nodes
             minTrail_dist = np.min(find_dis_trail_nodes)
             minLead_dist = np.min(find_dis_lead_nodes)
             index_minTrail=find_dis_trail_nodes.index(minTrail_dist)
             index_minLead=find_dis_lead_nodes.index(minLead_dist)
-
-            print index_minLead
 
             undefCoordline = [dots_XY_langs_Z[index_minTrail], dots_XY_langs_Z[index_minLead]]
             defCoordline = [dots_XY_langs_Zm[index_minTrail], dots_XY_langs_Zm[index_minLead]]

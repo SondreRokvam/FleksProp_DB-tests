@@ -88,16 +88,16 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-')   
                
                 #Linear regression for chordline
-                m,y = np.polyfit(np.array(Radi[maal]*radius*Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
+                m,y = np.polyfit(Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
                 #print(m,y)
                 #2nd order regression for warp
                 #a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
             
                 #Lag X-axis for choordline
-                xmin=np.min(Radi[maal]*radius*Coordline[Inter.index(p)][:,0])
-                xmax=np.max(Radi[maal]*radius*Coordline[Inter.index(p)][:,0])
-                ext = 5.0
-                x= np.linspace(xmin-abs(ext*xmin/100),xmax+abs(ext*xmax/100),10)
+                xmin=Radi[maal]*radius*np.min(Coordline[Inter.index(p)][:,0])
+                xmax=Radi[maal]*radius*np.max(Coordline[Inter.index(p)][:,0])
+                ext = 10.0
+                x= np.linspace(xmin-abs(ext*(xmax-xmin)/100),xmax+abs(ext*(xmax-xmin)/100),10)
                 #Plot chordline
                 axs[0, maal].plot(x, m*x + y,'--') 
                 #Save chordline angle
@@ -105,8 +105,8 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
                 Warping.append(1)
-            #axs[0, maal].set_xlim([-1100, -200])
-            #axs[0, maal].set_ylim([-350, 100])
+            axs[0, maal].set_xlim([-1100, -200])
+            axs[0, maal].set_ylim([-350, 100])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]

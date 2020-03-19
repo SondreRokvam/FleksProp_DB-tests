@@ -20,7 +20,7 @@ Azp = 'C:/Users/sondreor/Desktop/Azp/'
 HW = 'C:/Users/sondre/Desktop/HW/'
 gofor = HW   
 print (os.listdir(gofor))                                     # folder of folders of ODBs
-for g in os.listdir(gofor)[0:1]: #for many folders
+for g in os.listdir(gofor):#[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
     
@@ -40,14 +40,14 @@ for g in os.listdir(gofor)[0:1]: #for many folders
     spenn_delU=[]
     spenn_delA=[]
     spenn_delW=[]
-    for u in odb_names[0:1]:
+    for u in odb_names:#[0:1]:
         #Logging deltas
         delta_U=[]
         delta_A=[]
         delta_W=[]
         
         
-        fig, axs = plt.subplots(2,5,figsize = (22,10))
+        fig, axs = plt.subplots(2,5,figsize = (18,8))
         
         fig.suptitle('Simulation: '+u+', Series: '+g, fontsize=16)
         axs[0, 0].set_ylabel('Propeller axis')
@@ -105,7 +105,7 @@ for g in os.listdir(gofor)[0:1]: #for many folders
                 #Save chordline angle
                 #if m<0.0:
                 #    del koko
-                Alphas.append(math.atan2(m,1)*180/math.pi)
+                Alphas.append(math.atan2(1,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
                 Warping.append(1)
             #Find angle change

@@ -3,7 +3,7 @@ from abaqusConstants import *
 from odbAccess import *
 import numpy as np
 import math
-from PlottingClass import plottts
+import os
 #ODB PATH
 gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 Azp = 'C:/Users/sondreor/Desktop/Azp/'
@@ -15,8 +15,12 @@ for g in os.listdir(gofor): #for many folders
     odb_path =odb_path+g+'/' #for many folders
     
     #NPZ PATH
-    npz_path=odb_path+'npz_files/' 
-    plottts.new_folder(npz_path)
+    npz_path=odb_path+'npz_files/'
+    try:
+        os.mkdir(npz_path)  # Create target Directory
+        print("Directory ", npz_path, " Created ")
+    except:
+        print("Directory ", npz_path, " already exists")
     # Hent
     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
     for i in odb_names:

@@ -99,7 +99,7 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 #Lag X-axis for choordline
                 xmin=Radi[maal]*radius*np.min(Coordline[Inter.index(p)][:,0])
                 xmax=Radi[maal]*radius*np.max(Coordline[Inter.index(p)][:,0])
-                ext = 10.0
+                ext = 50.0
                 x= np.linspace(xmin-abs(ext*(xmax-xmin)/100),xmax+abs(ext*(xmax-xmin)/100),10)
                 #Plot chordline
                 axs[0, maal].plot(x, m*x + y,'--') 
@@ -108,8 +108,8 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
                 Warping.append(1)
-            axs[0, maal].set_xlim([-1100, -200])
-            axs[0, maal].set_ylim([-350, 100])
+            axs[0, maal].set_xlim([-1300, 100])
+            axs[0, maal].set_ylim([-350, 150])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]

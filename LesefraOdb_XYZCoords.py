@@ -63,6 +63,10 @@ for g in os.listdir(gofor): #for many folders
                 ym= float(Disp[Acount].data[1])
                 zm= float(Disp[Acount].data[2])
 
+                dots_XY_langs_Z.append([x, y , z ])
+                dots_XY_langs_Zm.append([x+xm, y+ym,z+zm])
+
+
                 #measure coordline nodes
                 trailpoint=Trailnodes[Measurementes.index(profile)]
                 leadpoint=Leadnodes[Measurementes.index(profile)]
@@ -71,8 +75,6 @@ for g in os.listdir(gofor): #for many folders
 
                 Acount =Acount + 1  # Manual counter
 
-                dots_XY_langs_Z.append([x, y , z ])
-                dots_XY_langs_Zm.append([xm, ym,zm])
 
             #Identify coordline nodes
             minTrail_dist = np.min(find_dis_trail_nodes)

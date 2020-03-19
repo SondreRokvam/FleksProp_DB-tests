@@ -12,17 +12,17 @@ Azp = 'C:/Users/sondre/Desktop/Azp/'
 gofor = Azp
 #AzP choordline
 if 1:#AzP
-    Leadnodes=[[-46.696491,-530.173661,247.266837],
-               [-6.368028,-429.953069,292.472833],
-               [26.214503,-343.738199,298.109126],
+    Leadnodes=[[88.140249,-198.797325,257.108194],
                [57.111528,-267.042178,284.233135],
-               [88.140249,-198.797325,257.108194]]
+               [26.214503,-343.738199,298.109126],
+               [-6.368028,-429.953069,292.472833],
+               [-46.696491,-530.173661,247.266837]]
 
-    Trailnodes =[[-236.240842,-571.887303,-123.166197],
-                [-270.14662,-504.497972,-126.022999],
-                [-286.225663,-442.58725,-105.553427],
+    Trailnodes =[[-282.872286,-322.146479,-42.972622],
                 [-291.328316,-382.15225,-77.843804],
-                [-282.872286,-322.146479,-42.972622]]
+                [-286.225663,-442.58725,-105.553427],
+                [-270.14662,-504.497972,-126.022999],
+                 [-236.240842,-571.887303,-123.166197] ]
 
 for g in os.listdir(gofor): #for many folders
     odb_path = gofor
@@ -67,8 +67,8 @@ for g in os.listdir(gofor): #for many folders
                 # measure coordline nodes
                 trailpoint = Trailnodes[Measurementes.index(profile)]
                 leadpoint = Leadnodes[Measurementes.index(profile)]
-                find_dis_trail_nodes.append(round(math.sqrt((x - trailpoint[0]) ** 2 + (y - trailpoint[1]) ** 2 + (z - trailpoint[2]) ** 2), 5))
-                find_dis_lead_nodes.append(round(math.sqrt((x - leadpoint[0]) ** 2 + (y - leadpoint[1]) ** 2 + (z - leadpoint[2]) ** 2), 5))
+                find_dis_trail_nodes.append(round(math.sqrt((x - trailpoint[0]) ** 2 + (y - trailpoint[1]) ** 2 + (z - trailpoint[2]) ** 2), 8))
+                find_dis_lead_nodes.append(round(math.sqrt((x - leadpoint[0]) ** 2 + (y - leadpoint[1]) ** 2 + (z - leadpoint[2]) ** 2), 8))
 
 
                 Acount = Acount + 1  # Manual counter

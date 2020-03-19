@@ -7,7 +7,6 @@ Created on Wed Feb 19 02:36:36 2020
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import operator
 import os
 from PlottingClass import plottts
 
@@ -18,7 +17,7 @@ gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 Azp = 'C:/Users/sondre/Desktop/Azp/'
 gofor = Azp                                        # folder of folders of ODBs
-for g in os.listdir(gofor)[0:1]: #for many folders
+for g in os.listdir(gofor):#[0:1]: #for many folders
     odb_path = gofor
     odb_path =odb_path+g+'/' #for many folders
     
@@ -37,7 +36,7 @@ for g in os.listdir(gofor)[0:1]: #for many folders
     spenn_delU=[]
     spenn_delA=[]
     spenn_delW=[]
-    for u in odb_names[0:1]:
+    for u in odb_names:#[0:1]:
         #Logging deltas
         delta_U=[]
         delta_A=[]
@@ -86,17 +85,17 @@ for g in os.listdir(gofor)[0:1]: #for many folders
             #Plot profile
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Plotting[:,p[0]])*Radi[maal]*radius,Plotting[:,p[1]],'-')   
+                axs[0, maal].plot((Plotting[:,p[0]]),Plotting[:,p[1]],'-')   
                
                 #Linear regression for chordline
-                m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,0]*Radi[maal]*radius,Coordline[Inter.index(p)][:,2],1)
+                m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
                 #print(m,y)
                 #2nd order regression for warp
                 #a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
             
                 #Lag X-axis for choordline
-                xmin=np.min(Coordline[Inter.index(p)][:,0])*Radi[maal]*radius
-                xmax=np.max(Coordline[Inter.index(p)][:,0])*Radi[maal]*radius
+                xmin=np.min(Coordline[Inter.index(p)][:,0])
+                xmax=np.max(Coordline[Inter.index(p)][:,0])
                 ext = 5.0
                 x= np.linspace(xmin-abs(ext*xmin/100),xmax+abs(ext*xmax/100),10)
                 #Plot chordline
@@ -106,12 +105,12 @@ for g in os.listdir(gofor)[0:1]: #for many folders
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
                 Warping.append(1)
-            axs[0, maal].set_xlim([-1100, -200])
-            axs[0, maal].set_ylim([-350, 100])
+            #axs[0, maal].set_xlim([-1100, -200])
+            #axs[0, maal].set_ylim([-350, 100])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]
-            deltaWarp= Warping[1]-Warping[0]
+            deltaWarp= deltaAlfa/deltaDeflec
             delta_U.append(deltaDeflec)
             delta_A.append(deltaAlfa)
             delta_W.append(deltaWarp)
@@ -119,16 +118,16 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         spenn_delA.append(delta_A)
         spenn_delW.append(delta_W)
         #Print data for dette designet
-        print('\n\n', u,'\n')
+        print('\n\n'+g+'\n', u,'\n')
         for maal in range(0,5):
             print('deltaDeflection \t',Measurementes[maal],'\t = ', delta_U[maal])
         for maal in range(0,5):
             print('deltaAlpha     \t',Measurementes[maal],'\t = ', delta_A[maal])
         for maal in range(0,5  ):
-            print('deltaWarp      \t',Measurementes[maal],'\t = ', delta_W[maal])
+            print('delta_Alpha per delta_deflection      \t',Measurementes[maal],'\t = ', delta_W[maal])
             
         ploo=[delta_U,delta_A,delta_W]
-        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Warp of propeller faces']
+        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Alpha per delta_deflection']
         for plo in range(0,3):
             #Plot profile
             axs[1, plo].plot(Radi,ploo[plo])  
@@ -141,6 +140,6 @@ for g in os.listdir(gofor)[0:1]: #for many folders
         #axs[1,4].scatter(pl3D[1])
         fig.tight_layout()
         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
-        plt.savefig(plot_path+g+'/'+u+'.png')
-        plt.savefig('C:/Users/sondreor/Desktop/Azp_plots/'+g+'/'+u+'.png')
-        #plt.close()
+        plt.savefig(plot_path+g+u[:-4]+'.png')
+        plt.savefig('C:\\Users\\Sondre\\Desktop\\Azp_plots\\'+g+u[:-4]+'.png')
+        plt.close()

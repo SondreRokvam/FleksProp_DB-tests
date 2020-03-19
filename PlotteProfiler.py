@@ -89,6 +89,7 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
                 axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-',label=handle[count])
+                count += 1
                
                 #Linear regression for chordline
                 m,y = np.polyfit(Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)

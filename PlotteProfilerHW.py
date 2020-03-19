@@ -106,8 +106,8 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[1]]),np.average(Plotting[:,p[0]])])
                 Warping.append(1)
-            #axs[0, maal].set_xlim([-250, 250])
-            #axs[0, maal].set_ylim([-25, 50])
+            axs[0, maal].set_xlim([-250, 200])
+            axs[0, maal].set_ylim([-25, 50])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]
@@ -128,7 +128,7 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             print('deltaWarp      \t',Measurementes[maal],'\t = ', delta_W[maal])
             
         ploo=[delta_U,delta_A,delta_W]
-        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Warp of propeller faces']
+        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Alpha per delta_deflection']
         for plo in range(0,3):
             #Plot profile
             axs[1, plo].plot(Radi,ploo[plo])  

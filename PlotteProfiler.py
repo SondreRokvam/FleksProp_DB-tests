@@ -81,21 +81,21 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             #Profile Subplot title
             axs[0, maal].title.set_text(Measurementes[maal])
             Inter=[[0,2],[6,8]]
-            
+            s='gr'
             #Plot profile
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Plotting[:,p[0]]),Plotting[:,p[1]],'-')   
+                axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-')   
                
                 #Linear regression for chordline
-                m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
+                m,y = np.polyfit(np.array(Radi[maal]*radius*Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
                 #print(m,y)
                 #2nd order regression for warp
                 #a,b,c = np.polyfit(Plotting[:,p[0]]*Radi[maal]*radius,Plotting[:,1],2)
             
                 #Lag X-axis for choordline
-                xmin=np.min(Coordline[Inter.index(p)][:,0])
-                xmax=np.max(Coordline[Inter.index(p)][:,0])
+                xmin=np.min(Radi[maal]*radius*Coordline[Inter.index(p)][:,0])
+                xmax=np.max(Radi[maal]*radius*Coordline[Inter.index(p)][:,0])
                 ext = 5.0
                 x= np.linspace(xmin-abs(ext*xmin/100),xmax+abs(ext*xmax/100),10)
                 #Plot chordline

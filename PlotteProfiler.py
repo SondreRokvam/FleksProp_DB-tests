@@ -85,11 +85,9 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             s='gr'
             #Plot profile
             handle = ['Undeformed', 'Deformed']
-            count = 0
             axs[0, maal].set_xlabel('Cylinder length')
             for p in Inter:
-                axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-',label=handle[count])
-                count += 1
+                axs[0, maal].plot((Radi[maal]*radius*Plotting[:,p[0]]),Plotting[:,p[1]],s[Inter.index(p)]+'-',label=handle[Inter.index(p)])
                
                 #Linear regression for chordline
                 m,y = np.polyfit(Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[:,0],Coordline[Inter.index(p)][:,2],1)
@@ -100,7 +98,7 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 #Lag X-axis for choordline
                 xmin=Radi[maal]*radius*np.min(Coordline[Inter.index(p)][:,0])
                 xmax=Radi[maal]*radius*np.max(Coordline[Inter.index(p)][:,0])
-                ext = 10.0
+                ext = 33.0
                 x= np.linspace(xmin-abs(ext*(xmax-xmin)/100),xmax+abs(ext*(xmax-xmin)/100),10)
                 #Plot chordline
                 axs[0, maal].plot(x, m*x + y,'--') 
@@ -109,8 +107,8 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[0]]),np.average(Plotting[:,p[1]])])
                 Warping.append(1)
-            axs[0, maal].set_xlim([-1100, -200])
-            axs[0, maal].set_ylim([-350, 100])
+            axs[0, maal].set_xlim([-1300, 100])
+            axs[0, maal].set_ylim([-350, 150])
             #Find angle change
             deltaDeflec= ((Centers[1][0]-Centers[0][0])**2+(Centers[1][1]-Centers[0][1])**2)**0.5
             deltaAlfa= Alphas[1]-Alphas[0]
@@ -131,14 +129,14 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
         #Print data for dette designet
         print('\n\n'+g+'\n', u,'\n')
         for maal in range(0,5):
-            print('deltaDeflection \t',Measurementes[maal],'\t = ', delta_U[maal])
+            print('\u0394Deflection \t',Measurementes[maal],'\t = ', delta_U[maal])
         for maal in range(0,5):
-            print('deltaAlpha     \t',Measurementes[maal],'\t = ', delta_A[maal])
+            print('\u0394Alpha     \t',Measurementes[maal],'\t = ', delta_A[maal])
         for maal in range(0,5  ):
-            print('delta_Alpha per delta_deflection      \t',Measurementes[maal],'\t = ', delta_W[maal])
+            print('\u0394_Alpha per \u0394_deflection      \t',Measurementes[maal],'\t = ', delta_W[maal])
             
         ploo=[delta_U,delta_A,delta_W]
-        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Alpha per delta_deflection']
+        pli= ['\u0394_Deflection of center','\u0394_Alpha of coordline','\u0394_Alpha per \u0394_deflection']
         for plo in range(0,3):
             #Plot profile
             axs[1, plo].plot(Radi,ploo[plo])  

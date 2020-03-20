@@ -43,7 +43,6 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
         delta_A=[]
         delta_W=[]
         
-        
         fig, axs = plt.subplots(2,5,figsize = (18,8))
         
         fig.suptitle('Simulation: '+u+', Series: '+g, fontsize=16)
@@ -71,8 +70,6 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 Plotting[11][i]= ang
             Plotting=plottts.sortbyangle(np.transpose(Plotting))
 
-            
-            
             #Logging
             Centers= []
             Alphas= []
@@ -144,11 +141,15 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             axs[1, plo].set_ylabel(pli[plo])
             #Subplot title
             axs[1, plo].title.set_text(pli[plo])
-        #print(pl3D[0][:])
-        #axs[1,4].scatter(pl3D[0])
-        #axs[1,4].scatter(pl3D[1])
+
+
         fig.tight_layout()
         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
         plt.savefig(plot_path+g+u[:-4]+'.png')
+        np.savez(plot_path+g,
+                 spenn_delU=spenn_delU,
+                 spenn_delA=spenn_delA,
+                 spenn_delW =spenn_delW,
+                 radz=Radi)
         plt.savefig('C:\\Users\\Sondre\\Desktop\\Azp_plots\\'+g+u[:-4]+'.png')
         plt.close()

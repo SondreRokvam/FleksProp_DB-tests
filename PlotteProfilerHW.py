@@ -5,6 +5,7 @@ Created on Wed Feb 19 02:36:36 2020
 @author: Sondre
 """
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import math
 import os
@@ -83,9 +84,10 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             Inter=[[0,1],[6,7]]
             s='gr'
             #Plot profile
+            handle = ['Undeformed', 'Deformed']
             axs[0, maal].set_xlabel('coordlength')
             for p in Inter:
-                axs[0, maal].plot((Plotting[:,p[1]]),Plotting[:,p[0]],s[Inter.index(p)]+'-')   
+                axs[0, maal].plot((Plotting[:,p[1]]),Plotting[:,p[0]],s[Inter.index(p)]+'-',label=handle[Inter.index(p)])   
                 
                 #Linear regression for chordline
                 m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,1],Coordline[Inter.index(p)][:,0],1)
@@ -96,13 +98,12 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                 #Lag X-axis for choordline
                 xmin=np.min(Coordline[Inter.index(p)][:,1])
                 xmax=np.max(Coordline[Inter.index(p)][:,1])
-                ext = 50.0
+                ext = 33.0
                 x= np.linspace(xmin-abs(ext*(xmax-xmin)/100),xmax+abs(ext*(xmax-xmin)/100),10)
                 #Plot chordline
                 axs[0, maal].plot(x, m*x + y,'--') 
                 #Save chordline angle
-                #if m<0.0:
-                #    del koko
+
                 Alphas.append(math.atan2(m,1)*180/math.pi)
                 Centers.append([np.average(Plotting[:,p[1]]),np.average(Plotting[:,p[0]])])
                 Warping.append(1)
@@ -115,20 +116,28 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
             delta_U.append(deltaDeflec)
             delta_A.append(deltaAlfa)
             delta_W.append(deltaWarp)
+            
+            # Legend
+            extraString = '\u0394' + '\u03B1' + '=' + str("%.4f" % deltaAlfa)
+            handles, labels = axs[0, maal].get_legend_handles_labels()
+            handles.append(mpatches.Patch(color='none', label=extraString))
+            axs[0, maal].legend(handles=handles, loc='upper left', fontsize=10)
+            
+            
         spenn_delU.append(delta_U)
         spenn_delA.append(delta_A)
         spenn_delW.append(delta_W)
         #Print data for dette designet
         print('\n\n', u,'\n')
         for maal in range(0,5):
-            print('deltaDeflection \t',Measurementes[maal],'\t = ', delta_U[maal])
+            print('\u0394 Deflection \t',Measurementes[maal],'\t = ', delta_U[maal])
         for maal in range(0,5):
-            print('deltaAlpha     \t',Measurementes[maal],'\t = ', delta_A[maal])
+            print('\u0394 \u03B1  \t',Measurementes[maal],'\t = ', delta_A[maal])
         for maal in range(0,5  ):
-            print('deltaWarp      \t',Measurementes[maal],'\t = ', delta_W[maal])
+            print('\u0394 Warp      \t',Measurementes[maal],'\t = ', delta_W[maal])
             
         ploo=[delta_U,delta_A,delta_W]
-        pli= ['delta_Deflection of center','delta_Alpha of coordline','delta_Alpha per delta_deflection']
+        pli= ['\u0394_Deflection of center','\u0394_Alpha of coordline','\u0394_Alpha per \u0394_deflection']
         for plo in range(0,3):
             #Plot profile
             axs[1, plo].plot(Radi,ploo[plo])  
@@ -141,6 +150,6 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
         #axs[1,4].scatter(pl3D[1])
         fig.tight_layout()
         plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
-        plt.savefig(plot_path+g+u+'.png')
-        plt.savefig('C:/Users/sondre/Desktop/HW_plots/'+u[:-4]+'.png')
+        plt.savefig(plot_path+g+u[:-4]+'.png')
+        plt.savefig('C:/Users/sondre/Desktop/HW_plots/'+g+u[:-4]+'.png')
         plt.close()

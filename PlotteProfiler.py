@@ -14,9 +14,11 @@ from PlottingClass import plottts
 print (plottts)
 
 #ODB PATH
-gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
-gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-Azp = 'C:/Users/sondre/Desktop/Azp/'
+#gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
+#gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
+gitHub = 'C:/Users/lmark/Documents/GitHub/FleksProp_DB-tests/'
+#Azp = 'C:/Users/sondre/Desktop/Azp/'
+Azp = 'C:/Users/lmark/Desktop/AZP/'
 gofor = Azp                                        # folder of folders of ODBs
 for g in os.listdir(gofor):#[0:1]: #for many folders
     odb_path = gofor
@@ -152,4 +154,5 @@ for g in os.listdir(gofor):#[0:1]: #for many folders
                  spenn_delW =spenn_delW,
                  radz=Radi)
         plt.savefig('C:\\Users\\Sondre\\Desktop\\Azp_plots\\'+g+u[:-4]+'.png')
+        plt.savefig('C:/Users/lmark/Desktop/AZP/FullShell/plots/' + g + u[:-4] + '.png')
         plt.close()

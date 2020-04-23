@@ -26,17 +26,26 @@ import numpy as np
 import sys
 
 class HydroWing:
+<<<<<<< Updated upstream
     def __init__(self, cae_file_path,input_file_path,load_file_path):
         self.cae_file_path = cae_file_path
         self.input_file_path = input_file_path
         self.load_file_path = load_file_path
         self.r = 500
         self.r_val = [0.5, 0.6, 0.7, 0.8, 0.9]
+=======
+    def __init__(self, cae_file_path, input_file_path):
+        self.cae_file_path = cae_file_path
+        self.input_file_path = input_file_path
+        self.r = 500
+        self.r_val = [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+>>>>>>> Stashed changes
         self.partition_set_names = []
 
     def openCAE(self):
         openMdb(self.cae_file_path)
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     def all_over(self, angles, thickness):
@@ -81,6 +90,8 @@ class HydroWing:
         except:
             pass
 =======
+=======
+>>>>>>> Stashed changes
     def all_over(self, thickness=0.2):
         p = mdb.models['Model-1'].parts['HW']
 
@@ -112,6 +123,9 @@ class HydroWing:
         f1 = a.instances['HW'].faces
         pickedRegions = regionToolset.Region(skinFaces=(('Skin-1', f1), ))
         a.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2))
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     def importAssembly(self):
@@ -153,7 +167,11 @@ class HydroWing:
         s.unsetPrimaryObject()
         del mdb.models['Model-1'].sketches['__profile__']
 
+<<<<<<< Updated upstream
     def partitionHorizontal(self,division,grid=0):
+=======
+    def partitionHorizontal(self,division,grid=0, angle=0):
+>>>>>>> Stashed changes
         if not grid:
             self.sets = []
         p = mdb.models['Model-1'].parts['HW']
@@ -171,6 +189,7 @@ class HydroWing:
         # ------------Creating Horizontal Partitions- -----------------------
 
         cells = p.cells
+<<<<<<< Updated upstream
         if not grid:
             p.DatumPlaneByPrincipalPlane(principalPlane=XYPLANE, offset=151)
         for z in partitiondensity:
@@ -199,6 +218,54 @@ class HydroWing:
                 pickedCells = cells.getByBoundingBox(-1000, -1000, 0, 1000, 1000, Radius+tol)
                 p.PartitionCellByDatumPlane(datumPlane=z, cells=pickedCells)
                 i += 1
+=======
+        d1 = p.datums
+        p.DatumPointByCoordinate((15,-50,306))
+        p.DatumPointByCoordinate((14,-50,306))
+        p.DatumAxisByTwoPoint(d1.values()[-2],d1.values()[-1])
+        datumAxis = p.datums.values()[-1]
+        datumPlanes = []
+
+        if not grid:
+            p.DatumPlaneByPrincipalPlane(principalPlane=XYPLANE, offset=151)
+            brimPlane = p.datums.values()[-1]
+
+        for z in partitiondensity:
+            p.DatumPlaneByPrincipalPlane(principalPlane=XYPLANE, offset=z)
+            if angle:
+                p.DatumPlaneByRotation(plane=d1.values()[-1], axis=datumAxis, angle=angle)
+            datumPlanes.append(p.datums.keys()[-1])
+
+        if not grid:
+            pickedCells = cells.getByBoundingBox(-1000, -1000, 0, 1000, 1000, Radius+tol)
+            p.PartitionCellByDatumPlane(datumPlane=brimPlane, cells=pickedCells)
+            brimCell = cells.getByBoundingBox(-1000, -1000, 0, 1000, 1000, 151+tol)
+            p.Set(cells=brimCell,name='Cell_Brim')
+
+        for z in datumPlanes:
+            pickedCells = cells.getByBoundingBox(-1000, -1000, 150-tol, 1000, 1000, Radius+tol)
+            p.PartitionCellByDatumPlane(datumPlane=d1[z], cells=pickedCells)
+
+        sortedIndeces = self.sortCells(angle)
+        for i,cellIndex in enumerate(sortedIndeces):
+            p.Set(cells=cells.findAt(cells[cellIndex].pointOn), name='Cell_'+str(i+1))
+            self.sets.append('Cell_'+str(i+1))
+
+    def sortCells(self,angle):
+        p = mdb.models['Model-1'].parts['HW']
+        distance = []
+        pointA = np.array([-500,0])
+        pointB = np.array([-500-np.cos(angle*180/np.pi),np.sin(angle*180/np.pi)])
+        AB = pointB-pointA
+        for cell in p.cells:
+            pointC = np.array(cell.pointOn)[0]
+            if pointC[2] > 151:
+                xCoords, yCoords, zCoords = pointC
+                AC = pointC[1:] - pointA
+                distance.append(np.linalg.norm(np.cross(AC,AB))/np.linalg.norm(AB))
+        sortedIndeces = sorted(range(len(distance)), key=lambda k: distance[k])
+        return sortedIndeces
+>>>>>>> Stashed changes
 
     def partitionVertical(self,division,grid=0):
         if not grid:
@@ -269,6 +336,7 @@ class HydroWing:
                     p.Set(cells=pickedCells, name='Cell_'+str(j+1)+str(i+1))
                     self.sets.append('Cell_'+str(j+1)+str(i+1))
 
+<<<<<<< Updated upstream
     def assignSections(self,stiffSection):
         p = mdb.models['Model-1'].parts['HW']
         sets = p.sets
@@ -284,6 +352,33 @@ class HydroWing:
                                 thicknessAssignment=FROM_SECTION)
             else:
                 p.SectionAssignment(region=sets[i], sectionName='Foam', offset=0.0,
+=======
+    def assignSections(self,stiffSection,BronzeRatio=0):
+        p = mdb.models['Model-1'].parts['HW']
+        sets = p.sets
+        self.createMaterials(BronzeRatio=BronzeRatio)
+        for i in sets.keys():
+            if i in stiffSection:
+                if BronzeRatio < 1 and BronzeRatio > 0:
+                    p.SectionAssignment(region=sets[i], sectionName='Foam', offset=0.0,
+                                    offsetType=TOP_SURFACE, offsetField='',
+                                    thicknessAssignment=FROM_SECTION)
+                else:
+                    p.SectionAssignment(region=sets[i], sectionName='Bronze', offset=0.0,
+                                    offsetType=TOP_SURFACE, offsetField='',
+                                    thicknessAssignment=FROM_SECTION)
+            else:
+                if i == 'Cell_Brim':
+                    p.SectionAssignment(region=sets[i], sectionName='Foam', offset=0.0,
+                                    offsetType=TOP_SURFACE, offsetField='',
+                                    thicknessAssignment=FROM_SECTION)
+                elif BronzeRatio < 1 and BronzeRatio > 0:
+                    p.SectionAssignment(region=sets[i], sectionName='Bronze', offset=0.0,
+                                    offsetType=TOP_SURFACE, offsetField='',
+                                    thicknessAssignment=FROM_SECTION)
+                else:
+                    p.SectionAssignment(region=sets[i], sectionName='Foam', offset=0.0,
+>>>>>>> Stashed changes
                                     offsetType=TOP_SURFACE, offsetField='',
                                     thicknessAssignment=FROM_SECTION)
 
@@ -291,6 +386,7 @@ class HydroWing:
         while mdb.models['Model-1'].parts['HW'].sectionAssignments:
             del mdb.models['Model-1'].parts['HW'].sectionAssignments[-1]
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     def createMaterials(self,angle=0):
 =======
@@ -323,6 +419,40 @@ class HydroWing:
         mdb.models['Model-1'].Material(name='Foam')
         mdb.models['Model-1'].materials['Foam'].Elastic(table=((200.0, 0.3), ))
 
+=======
+    def createMaterials(self,angle=0,CFratio=0,BronzeRatio=0):
+
+        if CFratio >= 1:
+            E1 = 130000
+            E2 = E1/CFratio
+
+        elif CFratio > 0:
+            E2 = 130000
+            E1 = E2/CFratio
+        else:
+            E1 = 130000
+            E2 = 10000
+
+        if BronzeRatio < 1 and BronzeRatio > 0:
+                    ratio = 1/BronzeRatio
+        else:
+            ratio = BronzeRatio
+        #-------------- Materials --------------------------------
+        mdb.models['Model-1'].Material(name='CF')
+        mdb.models['Model-1'].materials['CF'].Elastic(type=ENGINEERING_CONSTANTS,
+        table=((E1, E2, 10000.0, 0.2, 0.2, 0.4, 4000.0, 4000.0,3000.0), ))
+
+        mdb.models['Model-1'].Material(name='Bronze')
+        mdb.models['Model-1'].materials['Bronze'].Elastic(table=((115000.0, 0.34), ))
+
+        if not BronzeRatio:
+            mdb.models['Model-1'].Material(name='Foam')
+            mdb.models['Model-1'].materials['Foam'].Elastic(table=((200.0, 0.3), ))
+
+        else:
+            mdb.models['Model-1'].Material(name='Foam')
+            mdb.models['Model-1'].materials['Foam'].Elastic(table=((115000/ratio, 0.3), ))
+>>>>>>> Stashed changes
         # -------------- Sections -----------------------------
         sectionLayer1 = section.SectionLayer(material='CF', thickness=0.2,
                                              orientAngle=angle, numIntPts=3, plyName='')
@@ -331,7 +461,11 @@ class HydroWing:
                                                     poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT,
                                                     useDensity=OFF, integrationRule=SIMPSON, layup=(sectionLayer1, ))
 
+<<<<<<< Updated upstream
         mdb.models['Model-1'].HomogeneousSolidSection(name='Steel', material='Steel',
+=======
+        mdb.models['Model-1'].HomogeneousSolidSection(name='Bronze', material='Bronze',
+>>>>>>> Stashed changes
                                                       thickness=None)
         mdb.models['Model-1'].HomogeneousSolidSection(name='Foam', material='Foam',
                                                       thickness=None)
@@ -342,13 +476,17 @@ class HydroWing:
         for section in mdb.models['Model-1'].sections.keys():
             del mdb.models['Model-1'].sections[section]
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
         for skin in mdb.models['Model-1'].parts['HW'].skins.keys():
             del mdb.models['Model-1'].parts['HW'].skins[skin]
         while mdb.models['Model-1'].parts['HW'].sectionAssignments:
             del mdb.models['Model-1'].parts['HW'].sectionAssignments[-1]
         while mdb.models['Model-1'].parts['HW'].materialOrientations:
             del mdb.models['Model-1'].parts['HW'].materialOrientations[-1]
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 
     def prep(self):
@@ -491,6 +629,8 @@ class HydroWing:
                              distributionType=UNIFORM,
                              fieldName='',
                              localCsys=None)
+=======
+>>>>>>> Stashed changes
 
     def mesh(self,meshSize):
         r = self.r
@@ -554,7 +694,11 @@ class HydroWing:
         del a.sets['postPartiti']
         del a.sets['prePartiti']
 
+<<<<<<< Updated upstream
     def applyLoad(self):
+=======
+    def applyLoad(self,field):
+>>>>>>> Stashed changes
         model = mdb.models['Model-1']
 
         a = model.rootAssembly
@@ -564,7 +708,11 @@ class HydroWing:
                        createStepName='Step-1',
                        region=region,
                        distributionType=FIELD,
+<<<<<<< Updated upstream
                        field='AnalyticalField-1',
+=======
+                       field=field,
+>>>>>>> Stashed changes
                        magnitude=1.0,
                        amplitude=UNSET)
 
@@ -592,9 +740,15 @@ class HydroWing:
 
     def writeInput(self,*args):
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         name = 'HW-'
         for arg in args:
             name += str(arg) + '-'
+=======
+        name = 'HW_'
+        for arg in args:
+            name += str(arg) + '_'
+>>>>>>> Stashed changes
 =======
         name = 'HW_'
         for arg in args:
@@ -611,6 +765,7 @@ class HydroWing:
             numGPUs=0)
         mdb.jobs[name].writeInput(consistencyChecking=OFF)
 
+<<<<<<< Updated upstream
     def createFolder(self):
 <<<<<<< Updated upstream
 >>>>>>> Stashed changes
@@ -620,12 +775,24 @@ class HydroWing:
         os.chdir(input_file_location)
         input_folder_name = getInput('Enter name for folder containing input files: ')
         self.input_file_path += '\\' + input_folder_name
+=======
+    def createFolder(self,name=''):
+        os.chdir(self.input_file_path)
+        if not name:
+            input_file_location = self.input_file_path
+            input_folder_name = getInput('Enter name for folder containing input files: ')
+            self.input_file_path += '\\' + input_folder_name
+            self.partitionName = input_folder_name
+        else:
+            input_folder_name = name
+>>>>>>> Stashed changes
         if not os.path.exists(input_folder_name):
             os.mkdir(input_folder_name)
             print("Directory " , input_folder_name ,  " Created ")
             os.chdir(input_folder_name)
         else:
             print("Directory " , input_folder_name ,  " already exists")
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
             os.chdir(input_folder_name)
@@ -1303,5 +1470,129 @@ for meshSize in meshList:
     mdb.close()
 propeller.createBatch()
 
+"""
+>>>>>>> Stashed changes
+=======
+            sys.exit()
+
+    def createBatch(self):
+        current=os.getcwd()
+        print(current+'\\')
+        # Hent
+        odb_names = [f for f in os.listdir(current) if (f.endswith('.inp')) ]
+        s=open(current+'\\'+'run_inputs.bat',"w+")
+        for od in odb_names:
+            s.write('call abq2017 job='+od[:-4]+ ' int\n')
+        s.close()
+
+
+caeFilePath = 'C:\Users\Jon\Documents\Abaqus\HW.cae'
+inputFileLocation = 'C:\Users\Jon\OneDrive\FleksProp\InputFiles'
+
+
+ratios = [1000, 100., 10., 1/10., 1/100., 1/1000]
+ratioNames = ['1000', '100', '10', '0_1', '0_01', '0_001']
+angles = [0,30,45,60,90,120,135,150]
+
+fields = ['Seven-','Seven+']
+
+"""
+# ------------- Grid, Vertical & Horizontal ----------------------
+propeller = HydroWing(caeFilePath,inputFileLocation)
+
+propeller.createFolder()
+for field in fields:
+    propeller.openCAE()
+    propeller.partitionHorizontal(10)
+    propeller.importAssembly()
+    propeller.partitionRadii()
+    propeller.createFolder(field)
+    propeller.applyLoad(field)
+    propeller.mesh(8)
+    propeller.createSets()
+    setList = []
+
+    for set in propeller.sets:
+        setList.append(set)
+        propeller.assignSections(setList)
+        propeller.writeInput(propeller.partitionName,field,set)
+        propeller.deleteMaterials()
+    mdb.close()
+    propeller.createBatch()
+"""
+
+
+# -------------------- All Over --------------------------
+propeller = HydroWing(caeFilePath,inputFileLocation)
+propeller.openCAE()
+propeller.createFolder()
+propeller.partitionName = 'AllOver'
+propeller.importAssembly()
+propeller.partitionRadii()
+propeller.applyLoad('Seven-')
+propeller.mesh(8)
+propeller.createSets()
+
+for angle in np.linspace(-90,90,10):
+    propeller.createFolder(str(angle))
+    for ratio in ratios:
+        if ratio < 1:
+            ratioTxt = '0_'+str(ratio)[2:4]
+        else:
+            ratioTxt = int(ratio)
+        propeller.createMaterials(angle,ratio)
+        propeller.all_over(thickness=0.2)
+        propeller.writeInput(propeller.partitionName,'Seven-','Angle',str(int(angle)),'R',ratioTxt)
+        propeller.deleteMaterials()
+propeller.createBatch()
+
+
+"""
+# ----------------------- Mesh Convergence -------------------------------
+
+meshList = [100,75,50,35,25,15,12,10,8,6]
+
+propeller = HydroWing(caeFilePath,inputFileLocation,pressure_field_path)
+propeller.createFolder()
+for meshSize in meshList:
+    propeller.openCAE()
+    propeller.importAssembly()
+    propeller.partitionRadii()
+    propeller.applyLoad()
+    propeller.mesh(meshSize)
+    propeller.createSets()
+    propeller.createMaterials()
+    p = mdb.models['Model-1'].parts['HW']
+    p.Set(name='Set10', cells=p.cells)
+    p.SectionAssignment(region=p.sets['Set10'], sectionName='Foam', offset=0.0,
+                                    offsetType=TOP_SURFACE, offsetField='',
+                                    thicknessAssignment=FROM_SECTION)
+    propeller.writeInput(propeller.partitionName,meshSize)
+    mdb.close()
+propeller.createBatch()
+
+"""
+
+"""
+# ------------- Centered Sweeps ----------------------
+propeller = HydroWing(caeFilePath,inputFileLocation,pressure_field_path)
+propeller.openCAE()
+propeller.createFolder()
+propeller.partitionVertical(10)
+propeller.importAssembly()
+propeller.partitionRadii()
+propeller.applyLoad()
+propeller.mesh(8)
+propeller.createSets()
+setList = []
+middle = len(propeller.sets)/2
+
+for shift in range(5):
+    setList.append(propeller.sets[middle+shift])
+    setList.append(propeller.sets[middle-1-shift])
+    propeller.assignSections(setList)
+    propeller.writeInput(propeller.partitionName,'+-',shift)
+    propeller.removeSections()
+propeller.createBatch()
 """
 >>>>>>> Stashed changes

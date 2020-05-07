@@ -15,10 +15,12 @@ import os
 gitHUB = 'C:/Users/lmark/Documents/GitHub/FleksProp_DB-tests/'
 # HW = 'C:/Users/sondre/Desktop/HW/'
 # Azp = 'C:/Users/sondre/Desktop/Azp/'
-Azp = 'C:/Users/lmark/Desktop/AZP/'
+Azp = 'D:/PhD/Simuleringer/AZP/'
+HW = 'D:/PhD/Simuleringer/HW/'
 gofor = Azp
-
-for g in os.listdir(gofor)[0:1]:  # for many folders
+stuff= [f for f in os.listdir(gofor) if not (f.endswith('.bat'))]
+print(stuff)
+for g in stuff:  # for many folders
     try:
         odb_path = gofor
         odb_path = odb_path + g + '/'  # for many folders
@@ -48,11 +50,12 @@ for g in os.listdir(gofor)[0:1]:  # for many folders
         handles, labels = axs[plo].get_legend_handles_labels()
         axs[plo].legend(handles=handles, loc='upper center', bbox_to_anchor=(1.45, 0.8), borderaxespad=0., fontsize=10)
         # plt.tight_layout()
-
-        plt.savefig('C:/Users/lmark/Desktop/AZP/FullShell/plots/' + g + '.png', bbox_inches='tight')
+        if gofor.endswith('HW/'):    
+             plt.savefig('D:/PhD/Simuleringer/HW_plots/AA' + g + '.png', bbox_inches='tight')
+        if gofor.endswith('AZP/'): 
+             plt.savefig('D:/PhD/Simuleringer/Azp_plots/AA' + g + '.png', bbox_inches='tight')
         plt.close()
     except:
         print('not', g)
-        plt.close()
         pass
     

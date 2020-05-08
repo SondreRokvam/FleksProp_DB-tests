@@ -10,21 +10,16 @@ from PlottingClass import plottts
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
-HW = 'D:/PhD/Simuleringer/HW/'
-gofor = HW
+gofor = 'D:/PhD/Simuleringer/HW/'
 Inp_folders = []
 for root, dirs, files in os.walk(gofor, topdown=False):
      for name in dirs:
           name = os.path.join(root, name)
           inp_files = [a for a in os.listdir(name) if a.endswith('.inp')]
-          Odb_files = [a for a in os.listdir(name) if a.endswith('.odb')]
           if len(inp_files)>0:
               Inp_folders.append(name)
-stuff = Inp_folders
-print(len(stuff))
-FuckedList=[]
 
-for gofor in stuff:  # for many folder
+for gofor in Inp_folders[0]:  # for many folder
     odb_path = gofor
     npz_path=odb_path+'\\npz_files' 
     plot_path= odb_path+'\\plots'
@@ -44,7 +39,7 @@ for gofor in stuff:  # for many folder
     spenn_delU, spenn_delA, spenn_delW=[],[],[]
     spenn_AfU,spenn_WfU =[],[]
     
-    for u in odb_names:#[0:1]:
+    for u in odb_names[0:10]:
         try:
              # Logging deltas
              delta_U, delta_A, delta_W = [],[],[]
@@ -307,6 +302,4 @@ for gofor in stuff:  # for many folder
                   plt.close()
              except:
                   pass
-             FuckedList.append(u)
              pass
-print(FuckedList)

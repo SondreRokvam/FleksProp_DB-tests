@@ -1,18 +1,4 @@
-from abaqus import *
-from abaqusConstants import *
-from odbAccess import *
-import numpy as np
-import math
-import os
-Mdb()
-#ODB PATH
-gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-#Azp = 'C:/Users/sondre/Desktop/Azp/'
-Azp = 'C:/Users/Sondre/Desktop/Single_Simulations/CFD_results'    # Brukes for spesifikke mappetester
-#Azp = 'D:/PhD/Simuleringer/AzP/'       # Brukes for massetestene
-gofor = Azp
-#AzP choordline data
-if 1:#AzP
+if 1: #AzP lead/trail punkter
     Leadnodes=[[88.140249,-198.797325,257.108194],
                [57.111528,-267.042178,284.233135],
                [26.214503,-343.738199,298.109126],
@@ -24,88 +10,110 @@ if 1:#AzP
                 [-286.225663,-442.58725,-105.553427],
                 [-270.14662,-504.497972,-126.022999],
                  [-236.240842,-571.887303,-123.166197] ]
-stuff= [f for f in os.listdir(gofor) if not (f.endswith('.bat'))]
-print(stuff)
-for g in stuff: #for many folders
-    #odb_path = gofor
-
-    odb_path =gofor+'/'+g+'/' #for many folders
-    npz_path=odb_path+'npz_files/'
-
-    # Create npz Directory
-    if 1:   # Create  Directory
+execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Initiate.py')
+# ODB PATH
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP'       # Overmappe for massetestene
+# Os walk to get files, roots and
+execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Find_inpNodb_N_Make_differnceList.py')
+# Extract from odb paths
+if (inps-len(fuckedlist))>0:
+    for gofor in Inp_folders[0]:
+        # Give odb_path
+        odb_path = gofor
+        # create NPZ PATH
+        npz_path = odb_path + '\\npz_files'
         try:
-            os.mkdir(npz_path)
-            print("Directory ", npz_path, " Created ")
+            os.mkdir(npz_path)  # Create target Directory
+            #print("Directory ", npz_path, " Created ")
         except:
-            print("Directory ", npz_path, " already exists")
+            #print("Directory ", npz_path, " already exists")
+            pass
 
-    # Hent resultatfiler
-    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
+        # Hent resultatfiler i mappen
+        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
+        for i in odb_names:
+            Mdb()
+            #try:
+            if 1:
+                print '\n              Attepting extraction from: ', odb_path + '\\' + i
+                odb = session.openOdb(name=odb_path + '\\' + i)
+                Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+                #print i
+                if not "CFD" in i:
+                    Measurements = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+                    nodplace =odb.rootAssembly
+                else:
+                    Measurements = ['R250', 'R300', 'R350', 'R400', 'R450']
+                    nodplace =odb.rootAssembly.instances['HYDROWINGTOPLEADING-1-1']
 
-    for i in odb_names:
-        #try:
-        print 'Extracting from: ', i
-        odb = session.openOdb(name=odb_path+i)
-        Setnames = [nodeset.name for nodeset in odb.rootAssembly.instances['HYDROWINGTOPLEADING-1-1'].nodeSets.values() if ('R' in nodeset.name)]
-        #del SJekker
-        Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
-        print 'Extracting at: ', Measurementes
-        for profile in Measurementes:
-            dots_cyl_langs_x = []
-            dots_cyl_langs_xm =[]
+                for profile in Measurements:
+                    #print profile
+                    dots_cyl_langs_x = []
+                    dots_cyl_langs_xm =[]
 
-            #AllNodes = odb.rootAssembly.nodeSets[Setnames[Measurementes.index(profile)]].nodes[0]
-            AllNodes = odb.rootAssembly.instances['HYDROWINGTOPLEADING-1-1'].nodeSets[Setnames[Measurementes.index(profile)]].nodes
-            print(odb.steps)
-            Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(region=odb.rootAssembly.instances['HYDROWINGTOPLEADING-1-1'].nodeSets[Setnames[Measurementes.index(profile)]]).values
+                    if not "CFD" in i:
+                        AllNodes = nodplace.nodeSets[profile].nodes[0]
+                    else:
+                        AllNodes = nodplace.nodeSets[profile].nodes
+                    Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(
+                        region=nodplace.nodeSets[profile]).values
 
-            find_dis_trail_nodes = []
-            find_dis_lead_nodes = []
+                    find_dis_trail_nodes = []
+                    find_dis_lead_nodes = []
 
-            Acount= 0
-            for nod in AllNodes:
-                x = float(nod.coordinates[0])           #Initial position of node
-                y = float(nod.coordinates[1])
-                z = float(nod.coordinates[2])
-                xm = float(Disp[Acount].data[0])        #Displacement of node
-                ym= float(Disp[Acount].data[1])
-                zm= float(Disp[Acount].data[2])
+                    Acount= 0
+                    for nod in AllNodes:
+                        x = float(nod.coordinates[0])           #Initial position of node
+                        y = float(nod.coordinates[1])
+                        z = float(nod.coordinates[2])
+                        xm = float(Disp[Acount].data[0])        #Displacement of node
+                        ym= float(Disp[Acount].data[1])
+                        zm= float(Disp[Acount].data[2])
 
-                # measure coordline nodes
-                trailpoint = Trailnodes[Measurementes.index(profile)]
-                leadpoint = Leadnodes[Measurementes.index(profile)]
-                find_dis_trail_nodes.append(round(math.sqrt((x - trailpoint[0]) ** 2 + (y - trailpoint[1]) ** 2 + (z - trailpoint[2]) ** 2), 8))
-                find_dis_lead_nodes.append(round(math.sqrt((x - leadpoint[0]) ** 2 + (y - leadpoint[1]) ** 2 + (z - leadpoint[2]) ** 2), 8))
+                        # measure coordline nodes
+                        trailpoint = Trailnodes[Measurements.index(profile)]
+                        leadpoint = Leadnodes[Measurements.index(profile)]
+                        find_dis_trail_nodes.append(round(math.sqrt((x - trailpoint[0]) ** 2 + (y - trailpoint[1]) ** 2 + (z - trailpoint[2]) ** 2), 8))
+                        find_dis_lead_nodes.append(round(math.sqrt((x - leadpoint[0]) ** 2 + (y - leadpoint[1]) ** 2 + (z - leadpoint[2]) ** 2), 8))
 
 
-                Acount = Acount + 1  # Manual counter
+                        Acount = Acount + 1  # Manual counter
 
-                # Find angular value due to cylinder coordinates
-                ang = math.atan2(y , z)
-                angm = math.atan2((y+ym) , (z+zm))
+                        # Find angular value due to cylinder coordinates
+                        ang = math.atan2(y , z)
+                        angm = math.atan2((y+ym) , (z+zm))
 
-                #                        Angle        radius        Cylinder height
-                dots_cyl_langs_x.append([ang, ((y) ** 2 + (z) ** 2) ** 0.5, x ])
-                dots_cyl_langs_xm.append([angm, ((y+ym)**2+(z+zm)**2)**0.5, x+xm])
+                        #                        Angle        radius        Cylinder height
+                        dots_cyl_langs_x.append([ang, ((y) ** 2 + (z) ** 2) ** 0.5, x ])
+                        dots_cyl_langs_xm.append([angm, ((y+ym)**2+(z+zm)**2)**0.5, x+xm])
 
-            #Identify coordline nodes
-            minTrail_dist = np.min(find_dis_trail_nodes)
-            minLead_dist = np.min(find_dis_lead_nodes)
-            index_minTrail = find_dis_trail_nodes.index(minTrail_dist)
-            index_minLead = find_dis_lead_nodes.index(minLead_dist)
+                    #Identify coordline nodes
+                    minTrail_dist = np.min(find_dis_trail_nodes)
+                    minLead_dist = np.min(find_dis_lead_nodes)
+                    index_minTrail = find_dis_trail_nodes.index(minTrail_dist)
+                    index_minLead = find_dis_lead_nodes.index(minLead_dist)
 
-            undefCoordline = [dots_cyl_langs_x[index_minTrail], dots_cyl_langs_x[index_minLead]]
-            defCoordline = [dots_cyl_langs_xm[index_minTrail], dots_cyl_langs_xm[index_minLead]]
+                    undefCoordline = [dots_cyl_langs_x[index_minTrail], dots_cyl_langs_x[index_minLead]]
+                    defCoordline = [dots_cyl_langs_xm[index_minTrail], dots_cyl_langs_xm[index_minLead]]
 
-            #Save for plotting
-            np.savez(npz_path+'Cylinder view of '+profile+' for '+i[:-4],
-                     profile_undeformed = np.array( dots_cyl_langs_x),
-                     profile_deformed=np.array( dots_cyl_langs_xm) ,
-                     profile_undefcoordline=undefCoordline,
-                     profile_defcoordline=defCoordline)
-        print('worked for ' + i[:-4])
-        odb.close()
-        #except:
-        #print(i, 'didnt work')
-        #pass
+                    #Save for plotting
+                    np.savez(npz_path+'Cylinder view of '+profile+' for '+i[:-4],
+                             profile_undeformed = np.array( dots_cyl_langs_x),
+                             profile_deformed=np.array( dots_cyl_langs_xm) ,
+                             profile_undefcoordline=undefCoordline,
+                             profile_defcoordline=defCoordline)
+                print
+                '              Worked for :        ' + i[:-4] + '        in :        ', gofor, '\n\n'
+                odb.close()
+                #except:
+                #try:
+                #    odb.close()
+                #except:
+                #    pass
+                #print
+                #'              Didnt Work for :    ' + i[:-4] + '        in :        ', gofor, '\n\n'
+                #fuckedlist.append([gofor, i])
+                #print
+                #'          Added to redo-list\n\n'
+                #pass
+execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Write_Launcher_N_Overview.py')

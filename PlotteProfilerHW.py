@@ -10,17 +10,17 @@ from PlottingClass import plottts
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
-gofor = 'D:/PhD/Simuleringer/HW/'
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW' 
 Inp_folders = []
-for root, dirs, files in os.walk(gofor, topdown=False):
+for root, dirs, files in os.walk(Source, topdown=False):
      for name in dirs:
           name = os.path.join(root, name)
           inp_files = [a for a in os.listdir(name) if a.endswith('.inp')]
           if len(inp_files)>0:
-              Inp_folders.append(name)
-
-for gofor in Inp_folders[0]:  # for many folder
-    odb_path = gofor
+              Inp_folders.append(name.split('\n'))
+print (Inp_folders)
+for fold in Inp_folders:  # for many folder
+    odb_path = fold[0]
     npz_path=odb_path+'\\npz_files' 
     plot_path= odb_path+'\\plots'
     plottts.new_folder(plot_path)
@@ -295,7 +295,7 @@ for gofor in Inp_folders[0]:  # for many folder
                       spenn_delA=spenn_delA,
                       spenn_delW =spenn_delW,
                       radz=Radi)
-             plt.savefig('D:\\PhD\\Simuleringer\\HW_plots\\'+u[:-4]+'.png')
+             plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots\\'+u[:-4]+'.png')
              plt.close()
         except:
              try:

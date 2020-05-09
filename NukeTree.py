@@ -14,8 +14,8 @@ def nukemappe(loca, avoid1):
          except:
              pass
         
-nukeloc= 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp'
-nukeloc= 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW'
+#nukeloc= 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp'
+#nukeloc= 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW'
 affectedFolds=[['D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp']]
 for root, dirs, files in os.walk(nukeloc, topdown=False):
      for name in dirs:

@@ -18,13 +18,13 @@ Inp_folders = plottts.FindInPFolders(Source)
     
 #Starte datapreperation for simulation canvas
 for fold in Inp_folders:#[0:1]:  # for many folder
-    print(fold[0][52:])
+    print(fold[0][55:])
     odb_path = fold[0]
     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
     
     # Hent
     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
-    fig, axs = plt.subplots(1, 5, figsize=(18, 8))
+    fig, axs = plt.subplots(1, 5, figsize=(17, 6))
     fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
 
     for u in odb_names:
@@ -61,12 +61,14 @@ for fold in Inp_folders:#[0:1]:  # for many folder
          # legend
          handles, labels = axs[4].get_legend_handles_labels()
          plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0., fontsize=8)
-         plt.subplots_adjust(left=None, bottom=0.1, right=6/7, top=0.91, wspace=None, hspace=0.3)  
          
          if 'hw' in Source.lower():    
-             plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[5])+'\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
+             plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[6])+'\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
+             plt.savefig(Source +'_plots\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
          #if 'azp' in Source.lower():    
          #    plt.savefig(Source +'_plots\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
+    fig.tight_layout()
+    plt.subplots_adjust(left=None, bottom=0.1, right=5/8, top=0.91, wspace=None, hspace=0.3)  
     plt.close()
      
          

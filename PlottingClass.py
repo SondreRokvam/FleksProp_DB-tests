@@ -14,25 +14,27 @@ class plottts:
           pass
     
      def Top_bottom_warpPoints(tolran,REL_Points_rotated,XMI,XMA,CooLiX,CooliY,mama,yaya):
+          print(len(REL_Points_rotated))
           RelevantPoints=  []
           Xref =(float(XMI+XMA)/2)
-          for point in REL_Points_rotated:                     
+          
+          for point in REL_Points_rotated:
+               #print('is ', Xref+tolran,' < ',point[0],' > ', Xref-tolran)                      
                if point[0] > Xref-tolran:
                     if point[0] < Xref+tolran:
-                         #print(RWP[RWP.index(point)][0])
+                         #print(REL_Points_rotated[REL_Points_rotated.index(point)][0])
                          RelevantPoints.append([REL_Points_rotated[REL_Points_rotated.index(point)][0],REL_Points_rotated[REL_Points_rotated.index(point)][1]])
-          #print('Filter = ',len(RelevantPoints), ' of ',len(REL_Points_rotated) )
-      
+          print('Filter = ',len(RelevantPoints), ' of ',len(REL_Points_rotated) )
           #Is in the top points or bottom?
           CLdists =[]
-          for Coords in np.array(RelevantPoints)[:,0:2]:
+          print(np.array(RelevantPoints))
+          for Coords in RelevantPoints:
                CLdists.append(math.sqrt((Coords[0]-(XMI+XMA)/2)**2+ (Coords[1]-mama*(XMI+XMA)/2+yaya)**2))
           SnittDist = np.mean(CLdists)
           
           Botpoints=[]
           TopPoints=[]
-          
-          for Coords in range(0,len(CLdists)):
+          for Coords in range(len(CLdists)):
                if CLdists[Coords]<SnittDist:
                     Botpoints.append(RelevantPoints[Coords])
                else:
@@ -77,7 +79,7 @@ class plottts:
                               cool=[pop]
                     negpoints=cool
                TopPoints=[negpoints[0],pospoints[0]]
-          print(TopPoints)
+          #print(TopPoints)
           
           
           #Find Excact warppoints?

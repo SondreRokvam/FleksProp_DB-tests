@@ -94,7 +94,7 @@ for fold in Inp_folders:  # for many folder
                      # KPI management: Alfa, deflection and coordlength change                    
                      Alphas.append(math.atan2(m,1)*180/math.pi)
                      CenterDeflection.append([np.average(PlotData[:,p[0]]),np.average(PlotData[:,p[1]])])
-                     Coordlengths.append(math.sqrt((Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[1,0]-Radi[maal]*radius*np.array(Coordline[Inter.index(p)])[0,0])**2+(Coordline[Inter.index(p)][1,1]-Coordline[Inter.index(p)][0,1])**2))
+                     Coordlengths.append(math.sqrt((np.array(Coordline[Inter.index(p)])[1,0]-np.array(Coordline[Inter.index(p)])[0,0])**2+(Coordline[Inter.index(p)][1,1]-Coordline[Inter.index(p)][0,1])**2))
                             
                      #Sort and rotate data for Warp Calculation
                      WarpPoints = np.transpose([PlotData[:,p[0]],PlotData[:,p[1]]])
@@ -116,7 +116,6 @@ for fold in Inp_folders:  # for many folder
                      warp_point_topPlots = plottts.rotate((CLx,CLy),(warp_point_top),math.atan2(m,1))
                      warp_point_botPlots = plottts.rotate((CLx,CLy),(warp_point_bot),math.atan2(m,1))
                      WarpPointsPlotting.append([[warp_point_botPlots[0],warp_point_topPlots[0]],[warp_point_botPlots[1],warp_point_topPlots[1]],'m*'])
-                     
                      
                      #Plot coordlne and Normal with CenterMark
                      CLcenterMark.append([CLx,CLy, 'bx'])
@@ -207,7 +206,7 @@ for fold in Inp_folders:  # for many folder
                  axs[1, plo].title.set_text(pli[plo])
              fig.tight_layout()
              plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
-             print(plot_path+'\\Comparison')
+             #print(plot_path+'\\Comparison')
              np.savez(plot_path+'\\Comparison',
                       spenn_delU=spenn_delU,
                       spenn_delAlp=spenn_delAlp,

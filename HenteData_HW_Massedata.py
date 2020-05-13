@@ -15,11 +15,11 @@ execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Initiate.py')
 Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW'       # Overmappe for massetestene
 # Os walk to get files, roots and
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Find_inpNodb_N_Make_differnceList.py')
-# Extract from odb paths
+# Extract from odb path
 if (inps-len(fuckedlist))>0:
-    for gofor in Inp_folders[0]:
+    for gofor in Inp_folders:
         # Give odb_path
-        odb_path = gofor
+        odb_path = gofor[0]
         # create NPZ PATH
         npz_path = odb_path + '\\npz_files'
         try:
@@ -33,8 +33,7 @@ if (inps-len(fuckedlist))>0:
         odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
         for i in odb_names:
             Mdb()
-            #try:
-            if 1:
+            try:
                 print '\n              Attepting extraction from: ', odb_path + '\\' + i
                 odb = session.openOdb(name=odb_path + '\\' + i)
                 Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -63,7 +62,7 @@ if (inps-len(fuckedlist))>0:
                     Acount = 0
                     for nod in AllNodes:
                         x = float(nod.coordinates[0])  # Initial position of node
-                        y = float(nod.coordinates[1])
+                        y = -float(nod.coordinates[1])
                         z = float(nod.coordinates[2])
                         xm = float(Disp[Acount].data[0])  # Displacement of node
                         ym = float(Disp[Acount].data[1])
@@ -101,13 +100,13 @@ if (inps-len(fuckedlist))>0:
                              profile_defcoordline=defCoordline)
                 print '              Worked for :        ' + i[:-4] + '        in :        ',gofor,'\n\n'
                 odb.close()
-                #except:
-                #try:
-                #    odb.close()
-                #except:
-                #    pass
-                #print '              Didnt Work for :    ' + i[:-4]+ '        in :        ',gofor,'\n\n'
-                #fuckedlist.append([gofor,i])
-                #print '          Added to redo-list\n\n'
-                #pass
+            except:
+                try:
+                    odb.close()
+                except:
+                    pass
+                print '              Didnt Work for :    ' + i[:-4]+ '        in :        ',gofor,'\n\n'
+                fuckedlist.append([gofor,i])
+                print '          Added to redo-list\n\n'
+                pass
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Write_Launcher_N_Overview.py')

@@ -9,9 +9,15 @@ if len(fuckedlist)>0:
         else:
             s.write(' ' * len(BAT[0][0]) + ' \t ' + BAT[1] + '\n')
         p.write('chdir "' + BAT[0][0] + '"\n'+
-                'call abq2017 job=' + BAT[1][:-4] + ' cpus=3 interactive\n')
+                'call abq2017 job=' + BAT[1][:-4] + ' int\n')
     p.close()
     s.close()
     print 'wrote Relauncher and unRun List'
 else:
     print 'No mishaps'
+    p = open(Source + '\\ReLauncher.bat', "w+")
+    s = open(Source + '\\NotRun_possibleProblems.txt', "w+")
+    s.write('No problem')
+    p.write('\n')
+    p.close()
+    s.close()

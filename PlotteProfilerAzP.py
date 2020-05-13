@@ -1,8 +1,5 @@
-"""
-Plot/charts illustrationg deformation behaviour for propellers like AzP
-Created on Feb-May 2020
-@author: Sondre                      Current 23:07 22.04.2020"""
-
+"""Illustrationg deformation behaviour for AzP propeller
+@author: Sondre feb-may.2020"""
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
@@ -10,26 +7,26 @@ import math
 import os
 from PlottingClass import plottts
 
-"""Directories"""
+#Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
-Source = 'C:/Users/Sondre/Desktop/Single_Simulations/CFD-Dyn-Static_Tests'
-
-Source = 'C:/Users/Sondre/Desktop/Single_Simulations/CFD-Dyn-Static_Tests'
-Source = 'D:/PhD/Simuleringer/AzP'
-#Source = 'C:/Users/Sondre/Desktop/Single_Simulations/Shell-vs-Solid_Tests'
-#Source = 'C:/Users/Sondre/Desktop/Single_Simulations/Mecanical aspects'
-
-gofor =  [b for b in os.listdir(Source) if 'Azp'.lower() and not '.' in b.lower()]
-print('filer',gofor)
-for g in gofor[1:2]: #for many folders
-    odb_path = Source+'/'+g+'/' #for many folders
-    npz_path=odb_path+'npz_files/' 
-    plot_path= odb_path+'plots/'
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP' 
+Inp_folders = []
+for root, dirs, files in os.walk(Source, topdown=False):
+     for name in dirs:
+          name = os.path.join(root, name)
+          inp_files = [a for a in os.listdir(name) if a.endswith('.inp')]
+          if len(inp_files)>0:
+              Inp_folders.append(name.split('\n'))
+print (Inp_folders)
+for fold in Inp_folders:  # for many folder
+    odb_path = fold[0]
+    npz_path=odb_path+'\\npz_files' 
+    plot_path= odb_path+'\\plots'
     plottts.new_folder(plot_path)
     
     # Hent data
-    odb_names = [f for f in os.listdir(odb_path) if ((f.endswith('.odb')) and "100" not in f)]  # if not f.endswith('.inp')]
+    odb_names = [f for f in os.listdir(odb_path) if ((f.endswith('.odb')]  # if not f.endswith('.inp')]
     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz'))]
     
     # Get guidelines for choice of tracked radii profiles

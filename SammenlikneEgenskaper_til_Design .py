@@ -1,61 +1,72 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 20 01:27:31 2020
+"""Comparing Illustrations of deformation behaviour for HW propeller
+@author: Sondre feb-may.2020"""
 
-@author: Sondre
-"""
+from PlottingClass import plottts
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 import os
 
-# ODB PATH
-# gitHub = 'C:/Users/sondreor/Documents/GitHub/FleksProp_DB-tests/'
-# gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-gitHUB = 'C:/Users/lmark/Documents/GitHub/FleksProp_DB-tests/'
-# HW = 'C:/Users/sondre/Desktop/HW/'
-# Azp = 'C:/Users/sondre/Desktop/Azp/'
-Azp = 'D:/PhD/Simuleringer/AZP/'
-HW = 'D:/PhD/Simuleringer/HW/'
-gofor = Azp
-stuff= [f for f in os.listdir(gofor) if not (f.endswith('.bat'))]
-print(stuff)
-for g in stuff:  # for many folders
-    try:
-        odb_path = gofor
-        odb_path = odb_path + g + '/'  # for many folders
-        plot_path = odb_path + 'plots/'
+#Directories#
+gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
+#Singles eller Mass Simulations?
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW' 
 
-        # Hent
-        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
-        fig, axs = plt.subplots(1, 3, figsize=(18, 8))
-        fig.suptitle('Simulations of series: ' + g, fontsize=16)
-        # Profile Subplot title
-        # axs[0, maal].title.set_text(Measurementes[maal])
-        CylX = np.load(plot_path + g + '.npz')
-        deltas, Radi = [CylX['spenn_delU'], CylX['spenn_delA'], CylX['spenn_delW']], CylX['radz']
-        for uo in range(0, len(deltas[0])):
-            ploo = deltas
-            pli = ['\u0394_Deflection of center', '\u0394_Alpha of coordline', '\u0394_Alpha per \u0394_deflection']
-            for plo in range(0, 3):
-                # Plot profile
-                axs[plo].plot(Radi, np.array(ploo[:][plo][uo]), label=odb_names[uo].rstrip('.odb'))
+Inp_folders = plottts.FindInPFolders(Source)
+#fig, axs = plt.subplots(1, 5, figsize=(12, 8))
+#fig.suptitle('Sim: '+'all', fontsize=16)
+    
+#Starte datapreperation for simulation canvas
+for fold in Inp_folders:#[0:1]:  # for many folder
+    print(fold[0][52:])
+    odb_path = fold[0]
+    npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
+    
+    # Hent
+    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]  # if not f.endswith('.inp')]
+    fig, axs = plt.subplots(1, 5, figsize=(18, 8))
+    fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
+
+    for u in odb_names:
+         # Profile Subplot title
+         # axs[0, maal].title.set_text(Measurementes[maal])
+         CylX = np.load(plot_path+'\\Comparison' + '.npz')
+         deltas, Radi = [CylX['spenn_delU'], 
+                        CylX['spenn_delAlp'], CylX['spenn_AfU'],
+                        CylX['spenn_CMBR'], CylX['spenn_CMBRfU']],CylX['radz']
+         
+         
+         pli= ['\u0394_Deflection of center',
+             '\u0394_Alpha of coordline',
+             '\u0394_Alpha per deflection',
+             '\u0394_Chamber',
+             '\u0394_Chamber per deflection']
+         a = [([0.3,1]  , [-10, 150]),
+               ([0.3,1]  , [-5, 10]),
+               ([00.3,1]  , [-0.25, 0.25]),
+               ([00.3,1]  , [-0.075, 0.01]),
+               ([00.3,1]  , [-0.05, 0.001])]
+         for uo in range(0, len(deltas[0])):
+              
+            for plo in range(0, 5):
+                axs[plo].plot(Radi, deltas[plo][uo], label=odb_names[uo].rstrip('.odb'))
                 # axs[plo].subplot2grid((0, 4), (0, plo))
                 axs[plo].set_xlabel('Radius length')
                 axs[plo].set_ylabel(pli[plo])
+                axs[plo].set_xlim(a[plo][0])
+                axs[plo].set_ylim(a[plo][1])
                 # Subplot title
                 axs[plo].title.set_text(pli[plo])
-
-        # legend
-        handles, labels = axs[plo].get_legend_handles_labels()
-        axs[plo].legend(handles=handles, loc='upper center', bbox_to_anchor=(1.45, 0.8), borderaxespad=0., fontsize=10)
-        # plt.tight_layout()
-        if gofor.endswith('HW/'):    
-             plt.savefig('D:/PhD/Simuleringer/HW_plots/AA' + g + '.png', bbox_inches='tight')
-        if gofor.endswith('AZP/'): 
-             plt.savefig('D:/PhD/Simuleringer/Azp_plots/AA' + g + '.png', bbox_inches='tight')
-        plt.close()
-    except:
-        print('not', g)
-        pass
-    
+     
+         # legend
+         handles, labels = axs[4].get_legend_handles_labels()
+         plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0., fontsize=8)
+         plt.subplots_adjust(left=None, bottom=0.1, right=6/7, top=0.91, wspace=None, hspace=0.3)  
+         
+         if 'hw' in Source.lower():    
+             plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[5])+'\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
+         #if 'azp' in Source.lower():    
+         #    plt.savefig(Source +'_plots\\!'+str(fold[0][52:]).replace("\\","-")+'.png')
+    plt.close()
+     
+         

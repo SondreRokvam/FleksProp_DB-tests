@@ -17,9 +17,9 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP'       # O
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Find_inpNodb_N_Make_differnceList.py')
 # Extract from odb paths
 if (inps-len(fuckedlist))>0:
-    for gofor in Inp_folders[0]:
+    for gofor in Inp_folders:
         # Give odb_path
-        odb_path = gofor
+        odb_path = gofor[0]
         # create NPZ PATH
         npz_path = odb_path + '\\npz_files'
         try:
@@ -33,8 +33,7 @@ if (inps-len(fuckedlist))>0:
         odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
         for i in odb_names:
             Mdb()
-            #try:
-            if 1:
+            try:
                 print '\n              Attepting extraction from: ', odb_path + '\\' + i
                 odb = session.openOdb(name=odb_path + '\\' + i)
                 Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -105,15 +104,15 @@ if (inps-len(fuckedlist))>0:
                 print
                 '              Worked for :        ' + i[:-4] + '        in :        ', gofor, '\n\n'
                 odb.close()
-                #except:
-                #try:
-                #    odb.close()
-                #except:
-                #    pass
-                #print
-                #'              Didnt Work for :    ' + i[:-4] + '        in :        ', gofor, '\n\n'
-                #fuckedlist.append([gofor, i])
-                #print
-                #'          Added to redo-list\n\n'
-                #pass
+            except:
+                try:
+                    odb.close()
+                except:
+                    pass
+                print
+                '              Didnt Work for :    ' + i[:-4] + '        in :        ', gofor, '\n\n'
+                fuckedlist.append([gofor, i])
+                print
+                '          Added to redo-list\n\n'
+                pass
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Write_Launcher_N_Overview.py')

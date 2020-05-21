@@ -16,7 +16,7 @@ Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
 for fold in Inp_folders:  # for many folder
-    print(fold)
+    print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
     odb_path = fold[0]
     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
     plottts.new_folder(plot_path)
@@ -37,8 +37,7 @@ for fold in Inp_folders:  # for many folder
     
     for u in odb_names:
          print(u)
-         #try:
-         if 1:
+         try:
              # Logging KPIs
              delta_U, delta_A, delta_CMBR = [],[],[]
              A_for_U, CMBR_for_U =[],[]
@@ -53,7 +52,7 @@ for fold in Inp_folders:  # for many folder
              # Data processing for each profile
              for maal in range(0,len(Measurementes)):
                  # Data pickup  i lister.
-                 Data   =  np.load( npz_path+'Cartesian view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
+                 Data   =  np.load( npz_path+'\\Cartesian view of '+Measurementes[maal]+' for '+u[:-4]+'.npz')
                  Coordline = [Data['profile_undefcoordline'],Data['profile_defcoordline']]
                  dotCyl,dotCylm = Data['profile_undeformed'],Data['profile_deformed']
                  Inter=[[1,0],[7,6]] # The datacolumns in plotdata used for plotting in current tests
@@ -218,9 +217,12 @@ for fold in Inp_folders:  # for many folder
              plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots\\'+str(fold[0].split("\\")[6])+'\\')
              plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots\\'+str(fold[0].split("\\")[6])+'\\'+u[:-4]+'.png')
              plt.close()
-         #except:
-         #    try:
-         #         plt.close()
-         #    except:
-         #         pass
-         #    pass
+         except:
+             try:
+                  plt.close()
+             except:
+                  pass
+             print('Odb_issue')
+             pass
+             
+             

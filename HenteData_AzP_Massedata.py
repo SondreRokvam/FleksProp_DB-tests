@@ -30,10 +30,11 @@ if (inps-len(fuckedlist))>0:
             pass
 
         # Hent resultatfiler i mappen
-        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
+        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not "1000" in f.lower())]
         for i in odb_names:
             Mdb()
-            try:
+            #try:
+            if 1:
                 print '\n              Attepting extraction from: ', odb_path + '\\' + i
                 odb = session.openOdb(name=odb_path + '\\' + i)
                 Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -79,12 +80,12 @@ if (inps-len(fuckedlist))>0:
                         Acount = Acount + 1  # Manual counter
 
                         # Find angular value due to cylinder coordinates
-                        ang = math.atan2(y , z)
-                        angm = math.atan2((y+ym) , (z+zm))
-
-                        #                        Angle        radius        Cylinder height
-                        dots_cyl_langs_x.append([ang, ((y) ** 2 + (z) ** 2) ** 0.5, x ])
-                        dots_cyl_langs_xm.append([angm, ((y+ym)**2+(z+zm)**2)**0.5, x+xm])
+                        ang = math.atan2(y , z)+math.pi
+                        angm = math.atan2((y+ym) , (z+zm))+math.pi
+                        AvgRad=((((y) ** 2 + (z) ** 2) ** 0.5)*(((y+ym)**2+(z+zm)**2)**0.5))/2.0
+                        #                        Cylinder height   Angle width *Radius                      Radius
+                        dots_cyl_langs_x.append( [x ,              ang*((y) ** 2 + (z) ** 2) ** 0.5,        ((y) ** 2 + (z) ** 2) ** 0.5])
+                        dots_cyl_langs_xm.append([x+xm,            angm*((y+ym)**2+(z+zm)**2)**0.5,                             ((y+ym)**2+(z+zm)**2)**0.5])
 
                     #Identify coordline nodes
                     minTrail_dist = np.min(find_dis_trail_nodes)
@@ -96,23 +97,20 @@ if (inps-len(fuckedlist))>0:
                     defCoordline = [dots_cyl_langs_xm[index_minTrail], dots_cyl_langs_xm[index_minLead]]
 
                     #Save for plotting
-                    np.savez(npz_path+'Cylinder view of '+profile+' for '+i[:-4],
+                    np.savez(npz_path+'\\Cylinder view of '+profile+' for '+i[:-4],
                              profile_undeformed = np.array( dots_cyl_langs_x),
                              profile_deformed=np.array( dots_cyl_langs_xm) ,
                              profile_undefcoordline=undefCoordline,
                              profile_defcoordline=defCoordline)
-                print
-                '              Worked for :        ' + i[:-4] + '        in :        ', gofor, '\n\n'
+                print    '              Worked for :        ' + i[:-4] + '        in :        ', gofor, '\n\n'
                 odb.close()
-            except:
-                try:
-                    odb.close()
-                except:
-                    pass
-                print
-                '              Didnt Work for :    ' + i[:-4] + '        in :        ', gofor, '\n\n'
-                fuckedlist.append([gofor, i])
-                print
-                '          Added to redo-list\n\n'
-                pass
+            #except:
+            #    try:
+            #        odb.close()
+            #    except:
+            #        pass
+            #    print '              Didnt Work for :    ' + i[:-4] + '        in :        ', gofor, '\n\n'
+            #    fuckedlist.append([gofor, i])
+            #    print '          Added to redo-list\n\n'
+            #    pass
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Write_Launcher_N_Overview.py')

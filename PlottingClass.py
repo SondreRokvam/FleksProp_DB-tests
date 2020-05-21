@@ -14,7 +14,7 @@ class plottts:
           pass
     
      def Top_bottom_warpPoints(tolran,REL_Points_rotated,XMI,XMA,CooLiX,CooliY,mama,yaya):
-          print(len(REL_Points_rotated))
+          #print(len(REL_Points_rotated))
           RelevantPoints=  []
           Xref =(float(XMI+XMA)/2)
           
@@ -24,10 +24,10 @@ class plottts:
                     if point[0] < Xref+tolran:
                          #print(REL_Points_rotated[REL_Points_rotated.index(point)][0])
                          RelevantPoints.append([REL_Points_rotated[REL_Points_rotated.index(point)][0],REL_Points_rotated[REL_Points_rotated.index(point)][1]])
-          print('Filter = ',len(RelevantPoints), ' of ',len(REL_Points_rotated) )
+          #print('Filter = ',len(RelevantPoints), ' of ',len(REL_Points_rotated) )
           #Is in the top points or bottom?
           CLdists =[]
-          print(np.array(RelevantPoints))
+          #print(np.array(RelevantPoints))
           for Coords in RelevantPoints:
                CLdists.append(math.sqrt((Coords[0]-(XMI+XMA)/2)**2+ (Coords[1]-mama*(XMI+XMA)/2+yaya)**2))
           SnittDist = np.mean(CLdists)
@@ -85,7 +85,7 @@ class plottts:
           #Find Excact warppoints?
           A = (CooLiX, CooliY + 200)
           B = (CooLiX, CooliY- 200)
-          print(len(TopPoints),len(Botpoints))
+          #print(len(TopPoints),len(Botpoints))
           for i in range(len(TopPoints)):
                if len(TopPoints)==2:
                     E = (TopPoints[0][0], TopPoints[0][1])
@@ -157,9 +157,10 @@ class plottts:
      def new_folder(path):
           try:
                os.mkdir(path) # Create target Directory
-               print("Directory " , path ,  " Created ") 
+               #print("Directory " , path ,  " Created ") 
           except:
-               print("Directory " , path ,  " already exists")
+               pass
+               #print("Directory " , path ,  " already exists")
             
      def sortProfile_points_for_plotting(PointCloud, PointCloudm,mark):
           PD=np.zeros((12, len(PointCloud)))

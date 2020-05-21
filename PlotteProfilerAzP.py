@@ -16,13 +16,13 @@ Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
 for fold in Inp_folders[0:1]:  # for many folder
-    print(fold)
+    print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
     odb_path = fold[0]
     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
     plottts.new_folder(plot_path)
     
     # Hent data
-    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
+    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and "R100" is not in f)]
     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz'))]
 
     #Hente faste variabler for plotting

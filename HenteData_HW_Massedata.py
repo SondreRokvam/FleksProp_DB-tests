@@ -30,7 +30,7 @@ if (inps-len(fuckedlist))>0:
             pass
 
         # Hent resultatfiler i mappen
-        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
+        odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not "1000" in f.lower())]
         for i in odb_names:
             Mdb()
             try:
@@ -93,7 +93,7 @@ if (inps-len(fuckedlist))>0:
                     defCoordline = [dots_XY_langs_Zm[index_minTrail], dots_XY_langs_Zm[index_minLead]]
 
                     # Save for plotting
-                    np.savez(npz_path + 'Cartesian view of ' + Measurementnames[Measurements.index(profile)] + ' for ' + i[:-4],
+                    np.savez(npz_path + '\\Cartesian view of ' + Measurementnames[Measurements.index(profile)] + ' for ' + i[:-4],
                              profile_undeformed=np.array(dots_XY_langs_Z),
                              profile_deformed=np.array(dots_XY_langs_Zm),
                              profile_undefcoordline=undefCoordline,

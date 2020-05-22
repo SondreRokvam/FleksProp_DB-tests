@@ -100,7 +100,7 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                          RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
                          
                     #Find Warp Points
-                    warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(10,RWP,xmin,xmax,CLx,CLy,m,y)
+                    warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
 
                     # KPI management
                     WarpTOP,  WarpBOT  =warp_point_top[1]-CLy, warp_point_bot[1]-CLy
@@ -115,7 +115,7 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                     WarpPointsPlotting.append([[warp_point_botPlots[0],warp_point_topPlots[0]],[warp_point_botPlots[1],warp_point_topPlots[1]],'m*'])
                     
                     #Plot coordlne and Normal with CenterMark
-                    CLcenterMark.append([CLx,CLy, 'bx'])
+                    CLcenterMark.append([CLx,CLy, 'bo'])
                     CLplot.append([Xline, m*Xline + y,'--']) 
                     NCLplot.append([Xline,NM*Xline+Ny,'-']) 
                     
@@ -182,14 +182,15 @@ for fold in Inp_folders:#[0:1]:  # for many folder
              
           #Andre rad - Maa oppdateres med nye plot når warp er satt opp
           ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_U]
-          pli= ['\u0394_Deflection of center','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
-                '\u0394_Chamber','\u0394_Chamber per deflection']
+          KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
+          pli= ['Deflection','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
+                '\u0394_Camber','\u0394_Camber per deflection']
           #        Xlim         Ylims
-          a = [([0.3,1]  , [-10, 150]),
-               ([0.3,1]  , [-5, 10]),
-               ([00.3,1]  , [-0.25, 0.25]),
-               ([00.3,1]  , [-0.075, 0.01]),
-               ([00.3,1]  , [-0.05, 0.001])]
+          a = [([0.3,1]  , [10, 110]),
+               ([0.3,1]  , [-4, 0.4]),
+               ([00.3,1]  , [-0.065, 0.02]),
+               ([00.3,1]  , [0, 0.160]),
+               ([00.3,1]  , [0.00125, 0.003])]
           for plo in range(0,5):
                #Plot profile
                axs[1, plo].plot(Radi,ploo[plo])
@@ -199,10 +200,9 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                #axs[1, plo].set_xlim(a[plo][0])
                #axs[1, plo].set_ylim(a[plo][1])
                #Subplot title
-               axs[1, plo].title.set_text(pli[plo])
+               axs[1, plo].title.set_text(KPItitles[plo])
           fig.tight_layout()
           plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
-          #print(plot_path+'\\Comparison')
           np.savez(plot_path+'\\Comparison',
                    spenn_delU=spenn_delU,
                    spenn_delAlp=spenn_delAlp,
@@ -210,6 +210,8 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                    spenn_CMBR =spenn_CMBR,
                    spenn_CMBRfU = spenn_CMBRfU,
                    radz=Radi)
+          print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
+          plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
           plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\'+Sim[:-4]+'.png')
           plt.close()
 

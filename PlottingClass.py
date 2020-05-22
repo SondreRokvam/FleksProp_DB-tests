@@ -160,7 +160,7 @@ class plottts:
                #print("Directory " , path ,  " Created ") 
           except:
                pass
-               #print("Directory " , path ,  " already exists")
+               print("Directory " , path ,  " already exists")
             
      def sortProfile_points_for_plotting(PointCloud, PointCloudm,mark):
           PD=np.zeros((12, len(PointCloud)))

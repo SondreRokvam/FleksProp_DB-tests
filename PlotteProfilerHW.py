@@ -102,7 +102,7 @@ for fold in Inp_folders:  # for many folder
                           RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
                          
                      #Find Warp Points
-                     warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(10,RWP,xmin,xmax,CLx,CLy,m,y)
+                     warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
 
                      # KPI management
                      WarpTOP,  WarpBOT  =warp_point_top[1]-CLy, warp_point_bot[1]-CLy
@@ -185,8 +185,9 @@ for fold in Inp_folders:  # for many folder
              
              #Andre rad - Maa oppdateres med nye plot når warp er satt opp
              ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_U]
+             KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
              pli= ['\u0394_Deflection of center','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
-                   '\u0394_Chamber','\u0394_Chamber per deflection']
+                   '\u0394_Camber','\u0394_Camber per deflection']
              #        Xlim         Ylims
              a = [([0.3,1]  , [-10, 150]),
                ([0.3,1]  , [-5, 10]),
@@ -202,7 +203,7 @@ for fold in Inp_folders:  # for many folder
                  axs[1, plo].set_xlim(a[plo][0])
                  axs[1, plo].set_ylim(a[plo][1])
                  #Subplot title
-                 axs[1, plo].title.set_text(pli[plo])
+                 axs[1, plo].title.set_text(KPItitles[plo])
              fig.tight_layout()
              plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
              #print(plot_path+'\\Comparison')

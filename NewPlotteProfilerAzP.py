@@ -6,28 +6,37 @@ import numpy as np
 import math
 import os
 from PlottingClass import plottts
+a = [([0.3,1]   , [-5, 140]),
+     ([0.3,1]   , [-4, 1.5]),
+     ([0.3,1]   , [-0.25, 0.15]),
+     ([0.3,1]   , [-0.01, 0.15]),
+     ([0.3,1]   , [-0, 0.003])]
 
+b = [([0.3,1]   , [-0, 5]),
+     ([0.3,1]   , [-0, 0.075]),
+     ([0.3,1]   , [-0, 0.1]),
+     ([0.3,1]   , [-0, 0.0015]),
+     ([0.3,1]   , [-0, 0.004])]
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
 Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP' 
+#Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'
 
 Inp_folders = plottts.FindInPFolders(Source)
+
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders:#[0:1]:  # for many folder
-          
+for fold in Inp_folders:  # for many folder
      print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
      odb_path = fold[0]
      npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
      plottts.new_folder(plot_path)
-     plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
+     #plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
      
      # Hent data
-     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not "100" in f.lower())]
-     odb_path = fold[0]
-     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
-     plottts.new_folder(plot_path)
-     
+     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and  '100' not in f)]
+     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and '100 ' not  in f)]
+          
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
      Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -37,13 +46,14 @@ for fold in Inp_folders:#[0:1]:  # for many folder
      #Make lists for holding KPI for comparison of concepts in folder plotting
      spenn_delU, spenn_delAlp, spenn_CMBR=[],[],[]
      spenn_AfU,spenn_CMBRfU =[],[]
-     for Sim in odb_names:#[0:1]:
+     
+     for Sim in odb_names:
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
           A_for_U, CMBR_for_U =[],[]
           
           # Start configuring plots
-          fig, axs = plt.subplots(2,5,figsize = (20,8))
+          fig, axs = plt.subplots(2,5,figsize = (19.1,10))
           fig.suptitle('Sim: '+Sim, fontsize=16)
           axs[0, 0].set_ylabel('Propeller longtudinal axis')
           s,j='gr', ['--','-'] #Farge og form for Display profil plottene
@@ -100,14 +110,13 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                          RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
                          
                     #Find Warp Points
-                    warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
+                    warp_point_bot,warp_point_top=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
 
                     # KPI management
-                    WarpTOP,  WarpBOT  =warp_point_top[1]-CLy, warp_point_bot[1]-CLy
                     Thickness=(warp_point_top[1]-warp_point_bot[1])
-                    Warp.append((WarpTOP+WarpBOT)/2)
                     Thicknesses.append(Thickness)
-                     
+                    Warp.append((warp_point_top[1]+warp_point_bot[1])/2)
+                    
                      
                     #Translate/Roatae back to real pos for plotting
                     warp_point_topPlots = plottts.rotate((CLx,CLy),(warp_point_top),math.atan2(m,1))
@@ -156,8 +165,8 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                     axs[0, maal].plot(ncl[0],ncl[1],ncl[2])
                     axs[0, maal].plot(clM[0],clM[1],clM[2])
                     axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
-               #axs[0, maal].set_xlim([-325, 250])
-               #axs[0, maal].set_ylim([-200, 375])
+               axs[0, maal].set_xlim([450,1200])
+               axs[0, maal].set_ylim([-400, 500])
                 
                # Preparere Legends
                handles, labels = axs[0, maal].get_legend_handles_labels()
@@ -186,23 +195,19 @@ for fold in Inp_folders:#[0:1]:  # for many folder
           pli= ['Deflection','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
                 '\u0394_Camber','\u0394_Camber per deflection']
           #        Xlim         Ylims
-          a = [([0.3,1]  , [10, 110]),
-               ([0.3,1]  , [-4, 0.4]),
-               ([00.3,1]  , [-0.065, 0.02]),
-               ([00.3,1]  , [0, 0.160]),
-               ([00.3,1]  , [0.00125, 0.003])]
+
           for plo in range(0,5):
                #Plot profile
                axs[1, plo].plot(Radi,ploo[plo])
                #axs[1, plo].set_yscale('log')
                axs[1, plo].set_xlabel('Radius length')
                axs[1, plo].set_ylabel(pli[plo])
-               #axs[1, plo].set_xlim(a[plo][0])
-               #axs[1, plo].set_ylim(a[plo][1])
+               axs[1, plo].set_xlim(a[plo][0])
+               axs[1, plo].set_ylim(a[plo][1])
                #Subplot title
                axs[1, plo].title.set_text(KPItitles[plo])
           fig.tight_layout()
-          plt.subplots_adjust(left=None, bottom=0.1, right=None, top=0.91, wspace=None, hspace=0.3)  
+          plt.subplots_adjust(left=0.025, bottom=0.1, right=0.975, top=0.9, wspace=0.28, hspace=0.25)  
           np.savez(plot_path+'\\Comparison',
                    spenn_delU=spenn_delU,
                    spenn_delAlp=spenn_delAlp,
@@ -210,9 +215,10 @@ for fold in Inp_folders:#[0:1]:  # for many folder
                    spenn_CMBR =spenn_CMBR,
                    spenn_CMBRfU = spenn_CMBRfU,
                    radz=Radi)
-          print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
+          #print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
           plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
           plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\'+Sim[:-4]+'.png')
+          #plt.savefig(Source+'\\'+Sim[:-4]+'.png')
           plt.close()
 
              

@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 12 13:21:24 2020
+"""  Created on Thu Mar 12 13:21:24 2020
+@author: sondreor """
 
-@author: sondreor
-"""
-import os
+import matplotlib.pyplot as plt
 import numpy as np
 import operator
 import math
+import os
 
 class plottts:
+     
      def __init__(self):
           pass
     
@@ -17,7 +16,6 @@ class plottts:
           #print(len(REL_Points_rotated))
           RelevantPoints=  []
           Xref =(float(XMI+XMA)/2)
-          
           for point in REL_Points_rotated:
                #print('is ', Xref+tolran,' < ',point[0],' > ', Xref-tolran)                      
                if point[0] > Xref-tolran:
@@ -25,20 +23,18 @@ class plottts:
                          #print(REL_Points_rotated[REL_Points_rotated.index(point)][0])
                          RelevantPoints.append([REL_Points_rotated[REL_Points_rotated.index(point)][0],REL_Points_rotated[REL_Points_rotated.index(point)][1]])
           #print('Filter = ',len(RelevantPoints), ' of ',len(REL_Points_rotated) )
-          #Is in the top points or bottom?
-          CLdists =[]
+          
           #print(np.array(RelevantPoints))
-          for Coords in RelevantPoints:
-               CLdists.append(math.sqrt((Coords[0]-(XMI+XMA)/2)**2+ (Coords[1]-mama*(XMI+XMA)/2+yaya)**2))
-          SnittDist = np.mean(CLdists)
+          Snitt = np.mean(np.array(RelevantPoints)[:,1])
           
           Botpoints=[]
           TopPoints=[]
-          for Coords in range(len(CLdists)):
-               if CLdists[Coords]<SnittDist:
+          for Coords in range(len(RelevantPoints)):
+               if RelevantPoints[Coords][1]<Snitt:
                     Botpoints.append(RelevantPoints[Coords])
                else:
                     TopPoints.append(RelevantPoints[Coords])
+          
           #print(len(Botpoints))
           if len(Botpoints)>2:
                relpoints=[]
@@ -47,19 +43,19 @@ class plottts:
                pospoints= [sd for sd in relpoints if sd[0]>0]
                negpoints= [sd for sd in relpoints if sd not in pospoints]
                if len(pospoints)>1:
-                    cool =pospoints[0:1]
-                    for pop in pospoints[1:]:
-                         if pop[0]<cool[0][0]:
-                              cool=[pop]
+                    cool =pospoints[0]
+                    for pop in pospoints:
+                         if pop[0]<cool[0]:
+                              cool=pop
                     pospoints=cool
                if len(negpoints)>1:
-                    cool =negpoints[0:1]
-                    for pop in negpoints[1:]:
-                         if pop[0]>cool[0][0]:
-                              cool=[pop]
+                    cool =negpoints[0]
+                    for pop in negpoints:
+                         if pop[0]>cool[0]:
+                              cool=pop
                     negpoints=cool
-               Botpoints=[negpoints[0],pospoints[0]]
-          #print(Botpoints)
+               Botpoints=[negpoints,pospoints]
+          #print('\n\nBOT',Botpoints)
           if len(TopPoints)>2:
                relpoints=[]
                for poi in TopPoints:     
@@ -67,67 +63,24 @@ class plottts:
                pospoints= [sd for sd in relpoints if sd[0]>0]
                negpoints= [sd for sd in relpoints if sd not in pospoints]
                if len(pospoints)>1:
-                    cool =pospoints[0:1]
+                    cool =pospoints[0]
                     for pop in pospoints[1:]:
-                         if pop[0]<cool[0][0]:
-                              cool=[pop]
+                         if pop[0]<cool[0]:
+                              cool=pop
                     pospoints=cool
                if len(negpoints)>1:
-                    cool =negpoints[0:1]
+                    cool =negpoints[0]
                     for pop in negpoints[1:]:
-                         if pop[0]>cool[0][0]:
-                              cool=[pop]
+                         if pop[0]>cool[0]:
+                              cool=pop
                     negpoints=cool
-               TopPoints=[negpoints[0],pospoints[0]]
-          #print(TopPoints)
+               TopPoints=[negpoints,pospoints]
+          #print('\n\n',TopPoints,'\n\n',Botpoints)
+          ere,y = np.polyfit(np.array(TopPoints)[:,0],np.array(TopPoints)[:,1],1)
+          WAPOTO=(Xref, y)
+          ere,y = np.polyfit(np.array(Botpoints)[:,0],np.array(Botpoints)[:,1],1)
+          WAPOBO=(Xref, y)
           
-          
-          #Find Excact warppoints?
-          A = (CooLiX, CooliY + 200)
-          B = (CooLiX, CooliY- 200)
-          #print(len(TopPoints),len(Botpoints))
-          for i in range(len(TopPoints)):
-               if len(TopPoints)==2:
-                    E = (TopPoints[0][0], TopPoints[0][1])
-                    F = (TopPoints[1][0], TopPoints[1][1])
-                    WAPOTO = plottts.line_intersection((A, B), (E, F))
-               elif len(TopPoints)>2:
-                    E = (TopPoints[0][0], TopPoints[0][1])
-                    F = (TopPoints[1][0], TopPoints[1][1])
-                    warp_point_top1 = plottts.line_intersection((A, B), (E, F))
-                    E = (TopPoints[2][0], TopPoints[2][1])
-                    F  = (TopPoints[1][0], TopPoints[1][1])
-                    warp_point_top2 = plottts.line_intersection((A, B), (E, F))
-                    if warp_point_top2 == 'lines do not intersect':
-                         WAPOTO = warp_point_top1
-                    elif warp_point_top1 == 'lines do not intersect':
-                         WAPOTO = warp_point_top2
-                    elif warp_point_top1 == 'lines do not intersect' and warp_point_top2 == 'lines do not intersect':
-                         print(warp_point_top1)
-                    else:
-                         WAPOTO = warp_point_top1
-           
-          for i in range(len(Botpoints)):
-               if len(Botpoints)==2:
-                    E = (Botpoints[0][0], Botpoints[0][1])
-                    F = (Botpoints[1][0], Botpoints[1][1])
-                    
-                    WAPOBO = plottts.line_intersection((A, B), (E, F))
-               elif len(Botpoints)>2:
-                    E = (Botpoints[0][0], Botpoints[0][1])
-                    F = (Botpoints[1][0], Botpoints[1][1])
-                    warp_point_bot1 = plottts.line_intersection((A, B), (E, F))
-                    E = (Botpoints[2][0], Botpoints[2][1])
-                    F = (Botpoints[1][0], Botpoints[1][1])
-                    warp_point_bot2 = plottts.line_intersection((A, B), (E, F))
-                    if warp_point_bot2 == 'lines do not intersect':
-                         WAPOBO = warp_point_bot1
-                    elif warp_point_bot1 == 'lines do not intersect':
-                         WAPOBO = warp_point_bot2
-                    elif warp_point_bot1 == 'lines do not intersect' and warp_point_bot2 == 'lines do not intersect':
-                         print(warp_point_bot1)
-                    else:
-                         WAPOBO = warp_point_bot1     
           return WAPOTO, WAPOBO
      
      def FindInPFolders(Soe):
@@ -205,3 +158,65 @@ class plottts:
                x = det(d, xdiff) / div
                y = det(d, ydiff) / div
                return x, y
+          
+     def ScriptForSimuleringsSammenligningMasse(Source,Inp_folders, ALL,a):
+          Figurines= 'ovsP*XD<>'
+          if ALL:
+               print('All testing')
+               fig, axs = plt.subplots(1, 5, figsize=(19, 10))
+               fig.suptitle('Sim: '+'All '+ Source.split("\\")[-1]+' simulations', fontsize=16)
+  
+          for fold in Inp_folders:  # for many folder
+               
+               print(fold[0][55:],'\n')
+               odb_path = fold[0]
+               npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
+               mirker = 0
+               # Hent
+               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and  '100' not in f)]
+               #print(odb_names)
+               if not ALL:
+                    fig, axs = plt.subplots(1, 5, figsize=(19, 10))
+                    fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
+                    
+               #Sette alle filene i denne mappen i ett plott
+               for u in odb_names:
+                    
+                    # Profile Subplot title
+                    CylX = np.load(plot_path+'\\Comparison' + '.npz')
+                    deltas, Radi = [CylX['spenn_delU'], 
+                                  CylX['spenn_delAlp'], CylX['spenn_AfU'],
+                                  CylX['spenn_CMBR'], CylX['spenn_CMBRfU']],CylX['radz']
+                    KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
+                    pli= ['\u0394 Deflection of center','\u0394 Alpha of coordline','\u0394 Alpha per deflection',
+                        '\u0394 Camber','\u0394 Camber per deflection']
+                    #print('sdsds', deltas[0])
+                    
+                    for plo in range(0, 5):
+                         if ALL:
+                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,)
+                         if not ALL:
+                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[3:])
+                         axs[plo].set_xlabel('Radius length')
+                         axs[plo].set_ylabel(pli[plo])
+                         axs[plo].set_xlim(a[plo][0])
+                         axs[plo].set_ylim(a[plo][1]) 
+                     
+                         # Subplot title
+                         axs[plo].title.set_text(KPItitles[plo])
+     
+               if not ALL:
+                    handles, labels = axs[0].get_legend_handles_labels()
+                    plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
+                    fig.tight_layout()
+                    plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
+                    
+                    #plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[6])+'\\!'+str(fold[0][55:]).replace("\\","-")+'.png')
+                    plottts.new_folder(Source +'_plots\\')
+                    plt.savefig(Source +'_plots\\-  '+str(fold[0][55:]).replace("\\","-")+'.png')
+                    plt.close()
+                                  
+          if ALL:
+               fig.tight_layout()
+               plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
+               plt.savefig(Source +'_plots\\- !All.png')

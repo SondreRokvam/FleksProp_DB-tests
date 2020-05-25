@@ -6,7 +6,11 @@ import numpy as np
 import math
 import os
 from PlottingClass import plottts
-
+a = [([0.3,1]   , [-5, 150]),
+     ([0.3,1]   , [-4, 6]),
+     ([0.3,1]   , [-0.5, 0.5]),
+     ([0.3,1]   , [-0.01, 0.5]),
+     ([0.3,1]   , [-0, 0.07])]
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
@@ -22,9 +26,8 @@ for fold in Inp_folders:  # for many folder
     plottts.new_folder(plot_path)
     
     # Hent data
-    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb'))]
-    npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz'))]
-        
+    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and  '100' not in f)]
+    npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and '100 ' not  in f)]
     #Hente faste variabler for plotting
     Para   =  np.load(gitHub+'parameters_for_plot.npz')
     Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -37,7 +40,8 @@ for fold in Inp_folders:  # for many folder
     
     for u in odb_names:
          print(u)
-         try:
+         #try:
+         if 1:
              # Logging KPIs
              delta_U, delta_A, delta_CMBR = [],[],[]
              A_for_U, CMBR_for_U =[],[]
@@ -94,7 +98,7 @@ for fold in Inp_folders:  # for many folder
                      Alphas.append(math.atan2(m,1)*180/math.pi)
                      CenterDeflection.append([np.average(PlotData[:,p[0]]),np.average(PlotData[:,p[1]])])
                      Coordlengths.append(math.sqrt((np.array(Coordline[Inter.index(p)])[1,0]-np.array(Coordline[Inter.index(p)])[0,0])**2+(Coordline[Inter.index(p)][1,1]-Coordline[Inter.index(p)][0,1])**2))
-                            
+                    
                      #Sort and rotate data for Warp Calculation
                      WarpPoints = np.transpose([PlotData[:,p[0]],PlotData[:,p[1]]])
                      RWP =[]
@@ -105,17 +109,18 @@ for fold in Inp_folders:  # for many folder
                      warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
 
                      # KPI management
-                     WarpTOP,  WarpBOT  =warp_point_top[1]-CLy, warp_point_bot[1]-CLy
+                     #print(warp_point_top)
+                     #print(warp_point_bot)
                      Thickness=(warp_point_top[1]-warp_point_bot[1])
-                     Warp.append((WarpTOP+WarpBOT)/2)
                      Thicknesses.append(Thickness)
-                     
+                     Warp.append((warp_point_top[1]+warp_point_bot[1])/2)
+                    
                      
                      #Translate/Roatae back to real pos for plotting
                      warp_point_topPlots = plottts.rotate((CLx,CLy),(warp_point_top),math.atan2(m,1))
                      warp_point_botPlots = plottts.rotate((CLx,CLy),(warp_point_bot),math.atan2(m,1))
                      WarpPointsPlotting.append([[warp_point_botPlots[0],warp_point_topPlots[0]],[warp_point_botPlots[1],warp_point_topPlots[1]],'m*'])
-                     
+                    
                      #Plot coordlne and Normal with CenterMark
                      CLcenterMark.append([CLx,CLy, 'bx'])
                      CLplot.append([Xline, m*Xline + y,'--']) 
@@ -127,7 +132,7 @@ for fold in Inp_folders:  # for many folder
                      #Plotting flat profil plots
                      RW=np.transpose(RWP)
                      FlatProfilePlots.append([RW[0],RW[1],s[Inter.index(p)]+j[Inter.index(p)]])                 
-                    
+                     #CenterDeflection,Alphas,Coordlengths,Warp,Thicknesses
                  #Find change  angle 
                  deltaDeflec= ((CenterDeflection[1][0]-CenterDeflection[0][0])**2+(CenterDeflection[1][1]-CenterDeflection[0][1])**2)**0.5
                  deltaAlfa= Alphas[1]-Alphas[0]
@@ -161,6 +166,7 @@ for fold in Inp_folders:  # for many folder
                       axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
                  axs[0, maal].set_xlim([-325, 250])
                  axs[0, maal].set_ylim([-200, 375])
+                 #axs[0, maal].set_ylim([-100, 100])
                 
                  # Preparere Legends
                  handles, labels = axs[0, maal].get_legend_handles_labels()
@@ -189,11 +195,7 @@ for fold in Inp_folders:  # for many folder
              pli= ['\u0394_Deflection of center','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
                    '\u0394_Camber','\u0394_Camber per deflection']
              #        Xlim         Ylims
-             a = [([0.3,1]  , [-10, 150]),
-               ([0.3,1]  , [-5, 10]),
-               ([00.3,1]  , [-0.25, 0.25]),
-               ([00.3,1]  , [-0.075, 0.01]),
-               ([00.3,1]  , [-0.05, 0.001])]
+
              for plo in range(0,5):
                  #Plot profile
                  axs[1, plo].plot(Radi,ploo[plo])
@@ -218,12 +220,12 @@ for fold in Inp_folders:  # for many folder
              plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots\\'+str(fold[0].split("\\")[6])+'\\')
              plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots\\'+str(fold[0].split("\\")[6])+'\\'+u[:-4]+'.png')
              plt.close()
-         except:
-             try:
-                  plt.close()
-             except:
-                  pass
-             print('Odb_issue')
-             pass
+         #except:
+         #    try:
+         #         plt.close()
+         #    except:
+         #         pass
+         #    print('Odb_issue')
+         #    pass
              
              

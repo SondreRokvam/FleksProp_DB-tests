@@ -161,9 +161,12 @@ class plottts:
           
      def ScriptForSimuleringsSammenligningMasse(Source,Inp_folders, ALL,a):
           Figurines= 'ovsP*XD<>'
+          KPItitles = ['Bend ', 'Twist', 'BendTwist (Twist per Bend)','Camber','Camber per Twist' ]
+          pli= ['Deflection [mm]','\u0394 \u03B1 of coordline [°]','\u0394 \u03B1 / deflection [°/mm] ',
+                '\u0394 Camber','\u0394 Camber / \u03B1 [1/°]']
           if ALL:
                print('All testing')
-               fig, axs = plt.subplots(1, 5, figsize=(19, 10))
+               fig, axs = plt.subplots(1, 5, figsize=(19, 9))
                fig.suptitle('Sim: '+'All '+ Source.split("\\")[-1]+' simulations', fontsize=16)
   
           for fold in Inp_folders:  # for many folder
@@ -180,8 +183,8 @@ class plottts:
                     fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
                     
                #Sette alle filene i denne mappen i ett plott
-               print(odb_names)
-               print(len(odb_names))
+               #print(odb_names)
+               #print(len(odb_names))
                for u in odb_names:
                     print (u)
                     # Profile Subplot title
@@ -193,18 +196,19 @@ class plottts:
                     pli= ['\u0394 Deflection of center','\u0394 Alpha of coordline','\u0394 Alpha per deflection',
                         '\u0394 Camber','\u0394 Camber per deflection']
                     #print('sdsds', deltas[0])
-                    print(len(deltas[0]),len(deltas[1]),len(deltas[2]),len(deltas[3]),len(deltas[4]))
+                    #print(len(deltas[0]),len(deltas[1]),len(deltas[2]),len(deltas[3]),len(deltas[4]))
                     for plo in range(0, 5):
                          if ALL:
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0)
                          if not ALL:
-                              print(odb_names.index(u))
+                              #print(odb_names.index(u))
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
                          axs[plo].set_xlabel('Radius length')
                          axs[plo].set_ylabel(pli[plo])
                          axs[plo].set_xlim(a[plo][0])
-                         axs[plo].set_ylim(a[plo][1]) 
-                     
+                         if not ALL:
+                             axs[plo].set_ylim(a[plo][1]) 
+                         
                          # Subplot title
                          axs[plo].title.set_text(KPItitles[plo])
      

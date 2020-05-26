@@ -16,25 +16,16 @@ Inp_folders = plottts.FindInPFolders(Source)
 
 #Plotting starte
 
-KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
-pli= ['\u0394 Deflection of center','\u0394 Alpha of coordline','\u0394 Alpha per deflection',
-        '\u0394 Camber','\u0394 Camber per deflection']
 
-a = [([0.3,1]   , [-5, 140]),
-     ([0.3,1]   , [-4, 1.5]),
-     ([0.3,1]   , [-0.25, 0.15]),
-     ([0.3,1]   , [-0.01, 0.15]),
-     ([0.3,1]   , [-0, 0.003])]
+
+a = [([0.3,1]   , [-5, 125]),
+     ([0.3,1]   , [-3.5, 1]),
+     ([0.3,1]   , [-0.15, 0.15]),
+     ([0.3,1]   , [-0.075, 0.175]),
+     ([0.3,1]   , [-2, 2])]
 
 #Flow - Flags
 ALL = 1
 
-if ALL:
-     a = [([0.3,1]   , [-5, 160]),
-          ([0.3,1]   , [-5, 3]),
-          ([0.3,1]   , [-0.4, 0.2]),
-          ([0.3,1]   , [-0.01, 0.2]),
-          ([0.3,1]   , [0, 0.004])]
-  
 
 plottts.ScriptForSimuleringsSammenligningMasse(Source,Inp_folders,ALL,a)

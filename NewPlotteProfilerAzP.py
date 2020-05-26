@@ -173,9 +173,9 @@ for fold in Inp_folders:#[:1]:  # for many folder
                handles, labels = axs[0, maal].get_legend_handles_labels()
                
                AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
-               CMBRLabl = 'CL, \u0394' + 'CL' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER/(Warp[0]/Coordlengths[0]))*100.0))+'%'
-               CoorlineLabl = 'Coordlen.' + ' = ' + str("%.1f" % (float(Coordlengths[0]))) + ', ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
-               ThicknessLabl ='Thickness' + ' = ' + str("%.1f" % (float(Thicknesses[0] ))) + ', '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
+               CMBRLabl = 'f, \u0394' + 'f' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER/(Warp[0]/Coordlengths[0]))*100.0))+'%'
+               CoorlineLabl = 'C' + ' = ' + str("%.1f" % (float(Coordlengths[0]))) + ', ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
+               ThicknessLabl ='T' + ' = ' + str("%.1f" % (float(Thicknesses[0] ))) + ', '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
 
                handles.append(mpatches.Patch(color='none', label=AlfaLabl))
                handles.append(mpatches.Patch(color='none', label=CMBRLabl))

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Illustrationg deformation behaviour for AzP propeller
 @author: Sondre feb-may.2020"""
 import matplotlib.pyplot as plt
@@ -26,7 +27,7 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP'
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders[:1]:  # for many folder
+for fold in Inp_folders:#[:1]:  # for many folder
      print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
      odb_path = fold[0]
      npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
@@ -46,14 +47,14 @@ for fold in Inp_folders[:1]:  # for many folder
      spenn_delU, spenn_delAlp, spenn_CMBR=[],[],[]
      spenn_AfU,spenn_CMBRfU =[],[]
      
-     for Sim in odb_names:#[:-1]:
+     for Sim in odb_names:#[:3]:
           print(Sim)
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
           A_for_U, CMBR_for_U =[],[]
           
           # Start configuring plots
-          fig, axs = plt.subplots(2,5,figsize = (19,8))
+          fig, axs = plt.subplots(2,5,figsize = (19,9))
           fig.suptitle('Sim: '+Sim, fontsize=16)
           axs[0, 0].set_ylabel('Propeller longtudinal axis')
           s,j='gr', ['--','-'] #Farge og form for Display profil plottene
@@ -90,8 +91,7 @@ for fold in Inp_folders[:1]:  # for many folder
                      
                     #Linear regression for coordline
                     m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,1],Coordline[Inter.index(p)][:,0],1)
-                    Chordline_ext = 15.0                  #Hvor langt extra den linja på CL?
-                    Xline=np.linspace(xmin-abs(Chordline_ext*(xmax-xmin)/100),xmax+abs(Chordline_ext*(xmax-xmin)/100),10)
+                    Xline=np.linspace(xmin-50.0,xmax+50.0,10)
                     CLx, CLy =(xmin+xmax)/2,m*(xmin+xmax)/2+y
                      
                     #Find normal to coordline
@@ -115,7 +115,7 @@ for fold in Inp_folders[:1]:  # for many folder
                     # KPI management
                     Thickness=(warp_point_top[1]-warp_point_bot[1])
                     Thicknesses.append(Thickness)
-                    Warp.append((warp_point_top[1]+warp_point_bot[1])/2)
+                    Warp.append((warp_point_top[1]+warp_point_bot[1])/2-CLy)
                     
                      
                     #Translate/Roatae back to real pos for plotting
@@ -125,7 +125,9 @@ for fold in Inp_folders[:1]:  # for many folder
                     #Plot coordlne and Normal with CenterMark
                     CLcenterMark.append([CLx,CLy, 'k.'])
                     CLplot.append([Xline, m*Xline + y,'--']) 
-                    NCLplot.append([Xline,NM*Xline+Ny,':']) 
+                    XlineMob=np.linspace(xmin+50.0,xmax-50.0,2)
+                    
+                    NCLplot.append([XlineMob,NM*XlineMob+Ny,':']) 
                     
                     #Plotting profile plots
                     CurcentProfilePlots.append([ProfXs,ProfYs,s[Inter.index(p)]+j[Inter.index(p)]])
@@ -143,9 +145,9 @@ for fold in Inp_folders[:1]:  # for many folder
                deltaCAMBER= deltaWarp/Coordlengths[0]
                delta_U.append(deltaDeflec)
                delta_A.append(deltaAlfa)
-               A_for_U.append(deltaAlfa/deltaDeflec)
+               A_for_U.append((deltaAlfa/deltaDeflec))
                delta_CMBR.append(deltaCAMBER)  
-               CMBR_for_U.append(deltaCAMBER/deltaDeflec)
+               CMBR_for_U.append(deltaCAMBER/deltaAlfa)
                
                #Plottinga av profile Subplots 
                axs[0, maal].title.set_text(Measurementes[maal])#Label Title in the subplot
@@ -164,14 +166,14 @@ for fold in Inp_folders[:1]:  # for many folder
                     axs[0, maal].plot(ncl[0],ncl[1],ncl[2])
                     axs[0, maal].plot(clM[0],clM[1],clM[2])
                     axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
-               axs[0, maal].set_xlim([450,1200])
-               axs[0, maal].set_ylim([-400, 500])
+               axs[0, maal].set_xlim([375,1225])
+               axs[0, maal].set_ylim([-400, 600])
                 
                # Preparere Legends
                handles, labels = axs[0, maal].get_legend_handles_labels()
                
-               AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.3f" % Alphas[0])+ ', '+str("%.3f" % deltaAlfa)
-               CMBRLabl = 'CL, \u0394' + 'CL' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.3f" % (float(deltaCAMBER)))
+               AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
+               CMBRLabl = 'CL, \u0394' + 'CL' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER/(Warp[0]/Coordlengths[0]))*100.0))+'%'
                CoorlineLabl = 'Coordlen.' + ' = ' + str("%.1f" % (float(Coordlengths[0]))) + ', ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
                ThicknessLabl ='Thickness' + ' = ' + str("%.1f" % (float(Thicknesses[0] ))) + ', '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
 
@@ -190,23 +192,21 @@ for fold in Inp_folders[:1]:  # for many folder
              
           #Andre rad - Maa oppdateres med nye plot når warp er satt opp
           ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_U]
-          KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
-          pli= ['Deflection','\u0394_Alpha of coordline','\u0394_Alpha per deflection',
-                '\u0394_Camber','\u0394_Camber per deflection']
+          KPItitles = ['Bend ', 'Twist', 'BendTwist (Twist per Bend)','Camber','Camber per Twist' ]
+          pli= ['Deflection [mm]','\u0394 \u03B1 of coordline [°]','\u0394 \u03B1 / deflection [°/mm] ',
+                '\u0394 Camber','\u0394 Camber / \u03B1 [1/°]']
           #        Xlim         Ylims
 
           for plo in range(0,5):
                #Plot profile
                axs[1, plo].plot(Radi,ploo[plo])
-               #axs[1, plo].set_yscale('log')
                axs[1, plo].set_xlabel('Radius length')
                axs[1, plo].set_ylabel(pli[plo])
                axs[1, plo].set_xlim(a[plo][0])
-               axs[1, plo].set_ylim(a[plo][1])
+               #axs[1, plo].set_ylim(a[plo][1])
                #Subplot title
                axs[1, plo].title.set_text(KPItitles[plo])
-          fig.tight_layout()
-          plt.subplots_adjust(left=0.025, bottom=0.1, right=0.975, top=0.9, wspace=0.28, hspace=0.25)  
+          plt.subplots_adjust(left=0.075, bottom=0.075, right=0.975, top=0.9, wspace=0.35, hspace=0.3)  
           np.savez(plot_path+'\\Comparison',
                    spenn_delU=spenn_delU,
                    spenn_delAlp=spenn_delAlp,
@@ -214,7 +214,7 @@ for fold in Inp_folders[:1]:  # for many folder
                    spenn_CMBR =spenn_CMBR,
                    spenn_CMBRfU = spenn_CMBRfU,
                    radz=Radi)
-          #print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
+          
           plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
           plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\'+Sim[:-4]+'.png')
           #plt.savefig(Source+'\\'+Sim[:-4]+'.png')

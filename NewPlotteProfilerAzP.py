@@ -40,7 +40,6 @@ for fold in Inp_folders[:-1]:  # for many folder
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
      Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
-     radius= 1
      Radi=Para['r_val']
 
      #Make lists for holding KPI for comparison of concepts in folder plotting

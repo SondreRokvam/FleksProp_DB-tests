@@ -173,7 +173,7 @@ class plottts:
                npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
                mirker = 0
                # Hent
-               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and  '100' not in f)]
+               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' in f)]
                #print(odb_names)
                if not ALL:
                     fig, axs = plt.subplots(1, 5, figsize=(19, 10))
@@ -196,7 +196,7 @@ class plottts:
                          if ALL:
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,)
                          if not ALL:
-                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[3:])
+                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
                          axs[plo].set_xlabel('Radius length')
                          axs[plo].set_ylabel(pli[plo])
                          axs[plo].set_xlim(a[plo][0])

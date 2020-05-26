@@ -26,7 +26,7 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP'
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders:  # for many folder
+for fold in Inp_folders[:-1]:  # for many folder
      print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
      odb_path = fold[0]
      npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
@@ -47,13 +47,14 @@ for fold in Inp_folders:  # for many folder
      spenn_delU, spenn_delAlp, spenn_CMBR=[],[],[]
      spenn_AfU,spenn_CMBRfU =[],[]
      
-     for Sim in odb_names:
+     for Sim in odb_names[:-1]:
+          print(Sim)
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
           A_for_U, CMBR_for_U =[],[]
           
           # Start configuring plots
-          fig, axs = plt.subplots(2,5,figsize = (19.1,10))
+          fig, axs = plt.subplots(2,5,figsize = (19.125,7.5))
           fig.suptitle('Sim: '+Sim, fontsize=16)
           axs[0, 0].set_ylabel('Propeller longtudinal axis')
           s,j='gr', ['--','-'] #Farge og form for Display profil plottene
@@ -110,8 +111,8 @@ for fold in Inp_folders:  # for many folder
                          RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
                          
                     #Find Warp Points
-                    warp_point_bot,warp_point_top=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
-
+                    warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
+     
                     # KPI management
                     Thickness=(warp_point_top[1]-warp_point_bot[1])
                     Thicknesses.append(Thickness)
@@ -121,12 +122,11 @@ for fold in Inp_folders:  # for many folder
                     #Translate/Roatae back to real pos for plotting
                     warp_point_topPlots = plottts.rotate((CLx,CLy),(warp_point_top),math.atan2(m,1))
                     warp_point_botPlots = plottts.rotate((CLx,CLy),(warp_point_bot),math.atan2(m,1))
-                    WarpPointsPlotting.append([[warp_point_botPlots[0],warp_point_topPlots[0]],[warp_point_botPlots[1],warp_point_topPlots[1]],'m*'])
-                    
+                    WarpPointsPlotting.append([[(warp_point_botPlots[0]+warp_point_topPlots[0])/2],[(warp_point_botPlots[1]+warp_point_topPlots[1])/2],'m*'])
                     #Plot coordlne and Normal with CenterMark
-                    CLcenterMark.append([CLx,CLy, 'bo'])
+                    CLcenterMark.append([CLx,CLy, 'k.'])
                     CLplot.append([Xline, m*Xline + y,'--']) 
-                    NCLplot.append([Xline,NM*Xline+Ny,'-']) 
+                    NCLplot.append([Xline,NM*Xline+Ny,':']) 
                     
                     #Plotting profile plots
                     CurcentProfilePlots.append([ProfXs,ProfYs,s[Inter.index(p)]+j[Inter.index(p)]])
@@ -161,7 +161,7 @@ for fold in Inp_folders:  # for many folder
                     wpp =WarpPointsPlotting[Inter.index(p)]
                     axs[0, maal].plot(cp[0],cp[1],cp[2],label=handle[Inter.index(p)])
                     #axs[0, maal].plot(fp[0],fp[1],fp[2])
-                    axs[0, maal].plot(cl[0],cl[1],cl[2])
+                    axs[0, maal].plot(cl[0],cl[1],cl[2],s[Inter.index(p)]+':')
                     axs[0, maal].plot(ncl[0],ncl[1],ncl[2])
                     axs[0, maal].plot(clM[0],clM[1],clM[2])
                     axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
@@ -171,8 +171,8 @@ for fold in Inp_folders:  # for many folder
                # Preparere Legends
                handles, labels = axs[0, maal].get_legend_handles_labels()
                
-               AlfaLabl = '\u0394' + '\u03B1' + ' = ' + str("%.4f" % deltaAlfa)
-               CMBRLabl = '\u0394' + 'CBR x 100' + ' = ' + str("%.4f" % (float(deltaCAMBER)*100.0))
+               AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.3f" % Alphas[0])+ ', '+str("%.3f" % deltaAlfa)
+               CMBRLabl = 'CL, \u0394' + 'CL' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.3f" % (float(deltaCAMBER)))
                CoorlineLabl = 'Coordlen.' + ' = ' + str("%.1f" % (float(Coordlengths[0]))) + ', ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
                ThicknessLabl ='Thickness' + ' = ' + str("%.1f" % (float(Thicknesses[0] ))) + ', '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
 
@@ -181,7 +181,7 @@ for fold in Inp_folders:  # for many folder
                handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
                handles.append(mpatches.Patch(color='none', label=ThicknessLabl))
                # Plotte Legends
-               axs[0, maal].legend(handles=handles, loc='best', fontsize=7)
+               axs[0, maal].legend(handles=handles, loc='best', fontsize=8)
                
           spenn_delU.append(delta_U)
           spenn_delAlp.append(delta_A)

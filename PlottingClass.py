@@ -170,8 +170,8 @@ class plottts:
                
                print(fold[0][55:],'\n')
                odb_path = fold[0]
-               npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
-               mirker = 0
+               plot_path= odb_path+'\\plots'
+               
                # Hent
                odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' in f)]
                #print(odb_names)
@@ -180,8 +180,10 @@ class plottts:
                     fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
                     
                #Sette alle filene i denne mappen i ett plott
+               print(odb_names)
+               print(len(odb_names))
                for u in odb_names:
-                    
+                    print (u)
                     # Profile Subplot title
                     CylX = np.load(plot_path+'\\Comparison' + '.npz')
                     deltas, Radi = [CylX['spenn_delU'], 
@@ -191,11 +193,12 @@ class plottts:
                     pli= ['\u0394 Deflection of center','\u0394 Alpha of coordline','\u0394 Alpha per deflection',
                         '\u0394 Camber','\u0394 Camber per deflection']
                     #print('sdsds', deltas[0])
-                    
+                    print(len(deltas[0]),len(deltas[1]),len(deltas[2]),len(deltas[3]),len(deltas[4]))
                     for plo in range(0, 5):
                          if ALL:
-                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,)
+                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0)
                          if not ALL:
+                              print(odb_names.index(u))
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
                          axs[plo].set_xlabel('Radius length')
                          axs[plo].set_ylabel(pli[plo])

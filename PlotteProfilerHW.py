@@ -19,15 +19,15 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW'
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders[:-1]:  # for many folder
+for fold in Inp_folders:#[:-1]:  # for many folder
     print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
     odb_path = fold[0]
     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
     plottts.new_folder(plot_path)
     
     # Hent data
-    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' in f)]
-    npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and not '100' in f)]
+    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100'in f)]
+    npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and not '100 ' in f)]
     #Hente faste variabler for plotting
     Para   =  np.load(gitHub+'parameters_for_plot.npz')
     Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
@@ -37,14 +37,14 @@ for fold in Inp_folders[:-1]:  # for many folder
     spenn_delU, spenn_delAlp, spenn_CMBR=[],[],[]
     spenn_AfU,spenn_CMBRfU =[],[]
     
-    for u in odb_names[:-1]:
+    for u in odb_names:#[:-1]:
         print(u)
         # Logging KPIs
         delta_U, delta_A, delta_CMBR = [],[],[]
         A_for_U, CMBR_for_U =[],[]
         
         # Start configuring plots
-        fig, axs = plt.subplots(2,5,figsize = (19.125,7.5))
+        fig, axs = plt.subplots(2,5,figsize = (19,8))
         fig.suptitle('Sim: '+u, fontsize=16)
         axs[0, 0].set_ylabel('Propeller longtudinal axis')
         s,j='gr', ['--','-'] #Farge og form for Display profil plottene

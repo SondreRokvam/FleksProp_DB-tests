@@ -21,11 +21,11 @@ Inp_folders = plottts.FindInPFolders(Source)
 a = [([0.3,1]   , [-5, 125]),
      ([0.3,1]   , [-3.5, 1]),
      ([0.3,1]   , [-0.15, 0.15]),
-     ([0.3,1]   , [-0.075, 0.175]),
-     ([0.3,1]   , [-2, 2])]
+     ([0.3,1]   , [-0.5, 0.5]),
+     ([0.3,1]   , [-1, 1])]
 
 #Flow - Flags
-ALL = 1
+ALL = 0
 
 
 plottts.ScriptForSimuleringsSammenligningMasse(Source,Inp_folders,ALL,a)

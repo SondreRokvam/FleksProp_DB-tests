@@ -7,17 +7,13 @@ import numpy as np
 import math
 import os
 from PlottingClass import plottts
-a = [([0.3,1]   , [-5, 140]),
-     ([0.3,1]   , [-4, 1.5]),
-     ([0.3,1]   , [-0.25, 0.15]),
-     ([0.3,1]   , [-0.01, 0.15]),
-     ([0.3,1]   , [-0, 0.003])]
+a = [([0.3,1]   , [-5, 125]),
+     ([0.3,1]   , [-3.5, 1]),
+     ([0.3,1]   , [-0.15, 0.15]),
+     ([0.3,1]   , [-0.5, 0.5]),
+     ([0.3,1]   , [-1, 1])]
 
-b = [([0.3,1]   , [-0, 5]),
-     ([0.3,1]   , [-0, 0.075]),
-     ([0.3,1]   , [-0, 0.1]),
-     ([0.3,1]   , [-0, 0.0015]),
-     ([0.3,1]   , [-0, 0.004])]
+
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
@@ -35,8 +31,8 @@ for fold in Inp_folders:#[:1]:  # for many folder
      #plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
      
      # Hent data
-     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100'in f)]
-     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and not '100 ' in f)]
+     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' or '20' in f)]
+     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and not '100' or '20'  in f)]
           
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
@@ -142,7 +138,7 @@ for fold in Inp_folders:#[:1]:  # for many folder
                deltaCoordchange= Coordlengths[1]-Coordlengths[0]
                deltaWarp= Warp[1]-Warp[0]
                deltaThick= Thicknesses[1]-Thicknesses[0]
-               deltaCAMBER= deltaWarp/Coordlengths[0]
+               deltaCAMBER= (deltaWarp/Coordlengths[0])/(Warp[0]/Coordlengths[0])
                delta_U.append(deltaDeflec)
                delta_A.append(deltaAlfa)
                A_for_U.append((deltaAlfa/deltaDeflec))
@@ -173,9 +169,9 @@ for fold in Inp_folders:#[:1]:  # for many folder
                handles, labels = axs[0, maal].get_legend_handles_labels()
                
                AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
-               CMBRLabl = 'f, \u0394' + 'f' + ' = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER/(Warp[0]/Coordlengths[0]))*100.0))+'%'
-               CoorlineLabl = 'C' + ' = ' + str("%.1f" % (float(Coordlengths[0]))) + ', ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
-               ThicknessLabl ='T' + ' = ' + str("%.1f" % (float(Thicknesses[0] ))) + ', '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
+               CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
+               CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
+               ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
 
                handles.append(mpatches.Patch(color='none', label=AlfaLabl))
                handles.append(mpatches.Patch(color='none', label=CMBRLabl))
@@ -194,7 +190,7 @@ for fold in Inp_folders:#[:1]:  # for many folder
           ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_U]
           KPItitles = ['Bend ', 'Twist', 'BendTwist (Twist per Bend)','Camber','Camber per Twist' ]
           pli= ['Deflection [mm]','\u0394 \u03B1 of coordline [°]','\u0394 \u03B1 / deflection [°/mm] ',
-                '\u0394 Camber','\u0394 Camber / \u03B1 [1/°]']
+                '\u0394 Camber','\u0394 Camber / Twist [1/°]']
           #        Xlim         Ylims
 
           for plo in range(0,5):
@@ -203,7 +199,7 @@ for fold in Inp_folders:#[:1]:  # for many folder
                axs[1, plo].set_xlabel('Radius length')
                axs[1, plo].set_ylabel(pli[plo])
                axs[1, plo].set_xlim(a[plo][0])
-               #axs[1, plo].set_ylim(a[plo][1])
+               axs[1, plo].set_ylim(a[plo][1])
                #Subplot title
                axs[1, plo].title.set_text(KPItitles[plo])
           plt.subplots_adjust(left=0.075, bottom=0.075, right=0.975, top=0.9, wspace=0.35, hspace=0.3)  

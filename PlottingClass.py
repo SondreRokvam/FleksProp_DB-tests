@@ -163,7 +163,8 @@ class plottts:
           Figurines= 'ovsP*XD<>'
           KPItitles = ['Bend ', 'Twist', 'BendTwist (Twist per Bend)','Camber','Camber per Twist' ]
           pli= ['Deflection [mm]','\u0394 \u03B1 of coordline [°]','\u0394 \u03B1 / deflection [°/mm] ',
-                '\u0394 Camber','\u0394 Camber / \u03B1 [1/°]']
+                '\u0394 Camber','\u0394 Camber / Twist [1/°]']
+          #        Xlim         Ylims
           if ALL:
                print('All testing')
                fig, axs = plt.subplots(1, 5, figsize=(19, 9))
@@ -176,7 +177,7 @@ class plottts:
                plot_path= odb_path+'\\plots'
                
                # Hent
-               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' in f)]
+               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('100' in f or '20' in f))]
                #print(odb_names)
                if not ALL:
                     fig, axs = plt.subplots(1, 5, figsize=(19, 10))
@@ -192,16 +193,11 @@ class plottts:
                     deltas, Radi = [CylX['spenn_delU'], 
                                   CylX['spenn_delAlp'], CylX['spenn_AfU'],
                                   CylX['spenn_CMBR'], CylX['spenn_CMBRfU']],CylX['radz']
-                    KPItitles = ['Bending', 'Twisting', 'BendTwist, BT - (Twist per Bend)','Camber','Camber per Bend' ]
-                    pli= ['\u0394 Deflection of center','\u0394 Alpha of coordline','\u0394 Alpha per deflection',
-                        '\u0394 Camber','\u0394 Camber per deflection']
-                    #print('sdsds', deltas[0])
-                    #print(len(deltas[0]),len(deltas[1]),len(deltas[2]),len(deltas[3]),len(deltas[4]))
+                    
                     for plo in range(0, 5):
                          if ALL:
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0)
                          if not ALL:
-                              #print(odb_names.index(u))
                               axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
                          axs[plo].set_xlabel('Radius length')
                          axs[plo].set_ylabel(pli[plo])

@@ -31,8 +31,8 @@ for fold in Inp_folders:#[:1]:  # for many folder
      #plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
      
      # Hent data
-     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not '100' or '20' in f)]
-     npz_files = [f for f in os.listdir(npz_path) if (f.endswith('.npz') and not '100' or '20'  in f)]
+     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
+     npz_files = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
           
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
@@ -40,14 +40,13 @@ for fold in Inp_folders:#[:1]:  # for many folder
      Radi=Para['r_val']
 
      #Make lists for holding KPI for comparison of concepts in folder plotting
-     spenn_delU, spenn_delAlp, spenn_CMBR=[],[],[]
-     spenn_AfU,spenn_CMBRfU =[],[]
+     spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
      
      for Sim in odb_names:#[:3]:
           print(Sim)
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
-          A_for_U, CMBR_for_U =[],[]
+          A_for_U, CMBR_for_T =[],[]
           
           # Start configuring plots
           fig, axs = plt.subplots(2,5,figsize = (19,9))
@@ -143,7 +142,7 @@ for fold in Inp_folders:#[:1]:  # for many folder
                delta_A.append(deltaAlfa)
                A_for_U.append((deltaAlfa/deltaDeflec))
                delta_CMBR.append(deltaCAMBER)  
-               CMBR_for_U.append(deltaCAMBER/deltaAlfa)
+               CMBR_for_T.append(deltaCAMBER/deltaAlfa)
                
                #Plottinga av profile Subplots 
                axs[0, maal].title.set_text(Measurementes[maal])#Label Title in the subplot
@@ -180,14 +179,14 @@ for fold in Inp_folders:#[:1]:  # for many folder
                # Plotte Legends
                axs[0, maal].legend(handles=handles, loc='best', fontsize=8)
                
-          spenn_delU.append(delta_U)
-          spenn_delAlp.append(delta_A)
-          spenn_AfU.append(A_for_U)
-          spenn_CMBR.append(delta_CMBR)
-          spenn_CMBRfU.append(CMBR_for_U)
+          spenn_delU[Sim]=delta_U
+          spenn_delAlp[Sim]=delta_A
+          spenn_AfU[Sim]=A_for_U
+          spenn_CMBR[Sim]=delta_CMBR
+          spenn_CMBRfT[Sim]=CMBR_for_T
              
           #Andre rad - Maa oppdateres med nye plot når warp er satt opp
-          ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_U]
+          ploo=[delta_U,delta_A,A_for_U,delta_CMBR,CMBR_for_T]
           KPItitles = ['Bend ', 'Twist', 'BendTwist (Twist per Bend)','Camber','Camber per Twist' ]
           pli= ['Deflection [mm]','\u0394 \u03B1 of coordline [°]','\u0394 \u03B1 / deflection [°/mm] ',
                 '\u0394 Camber','\u0394 Camber / Twist [1/°]']
@@ -208,7 +207,7 @@ for fold in Inp_folders:#[:1]:  # for many folder
                    spenn_delAlp=spenn_delAlp,
                    spenn_AfU=spenn_AfU,
                    spenn_CMBR =spenn_CMBR,
-                   spenn_CMBRfU = spenn_CMBRfU,
+                   spenn_CMBRfT = spenn_CMBRfT,
                    radz=Radi)
           
           plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))

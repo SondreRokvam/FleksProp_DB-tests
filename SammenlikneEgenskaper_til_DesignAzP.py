@@ -25,7 +25,7 @@ a = [([0.3,1]   , [-5, 125]),
      ([0.3,1]   , [-1, 1])]
 
 #Flow - Flags
-ALL = 0
+ALL = 1
 
 
 plottts.ScriptForSimuleringsSammenligningMasse(Source,Inp_folders,ALL,a)

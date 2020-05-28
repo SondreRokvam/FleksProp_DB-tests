@@ -169,57 +169,63 @@ class plottts:
                print('All testing')
                fig, axs = plt.subplots(1, 5, figsize=(19, 9))
                fig.suptitle('Sim: '+'All '+ Source.split("\\")[-1]+' simulations', fontsize=16)
-  
-          for fold in Inp_folders:  # for many folder
-               
-               print(fold[0][55:],'\n')
-               odb_path = fold[0]
-               plot_path= odb_path+'\\plots'
-               
-               # Hent
-               odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('100' in f or '20' in f))]
-               #print(odb_names)
-               if not ALL:
-                    fig, axs = plt.subplots(1, 5, figsize=(19, 10))
-                    fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
+          try:
+               for fold in Inp_folders:  # for many folder
                     
-               #Sette alle filene i denne mappen i ett plott
-               #print(odb_names)
-               #print(len(odb_names))
-               for u in odb_names:
-                    print (u)
-                    # Profile Subplot title
+                    print(fold[0][55:],'\n')
+                    odb_path = fold[0]
+                    plot_path= odb_path+'\\plots'
+                    
+                    # Hent
+                    odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]#print(odb_names)
+                    if not ALL:
+                         fig, axs = plt.subplots(1, 5, figsize=(19, 10))
+                         fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
+                         
+                    #Sette alle filene i denne mappen i ett plott
+                    #print(odb_names)
+                    #print(len(odb_names))
+                    
                     CylX = np.load(plot_path+'\\Comparison' + '.npz')
                     deltas, Radi = [CylX['spenn_delU'], 
-                                  CylX['spenn_delAlp'], CylX['spenn_AfU'],
-                                  CylX['spenn_CMBR'], CylX['spenn_CMBRfU']],CylX['radz']
+                                       CylX['spenn_delAlp'], CylX['spenn_AfU'],
+                                       CylX['spenn_CMBR'], CylX['spenn_CMBRfT']],CylX['radz']
                     
-                    for plo in range(0, 5):
-                         if ALL:
-                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0)
-                         if not ALL:
-                              axs[plo].plot(Radi, deltas[plo][odb_names.index(u)][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
-                         axs[plo].set_xlabel('Radius length')
-                         axs[plo].set_ylabel(pli[plo])
-                         axs[plo].set_xlim(a[plo][0])
-                         if not ALL:
-                             axs[plo].set_ylim(a[plo][1]) 
+                    
+                    for u in odb_names:
+                         print (u)
                          
-                         # Subplot title
-                         axs[plo].title.set_text(KPItitles[plo])
+                         # Profile Subplot title
      
-               if not ALL:
-                    handles, labels = axs[0].get_legend_handles_labels()
-                    plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
+                         #(deltas[0])
+                         for plo in range(0, 5):
+                              if ALL:
+                                   axs[plo].plot(Radi, deltas[plo].tolist()[u][:],linewidth=1.0)
+                              if not ALL:
+                                   axs[plo].plot(Radi, deltas[plo].tolist()[u][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
+                              axs[plo].set_xlabel('Radius length')
+                              axs[plo].set_ylabel(pli[plo])
+                              axs[plo].set_xlim(a[plo][0])
+                              if not ALL:
+                                  axs[plo].set_ylim(a[plo][1]) 
+                              
+                              # Subplot title
+                              axs[plo].title.set_text(KPItitles[plo])
+          
+                    if not ALL:
+                         handles, labels = axs[0].get_legend_handles_labels()
+                         plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
+                         fig.tight_layout()
+                         plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
+                         
+                         #plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[6])+'\\!'+str(fold[0][55:]).replace("\\","-")+'.png')
+                         plottts.new_folder(Source +'_plots\\')
+                         plt.savefig(Source +'_plots\\-  '+str(fold[0][55:]).replace("\\","-")+'.png')
+                         plt.close()
+                                       
+               if ALL:
                     fig.tight_layout()
                     plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
-                    
-                    #plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[6])+'\\!'+str(fold[0][55:]).replace("\\","-")+'.png')
-                    plottts.new_folder(Source +'_plots\\')
-                    plt.savefig(Source +'_plots\\-  '+str(fold[0][55:]).replace("\\","-")+'.png')
-                    plt.close()
-                                  
-          if ALL:
-               fig.tight_layout()
-               plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
-               plt.savefig(Source +'_plots\\- !All.png')
+                    plt.savefig(Source +'_plots\\- !All.png')
+          except:
+               pass

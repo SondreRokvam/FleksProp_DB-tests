@@ -12,7 +12,7 @@ if 1:  # Hw punkter
                   [15.057261, 225.33374, 450.]]
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Initiate.py')
 # ODB PATH
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW'       # Overmappe for massetestene
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_Particular'       # Overmappe for massetestene
 # Os walk to get files, roots and
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Find_inpNodb_N_Make_differnceList.py')
 # Extract from odb path
@@ -35,6 +35,7 @@ if (inps-len(fuckedlist))>0:
             Mdb()
             try:
                 print '\n              Attepting extraction from: ', odb_path + '\\' + i
+
                 odb = session.openOdb(name=odb_path + '\\' + i)
                 Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
                 #print i
@@ -109,4 +110,4 @@ if (inps-len(fuckedlist))>0:
                 fuckedlist.append([gofor,i])
                 print '          Added to redo-list\n\n'
                 pass
-execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Write_Launcher_N_Overview.py')
+execfile('C:\MultiScaleMethod\Github\FleksProp_DB-tests\Write_Launcher.py')

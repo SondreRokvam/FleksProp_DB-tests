@@ -11,19 +11,21 @@ a = [([0.3,1]   , [-5, 125]),
      ([0.3,1]   , [-3.5, 1]),
      ([0.3,1]   , [-0.15, 0.15]),
      ([0.3,1]   , [-0.5, 0.5]),
-     ([0.3,1]   , [-1, 1])]
+     ([0.3,1]   , [-2.5, 2.5])]
 
 
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP' 
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP_Particular' 
+
+#Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'       # Overmappe for massetestene
 #Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'
 
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders:#[:1]:  # for many folder
+for fold in Inp_folders:  # for many folder
      print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
      odb_path = fold[0]
      npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
@@ -31,19 +33,18 @@ for fold in Inp_folders:#[:1]:  # for many folder
      #plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
      
      # Hent data
-     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('-20' in f or '_20' in f or '_100' in f or '-100' in f))]
-     npz_files = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('-20' in f or '_20' in f or '_100' in f or '-100' in f))]
+     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
+     npz_files = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
           
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
-     ALterinss = ['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95']
      Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
      Radi=Para['r_val']
 
      #Make lists for holding KPI for comparison of concepts in folder plotting
      spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
      
-     for Sim in odb_names:#[:3]:
+     for Sim in odb_names[:]:
           print(Sim)
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
@@ -167,12 +168,13 @@ for fold in Inp_folders:#[:1]:  # for many folder
                 
                # Preparere Legends
                handles, labels = axs[0, maal].get_legend_handles_labels()
-               
+               DefoLabl = '\u0394 \u03B4  =   '+ str("%.2f" % deltaDeflec)+ 'mm'
                AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
                CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
                CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
                ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
 
+               handles.append(mpatches.Patch(color='none', label=DefoLabl))
                handles.append(mpatches.Patch(color='none', label=AlfaLabl))
                handles.append(mpatches.Patch(color='none', label=CMBRLabl))
                handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
@@ -211,9 +213,8 @@ for fold in Inp_folders:#[:1]:  # for many folder
                    spenn_CMBRfT = spenn_CMBRfT,
                    radz=Radi)
           
-          plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
-          plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\'+Sim[:-4]+'.png')
-          #plt.savefig(Source+'\\'+Sim[:-4]+'.png')
+          plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular_plots\\'+fold[0].split("\\")[-1]+'\\')
+          plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular_plots\\'+fold[0].split("\\")[-1]+'\\'+Sim[:-4]+'.png')
           plt.close()
 
              

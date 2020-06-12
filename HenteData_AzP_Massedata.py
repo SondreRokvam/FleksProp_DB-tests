@@ -12,7 +12,7 @@ if 1: #AzP lead/trail punkter
                  [-236.240842,-571.887303,-123.166197] ]
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Initiate.py')
 # ODB PATH
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP'       # Overmappe for massetestene
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular'       # Overmappe for massetestene
 # Os walk to get files, roots and
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Find_inpNodb_N_Make_differnceList.py')
 # Extract from odb paths

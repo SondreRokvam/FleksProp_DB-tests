@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Tue Jun  9 10:49:26 2020
+
+@author: Sondre
+"""
+
+# -*- coding: utf-8 -*-
 """Illustrationg deformation behaviour for AzP propeller
 @author: Sondre feb-may.2020"""
 import matplotlib.pyplot as plt
@@ -11,19 +18,21 @@ a = [([0.3,1]   , [-5, 125]),
      ([0.3,1]   , [-3.5, 1]),
      ([0.3,1]   , [-0.15, 0.15]),
      ([0.3,1]   , [-0.5, 0.5]),
-     ([0.3,1]   , [-1, 1])]
+     ([0.3,1]   , [-2.5, 2.5])]
 
 
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
 #Singles eller Mass Simulations?
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AZP' 
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular' 
+
+#Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'       # Overmappe for massetestene
 #Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'
 
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders:#[:1]:  # for many folder
+for fold in Inp_folders:  # for many folder
      print('\n\nFolder :',fold[0].split("\\")[-4:-1],'\n')
      odb_path = fold[0]
      npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
@@ -31,19 +40,18 @@ for fold in Inp_folders:#[:1]:  # for many folder
      #plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\')
      
      # Hent data
-     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('-20' in f or '_20' in f or '_100' in f or '-100' in f))]
-     npz_files = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('-20' in f or '_20' in f or '_100' in f or '-100' in f))]
+     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
+     npz_files = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]
           
      #Hente faste variabler for plotting
-     Para   =  np.load(gitHub+'parameters_for_plot.npz')
-     ALterinss = ['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95']
      Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
-     Radi=Para['r_val']
+     prifss =['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95']
+     Radi=[0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95]
 
      #Make lists for holding KPI for comparison of concepts in folder plotting
      spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
      
-     for Sim in odb_names:#[:3]:
+     for Sim in odb_names[:1]:
           print(Sim)
           #KPIs
           delta_U, delta_A, delta_CMBR = [],[],[]
@@ -54,10 +62,11 @@ for fold in Inp_folders:#[:1]:  # for many folder
           fig.suptitle('Sim: '+Sim, fontsize=16)
           axs[0, 0].set_ylabel('Propeller longtudinal axis')
           s,j='gr', ['--','-'] #Farge og form for Display profil plottene
-                
+          
+          
           ProfilePlots=[]
-          for maal in range(0,len(Measurementes)):
-               Data   =  np.load(npz_path+'\\Cylinder view of '+Measurementes[maal]+' for '+Sim[:-4]+'.npz')
+          for maal in range(0,len(prifss)):
+               Data   =  np.load(npz_path+'\\Cylinder view of '+prifss[maal]+' for '+Sim[:-4]+'.npz')
                Coordline = [Data['profile_undefcoordline'],Data['profile_defcoordline']]
                dotCyl,dotCylm = Data['profile_undeformed'],Data['profile_deformed']
                Inter=[[1,0],[7,6]] # The datacolumns in plotdata used for plotting in current tests
@@ -145,40 +154,44 @@ for fold in Inp_folders:#[:1]:  # for many folder
                delta_CMBR.append(deltaCAMBER)  
                CMBR_for_T.append(deltaCAMBER/deltaAlfa)
                
-               #Plottinga av profile Subplots 
-               axs[0, maal].title.set_text(Measurementes[maal])#Label Title in the subplot
-               axs[0, maal].set_xlabel('Cylinder length')      #Label x-axis in the subplot
-               handle = ['Undef.', 'Loaded'] # For legends
-               for p in Inter:
-                    cp =CurcentProfilePlots[Inter.index(p)]
-                    #fp =FlatProfilePlots[Inter.index(p)]
-                    cl =CLplot[Inter.index(p)]
-                    ncl =NCLplot[Inter.index(p)]
-                    clM = CLcenterMark[Inter.index(p)]
-                    wpp =WarpPointsPlotting[Inter.index(p)]
-                    axs[0, maal].plot(cp[0],cp[1],cp[2],label=handle[Inter.index(p)])
-                    #axs[0, maal].plot(fp[0],fp[1],fp[2])
-                    axs[0, maal].plot(cl[0],cl[1],cl[2],s[Inter.index(p)]+':')
-                    axs[0, maal].plot(ncl[0],ncl[1],ncl[2])
-                    axs[0, maal].plot(clM[0],clM[1],clM[2])
-                    axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
-               axs[0, maal].set_xlim([375,1225])
-               axs[0, maal].set_ylim([-400, 600])
-                
-               # Preparere Legends
-               handles, labels = axs[0, maal].get_legend_handles_labels()
-               
-               AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
-               CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
-               CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
-               ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
-
-               handles.append(mpatches.Patch(color='none', label=AlfaLabl))
-               handles.append(mpatches.Patch(color='none', label=CMBRLabl))
-               handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
-               handles.append(mpatches.Patch(color='none', label=ThicknessLabl))
-               # Plotte Legends
-               axs[0, maal].legend(handles=handles, loc='best', fontsize=8)
+               if prifss[maal] in Measurementes:
+                    #Plottinga av profile Subplots 
+                    print ('slslsl',Measurementes.index(prifss[maal]))
+                    plllit=Measurementes.index(prifss[maal])
+                    axs[0, plllit].title.set_text(prifss[maal])#Label Title in the subplot
+                    axs[0, plllit].set_xlabel('Cylinder length')      #Label x-axis in the subplot
+                    handle = ['Undef.', 'Loaded'] # For legends
+                    for p in Inter:
+                         cp =CurcentProfilePlots[Inter.index(p)]
+                         #fp =FlatProfilePlots[Inter.index(p)]
+                         cl =CLplot[Inter.index(p)]
+                         ncl =NCLplot[Inter.index(p)]
+                         clM = CLcenterMark[Inter.index(p)]
+                         wpp =WarpPointsPlotting[Inter.index(p)]
+                         axs[0, plllit].plot(cp[0],cp[1],cp[2],label=handle[Inter.index(p)])
+                         #axs[0, maal].plot(fp[0],fp[1],fp[2])
+                         axs[0, plllit].plot(cl[0],cl[1],cl[2],s[Inter.index(p)]+'x:')
+                         axs[0, plllit].plot(ncl[0],ncl[1],ncl[2])
+                         axs[0, plllit].plot(clM[0],clM[1],clM[2])
+                         axs[0, plllit].plot(wpp[0],wpp[1],wpp[2])
+                    axs[0, plllit].set_xlim([375,1225])
+                    axs[0, plllit].set_ylim([-400, 600])
+                     
+                    # Preparere Legends
+                    handles, labels = axs[0, plllit].get_legend_handles_labels()
+                    DefoLabl = '\u0394 \u03B4  =   '+ str("%.2f" % deltaDeflec)+ 'mm'
+                    AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
+                    CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
+                    CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
+                    ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
+     
+                    handles.append(mpatches.Patch(color='none', label=DefoLabl))
+                    handles.append(mpatches.Patch(color='none', label=AlfaLabl))
+                    handles.append(mpatches.Patch(color='none', label=CMBRLabl))
+                    handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
+                    handles.append(mpatches.Patch(color='none', label=ThicknessLabl))
+                    # Plotte Legends
+                    axs[0, plllit].legend(handles=handles, loc='best', fontsize=8)
                
           spenn_delU[Sim]=delta_U
           spenn_delAlp[Sim]=delta_A
@@ -210,10 +223,9 @@ for fold in Inp_folders:#[:1]:  # for many folder
                    spenn_CMBR =spenn_CMBR,
                    spenn_CMBRfT = spenn_CMBRfT,
                    radz=Radi)
-          
-          plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6]))
-          plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_plots\\'+str(fold[0].split("\\")[6])+'\\'+Sim[:-4]+'.png')
-          #plt.savefig(Source+'\\'+Sim[:-4]+'.png')
-          plt.close()
+          print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular_plots\\'+fold[0].split("\\")[-1]+'\\'+Sim[:-4]+'.png')
+          plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular_plots\\'+fold[0].split("\\")[-1]+'\\')
+          plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular_plots\\'+fold[0].split("\\")[-1]+'\\'+Sim[:-4]+'.png')
+          #plt.close()
 
              

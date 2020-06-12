@@ -169,10 +169,11 @@ class plottts:
                print('All testing')
                fig, axs = plt.subplots(1, 5, figsize=(19, 9))
                fig.suptitle('Sim: '+'All '+ Source.split("\\")[-1]+' simulations', fontsize=16)
-          try:
+          #try:
+          if 1:
                for fold in Inp_folders:  # for many folder
                     
-                    print(fold[0][55:],'\n')
+                    print(fold[0],'\n')
                     odb_path = fold[0]
                     plot_path= odb_path+'\\plots'
                     
@@ -193,7 +194,7 @@ class plottts:
                     
                     
                     for u in odb_names:
-                         print (u)
+                         print ('hjkhkhk',u)
                          
                          # Profile Subplot title
      
@@ -216,16 +217,17 @@ class plottts:
                          handles, labels = axs[0].get_legend_handles_labels()
                          plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
                          fig.tight_layout()
-                         plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
+                         plt.subplots_adjust(left=0.05, bottom=0.075 ,top=0.9 )  
                          
-                         #plt.savefig(Source +'_plots\\'+str(fold[0].split("\\")[6])+'\\!'+str(fold[0][55:]).replace("\\","-")+'.png')
-                         plottts.new_folder(Source +'_plots\\')
-                         plt.savefig(Source +'_plots\\-  '+str(fold[0][55:]).replace("\\","-")+'.png')
+                         plt.savefig(Source +'_plots\\'+fold[0].split("\\")[-1]+'\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
+                         #plt.savefig(Source +'_plots\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
                          plt.close()
                                        
                if ALL:
                     fig.tight_layout()
-                    plt.subplots_adjust(left=0.025, bottom=0.025 ,top=0.9 )  
+                    plt.subplots_adjust(left=0.075, bottom=0.075 ,top=0.9 )  
                     plt.savefig(Source +'_plots\\- !All.png')
-          except:
-               pass
+                    
+                    #plt.savefig(Source +'_plots\\- !All.png')
+          #except:
+          #     print pass

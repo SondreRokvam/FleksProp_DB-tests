@@ -9,7 +9,7 @@ import os
 
 #Declare Directories
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW' 
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_Particular' 
 
 #Hente folder directories
 Inp_folders = plottts.FindInPFolders(Source)
@@ -24,7 +24,7 @@ a = [([0.3,1]   , [-5, 30]),
      ([0.3,1]   , [-1, 1])]
 
 #Flow - Flags
-ALL = 1
+ALL = 0
 
 
 plottts.ScriptForSimuleringsSammenligningMasse(Source,Inp_folders,ALL,a)

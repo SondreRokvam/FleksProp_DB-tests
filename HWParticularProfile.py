@@ -19,7 +19,7 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_Particular'
 Inp_folders = plottts.FindInPFolders(Source)
 fuckedlist=[]
 #Starte datapreperation for simulation canvas
-for fold in Inp_folders[:]:  # for many folder
+for fold in Inp_folders[:1]:  # for many folder
     print('\n\nFolder :',fold[0].split("\\")[-4:],'\n')
     odb_path = fold[0]
     npz_path, plot_path=odb_path+'\\npz_files' , odb_path+'\\plots'
@@ -37,7 +37,7 @@ for fold in Inp_folders[:]:  # for many folder
     #Make lists for holding KPI for comparison of concepts in folder plotting
     spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
     
-    for u in odb_names[:]:
+    for u in odb_names[:1]:
          #try:
          if 1:
              print('pikk',fold[0].split("\\")[-1]+u[:-4])
@@ -85,7 +85,7 @@ for fold in Inp_folders[:]:  # for many folder
                      
                      #Linear regression for coordline
                      m,y = np.polyfit(np.array(Coordline[Inter.index(p)])[:,1],Coordline[Inter.index(p)][:,0],1)
-                     Xline=np.linspace(xmin,xmax,10)
+                     Xline=np.linspace(xmin-50,xmax+50,3)
                      CLx, CLy =(xmin+xmax)/2,m*(xmin+xmax)/2+y
                      
                      #Find normal to coordline
@@ -162,6 +162,7 @@ for fold in Inp_folders[:]:  # for many folder
                       axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
                  axs[0, maal].set_xlim([-325, 250])
                  axs[0, maal].set_ylim([-200, 375])
+                 axs[0, maal].yaxis.set_ticks(np.arange(-200, 375, 100))
                  #axs[0, maal].set_ylim([-100, 100])
                 
                  # Preparere Legends
@@ -214,7 +215,7 @@ for fold in Inp_folders[:]:  # for many folder
              print('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_plots_Particular\\'+fold[0].split("\\")[-1]+'\\')
              plottts.new_folder('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_Particular_plots\\'+fold[0].split("\\")[-1]+'\\')
              plt.savefig('D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\HW_Particular_plots\\'+fold[0].split("\\")[-1]+'\\'+u[:-4]+'.png')
-             plt.close()
+             #plt.close()
          #except:
          #    try:
          #         plt.close()

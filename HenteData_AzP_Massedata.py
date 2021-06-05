@@ -63,19 +63,20 @@ if (inps-len(fuckedlist))>0:
                     #print profile
                     dots_cyl_langs_x = []
                     dots_cyl_langs_xm =[]
-
-                    if not "CFD" in i:
-                        AllNodes = nodplace.nodeSets[profile].nodes[0]
-                    else:
-                        AllNodes = nodplace.nodeSets[profile].nodes
+                    AllNodes= []
+                    for nodes in nodplace.nodeSets[profile].nodes:
+                         print nodes
+                         for node in nodes:
+                              AllNodes.append(node)
                     Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(
                         region=nodplace.nodeSets[profile]).values
-
+                    print AllNodes
                     find_dis_trail_nodes = []
                     find_dis_lead_nodes = []
 
                     Acount= 0
                     for nod in AllNodes:
+                
                         x = float(nod.coordinates[0])           #Initial position of node
                         y = float(nod.coordinates[1])
                         z = float(nod.coordinates[2])

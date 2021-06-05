@@ -105,7 +105,7 @@ for fold in Inp_folders:  # for many folder
                     RWP =[]
                     for point in WarpPoints:
                          RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
-                         
+                    print(len(RWP))
                     #Find Warp Points
                     warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
      

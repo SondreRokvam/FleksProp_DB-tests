@@ -6,10 +6,10 @@ import numpy as np
 import math
 import os
 from PlottingClass import plottts
-a = [([0.3,1]   , [-5, 30]),
-     ([0.3,1]   , [-4, 4]),
-     ([0.3,1]   , [-0.3, 0.3]),
-     ([0.3,1]   , [-0.5, 0.5]),
+a = [([0.3,1]   , [0, 15]),
+     ([0.3,1]   , [-2, 2]),
+     ([0.3,1]   , [-0.2, 0.2]),
+     ([0.3,1]   , [-1., 1]),
      ([0.3,1]   , [-1, 1])]
 #Directories#
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
@@ -37,7 +37,7 @@ for fold in Inp_folders[:1]:  # for many folder
     #Make lists for holding KPI for comparison of concepts in folder plotting
     spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
     
-    for u in odb_names[:1]:
+    for u in odb_names[:]:
          #try:
          if 1:
              print('pikk',fold[0].split("\\")[-1]+u[:-4])

@@ -1,15 +1,28 @@
+print 'HenteData'
 if 1: #AzP lead/trail punkter
-    Leadnodes=[[88.140249,-198.797325,257.108194],
-               [57.111528,-267.042178,284.233135],
-               [26.214503,-343.738199,298.109126],
-               [-6.368028,-429.953069,292.472833],
-               [-46.696491,-530.173661,247.266837]]
+    Leadnodes=  [[88.140251,-198.797333,257.108185],
+               	 [72.609589,-231.798492,272.168518],
+               	 [57.111526,-267.042175,284.233124],
+               	 [41.653526,-304.398315,292.998169],
+               	 [26.214502,-343.73819,298.109131],
+               	 [10.324939,-385.480377,298.431122],
+               	 [-6.368028,-429.953064,292.472839],
+               	 [-24.538908,-477.645782,277.688263],
+               	 [-46.696491,-530.173645,247.26683],
+               	 [-76.464775,-587.882629,188.94519],
+               	 [-132.20723,-647.919617,48.496048]]
 
-    Trailnodes =[[-282.872286,-322.146479,-42.972622],
-                [-291.328316,-382.15225,-77.843804],
-                [-286.225663,-442.58725,-105.553427],
-                [-270.14662,-504.497972,-126.022999],
-                 [-236.240842,-571.887303,-123.166197] ]
+    Trailnodes =[[-282.872284,-322.146484,-42.972622],
+                    [-289.217621,-352.204224,-61.306122],
+                    [-291.328308,-382.152252,-77.843803],
+                    [-290.203033,-412.236786,-92.558594],
+                    [-286.225677,-442.58725,-105.553429],
+                    [-279.586548,-473.282013,-116.87767],
+                    [-270.146667,-504.497986,-126.02298],
+                    [-256.404358,-536.900452,-130.361664],
+                    [-236.24086,-571.887329,-123.166191],
+                    [-206.038391,-610.488525,-92.790321],
+                    [-146.371887,-649.578003,14.1441]]
 execfile('C:/MultiScaleMethod/Github/FleksProp_DB-tests/Initiate.py')
 # ODB PATH
 Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\AzP_Particular'       # Overmappe for massetestene
@@ -37,10 +50,10 @@ if (inps-len(fuckedlist))>0:
             if 1:
                 print '\n              Attepting extraction from: ', odb_path + '\\' + i
                 odb = session.openOdb(name=odb_path + '\\' + i)
-                Measurementnames= ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+                Measurementnames= ['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95','PROFILE-R1']
                 #print i
                 if not "CFD" in i:
-                    Measurements = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+                    Measurements = ['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95','PROFILE-R1']
                     nodplace =odb.rootAssembly
                 else:
                     Measurements = ['R250', 'R300', 'R350', 'R400', 'R450']

@@ -17,7 +17,7 @@ class plottts:
           RelevantPoints=  []
           Xref =(float(XMI+XMA)/2)
           for point in REL_Points_rotated:
-               #print('is ', Xref+tolran,' < ',point[0],' > ', Xref-tolran)                      
+               print('is ', Xref+tolran,' < ',point[0],' > ', Xref-tolran)                      
                if point[0] > Xref-tolran:
                     if point[0] < Xref+tolran:
                          #print(REL_Points_rotated[REL_Points_rotated.index(point)][0])
@@ -76,11 +76,20 @@ class plottts:
                     negpoints=cool
                TopPoints=[negpoints,pospoints]
           #print('\n\n',TopPoints,'\n\n',Botpoints)
+          print ('lil',TopPoints)
           ere,y = np.polyfit(np.array(TopPoints)[:,0],np.array(TopPoints)[:,1],1)
           WAPOTO=(Xref, y)
-          ere,y = np.polyfit(np.array(Botpoints)[:,0],np.array(Botpoints)[:,1],1)
+          try:
+               print ('lol',Botpoints)
+               ere,y = np.polyfit(np.array(Botpoints)[:,0],np.array(Botpoints)[:,1],1)
+          except:
+               print('here\n\n\n',Botpoints[1][0])
+               Botpoints =[Botpoints[0][0],Botpoints[1][0]]
+               print ('lol',Botpoints)
+               ere,y = np.polyfit(np.array(Botpoints)[:,0],np.array(Botpoints)[:,1],1)
+          else:
+               print( 'its Aokay')
           WAPOBO=(Xref, y)
-          
           return WAPOTO, WAPOBO
      
      def FindInPFolders(Soe):
@@ -173,7 +182,7 @@ class plottts:
           if 1:
                for fold in Inp_folders:  # for many folder
                     
-                    print(fold[0],'\n')
+                    #print(fold[0],'\n')
                     odb_path = fold[0]
                     plot_path= odb_path+'\\plots'
                     
@@ -194,7 +203,7 @@ class plottts:
                     
                     
                     for u in odb_names:
-                         print ('hjkhkhk',u)
+                         #print ('hjkhkhk',u)
                          
                          # Profile Subplot title
      
@@ -220,7 +229,7 @@ class plottts:
                          plt.subplots_adjust(left=0.05, bottom=0.075 ,top=0.9 )  
                          
                          plt.savefig(Source +'_plots\\'+fold[0].split("\\")[-1]+'\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
-                         #plt.savefig(Source +'_plots\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
+                         plt.savefig(Source +'_plots\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
                          plt.close()
                                        
                if ALL:

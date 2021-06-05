@@ -13,7 +13,7 @@ Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_Particular
  
 
 #Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'
-
+     
 #Hente folder directories
 Inp_folders = plottts.FindInPFolders(Source)
 
@@ -21,11 +21,11 @@ Inp_folders = plottts.FindInPFolders(Source)
 
 
 
-a = [([0.3,1]   , [-5, 125]),
-     ([0.3,1]   , [-3.5, 1]),
-     ([0.3,1]   , [-0.15, 0.15]),
-     ([0.3,1]   , [-1, 1]),
-     ([0.3,1]   , [-2.5, 2.5])]
+a = [([0.3,1]   , [-5, 65]),
+    ([0.3,1]   , [-3, 0.5]),
+    ([0.3,1]   , [-0.075, 0]),
+    ([0.3,1]   , [-1/4, 1/2]),
+    ([0.3,1]   , [-.5, .5])]
 
 #Flow - Flags
 ALL = 0

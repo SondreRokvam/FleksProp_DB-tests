@@ -38,8 +38,9 @@ for fold in Inp_folders:  # for many folder
           
      #Hente faste variabler for plotting
      Para   =  np.load(gitHub+'parameters_for_plot.npz')
-     Measurementes = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
-     Radi=Para['r_val']
+     Measurementes = ['PROFILE-R_5','PROFILE-R_55', 'PROFILE-R_6','PROFILE-R_65', 'PROFILE-R_7','PROFILE-R_75', 'PROFILE-R_8','PROFILE-R_85', 'PROFILE-R_9','PROFILE-R_95','PROFILE-R1',]
+     Measurementname = ['PROFILE-R_5', 'PROFILE-R_6', 'PROFILE-R_7', 'PROFILE-R_8', 'PROFILE-R_9']
+     Radi=[0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1]
 
      #Make lists for holding KPI for comparison of concepts in folder plotting
      spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
@@ -105,7 +106,7 @@ for fold in Inp_folders:  # for many folder
                     RWP =[]
                     for point in WarpPoints:
                          RWP.append(plottts.rotate([(xmin+xmax)/2,m*(xmin+xmax)/2+y], point, -math.atan2(m,1)))
-                    print(len(RWP))
+#                    print(len(RWP))
                     #Find Warp Points
                     warp_point_top,warp_point_bot=plottts.Top_bottom_warpPoints(40,RWP,xmin,xmax,CLx,CLy,m,y)
      
@@ -145,42 +146,44 @@ for fold in Inp_folders:  # for many folder
                A_for_U.append((deltaAlfa/deltaDeflec))
                delta_CMBR.append(deltaCAMBER)  
                CMBR_for_T.append(deltaCAMBER/deltaAlfa)
-               
+               #print(Measurementes)
                #Plottinga av profile Subplots 
-               axs[0, maal].title.set_text(Measurementes[maal])#Label Title in the subplot
-               axs[0, maal].set_xlabel('Cylinder length')      #Label x-axis in the subplot
-               handle = ['Undef.', 'Loaded'] # For legends
-               for p in Inter:
-                    cp =CurcentProfilePlots[Inter.index(p)]
-                    #fp =FlatProfilePlots[Inter.index(p)]
-                    cl =CLplot[Inter.index(p)]
-                    ncl =NCLplot[Inter.index(p)]
-                    clM = CLcenterMark[Inter.index(p)]
-                    wpp =WarpPointsPlotting[Inter.index(p)]
-                    axs[0, maal].plot(cp[0],cp[1],cp[2],label=handle[Inter.index(p)])
-                    #axs[0, maal].plot(fp[0],fp[1],fp[2])
-                    axs[0, maal].plot(cl[0],cl[1],cl[2],s[Inter.index(p)]+':')
-                    axs[0, maal].plot(ncl[0],ncl[1],ncl[2])
-                    axs[0, maal].plot(clM[0],clM[1],clM[2])
-                    axs[0, maal].plot(wpp[0],wpp[1],wpp[2])
-               axs[0, maal].set_xlim([375,1225])
-               axs[0, maal].set_ylim([-400, 600])
+               if Measurementes[maal] in Measurementname:
+                    SubPl =  Measurementname.index(Measurementes[maal])
+                    axs[0, SubPl].title.set_text(Measurementes[maal])#Label Title in the subplot
+                    axs[0, SubPl].set_xlabel('Cylinder length')      #Label x-axis in the subplot
+                    handle = ['Undef.', 'Loaded'] # For legends
+                    for p in Inter:
+                         cp =CurcentProfilePlots[Inter.index(p)]
+                         #fp =FlatProfilePlots[Inter.index(p)]
+                         cl =CLplot[Inter.index(p)]
+                         ncl =NCLplot[Inter.index(p)]
+                         clM = CLcenterMark[Inter.index(p)]
+                         wpp =WarpPointsPlotting[Inter.index(p)]
+                         axs[0, SubPl].plot(cp[0],cp[1],cp[2],label=handle[Inter.index(p)])
+                         #axs[0, maal].plot(fp[0],fp[1],fp[2])
+                         axs[0, SubPl].plot(cl[0],cl[1],cl[2],s[Inter.index(p)]+':')
+                         axs[0, SubPl].plot(ncl[0],ncl[1],ncl[2])
+                         axs[0, SubPl].plot(clM[0],clM[1],clM[2])
+                         axs[0, SubPl].plot(wpp[0],wpp[1],wpp[2])
+                    axs[0, SubPl].set_xlim([375,1225])
+                    axs[0, SubPl].set_ylim([-400, 600])
                 
-               # Preparere Legends
-               handles, labels = axs[0, maal].get_legend_handles_labels()
-               DefoLabl = '\u0394 \u03B4  =   '+ str("%.2f" % deltaDeflec)+ 'mm'
-               AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
-               CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
-               CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
-               ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
-
-               handles.append(mpatches.Patch(color='none', label=DefoLabl))
-               handles.append(mpatches.Patch(color='none', label=AlfaLabl))
-               handles.append(mpatches.Patch(color='none', label=CMBRLabl))
-               handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
-               handles.append(mpatches.Patch(color='none', label=ThicknessLabl))
-               # Plotte Legends
-               axs[0, maal].legend(handles=handles, loc='best', fontsize=8)
+                    # Preparere Legends
+                    handles, labels = axs[0, SubPl].get_legend_handles_labels()
+                    DefoLabl = '\u0394 \u03B4  =   '+ str("%.2f" % deltaDeflec)+ 'mm'
+                    AlfaLabl = '\u03B1, \u0394' + '\u03B1 = '+ str("%.2f" % Alphas[0])+ ', '+str("%.2f" % deltaAlfa) + ' °'
+                    CMBRLabl = 'f, \u0394' + 'f' + '   = '+ str("%.3f" % float(Warp[0]/Coordlengths[0]))+ ', '+str("%.1f" % (float(deltaCAMBER)*100))+'%'
+                    CoorlineLabl = 'C' + '        = ' + str("%.1f" % (float(Coordlengths[0]))) + ',  ' + str("%.1f" % (float(deltaCoordchange/Coordlengths[0])*100.0))+'%'
+                    ThicknessLabl ='T' + '        = ' + str("%.1f" % (float(Thicknesses[0] ))) + ',  '+ str("%.1f" % (float(deltaThick/Thicknesses[0])*100.0))+'%'
+     
+                    handles.append(mpatches.Patch(color='none', label=DefoLabl))
+                    handles.append(mpatches.Patch(color='none', label=AlfaLabl))
+                    handles.append(mpatches.Patch(color='none', label=CMBRLabl))
+                    handles.append(mpatches.Patch(color='none', label=CoorlineLabl))
+                    handles.append(mpatches.Patch(color='none', label=ThicknessLabl))
+                    # Plotte Legends
+                    axs[0, SubPl].legend(handles=handles, loc='best', fontsize=8)
                
           spenn_delU[Sim]=delta_U
           spenn_delAlp[Sim]=delta_A

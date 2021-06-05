@@ -48,7 +48,7 @@ if (inps-len(fuckedlist))>0:
             Mdb()
             #try:
             if 1:
-                print '\n              Attepting extraction from: ', odb_path + '\\' + i
+#                print '\n              Attepting extraction from: ', odb_path + '\\' + i
                 odb = session.openOdb(name=odb_path + '\\' + i)
                 Measurementnames= ['PROFILE-R_5', 'PROFILE-R_55', 'PROFILE-R_6', 'PROFILE-R_65', 'PROFILE-R_7', 'PROFILE-R_75', 'PROFILE-R_8', 'PROFILE-R_85', 'PROFILE-R_9', 'PROFILE-R_95','PROFILE-R1']
                 #print i
@@ -65,12 +65,12 @@ if (inps-len(fuckedlist))>0:
                     dots_cyl_langs_xm =[]
                     AllNodes= []
                     for nodes in nodplace.nodeSets[profile].nodes:
-                         print nodes
+#                         print nodes
                          for node in nodes:
                               AllNodes.append(node)
                     Disp = odb.steps['Step-1'].frames[-1].fieldOutputs['U'].getSubset(
                         region=nodplace.nodeSets[profile]).values
-                    print AllNodes
+#                    print AllNodes
                     find_dis_trail_nodes = []
                     find_dis_lead_nodes = []
 

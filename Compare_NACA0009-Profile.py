@@ -1,25 +1,22 @@
-"""Comparing Illustrations of deformation behaviour for AZP propeller
-@author: Sondre feb-may.2020"""
-
-from PlottingClass import plottts
+# -*- coding: utf-8 -*-
+"""
+@author: Sondre
+"""
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import math
 import os
+from PlottingClass import plottts
 
 #Declare Directories
 gitHub = 'C:\\MultiScaleMethod\\Github\\FleksProp_DB-tests\\'
-Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\Azp_Particular' 
- 
+Source = 'D:\\PhD\\Simuleringer\\Modelling_LayUp_vs_DefBehaviour\\NACA0009' 
 
-#Source = 'D:\\PhD\\Simuleringer\\Mecanical aspects\\Periodic Force Variations'
-     
 #Hente folder directories
 Inp_folders = plottts.FindInPFolders(Source)
 
 #Plotting starte
-
-
 
 a = [([0.3,1]   , [-0.01, 55]),
     ([0.3,1]   , [-4.5, 0.2]),

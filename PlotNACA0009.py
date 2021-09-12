@@ -40,9 +40,7 @@ for fold in Inp_folders[:]:  # for many folder
     spenn_delU, spenn_delAlp, spenn_CMBR,spenn_AfU,spenn_CMBRfT={},{},{},{},{}
     
     Measurementname=['PROFILE-R_5',
-                 'PROFILE-R_6',
                  'PROFILE-R_7',
-                 'PROFILE-R_8',
                  'PROFILE-R_9']
     for Sim in odb_names[:]:
          #KPIs
@@ -50,8 +48,8 @@ for fold in Inp_folders[:]:  # for many folder
          A_for_U, CMBR_for_T =[],[]
                
          # Start configuring plots
-         fig, axs = plt.subplots(2,5,figsize = (26,12))
-         fig.suptitle('Sim: '+Sim[:-4], fontsize=18)
+         fig, axs = plt.subplots(nrows=2, ncols=5,figsize = (26,12))
+         fig.suptitle('Sim: '+Sim[:-4], fontsize=18, horizontalalignment='left')
          axs[0, 0].set_ylabel('Propeller longtudinal axis', fontsize=14)
          s,j='gr', ['--','-'] #Farge og form for Display profil plottene
          ProfilePlots=[]
@@ -225,4 +223,5 @@ for fold in Inp_folders[:]:  # for many folder
                       spenn_CMBR =spenn_CMBR,
                       spenn_CMBRfT = spenn_CMBRfT,
                       radz=Radi)
-         plt.savefig(plot_path+'\\'+Sim[:-4]+'.png')
+         plottts.new_folder(plot_path[:-1])
+         plt.savefig(plot_path[:-1]+'\\'+Sim[:-4]+'.png')

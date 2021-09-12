@@ -182,8 +182,8 @@ class plottts:
                     # Hent
                     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]#print(odb_names)
                     if not ALL:
-                         fig, axs = plt.subplots(1, 5, figsize=(19, 10))
-                         fig.suptitle('Sims: '+(fold[0][52:]), fontsize=16)
+                         fig, axs = plt.subplots(1, 4, figsize=(19, 10))
+                         fig.suptitle('Comparison: '+(fold[0][52:-8])+' Baseline models', fontsize=20)
                          
                     #Sette alle filene i denne mappen i ett plott
                     #print(odb_names)
@@ -201,29 +201,32 @@ class plottts:
                          # Profile Subplot title
      
                          #(deltas[0])
-                         for plo in range(0, 5):
+                         for plo in range(0, 4):
                               if ALL:
                                    axs[plo].plot(Radi, deltas[plo].tolist()[u][:],linewidth=1.0)
                               if not ALL:
-                                   axs[plo].plot(Radi, deltas[plo].tolist()[u][:],linewidth=1.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
-                              axs[plo].set_xlabel('Radius length')
-                              axs[plo].set_ylabel(pli[plo])
+                                   axs[plo].plot(Radi, deltas[plo].tolist()[u][:],markersize=10,linewidth=2.0,marker=Figurines[odb_names.index(u)%len(Figurines)] ,label=odb_names[odb_names.index(u)].rstrip('.odb')[0:])
+                              axs[plo].set_xlabel('Radius length', fontsize=18)
+                              axs[plo].set_ylabel(pli[plo], fontsize=18)
                               axs[plo].set_xlim(a[plo][0])
-                              if not ALL:
-                                  axs[plo].set_ylim(a[plo][1]) 
+                              
+                              axs[plo].tick_params(labelsize=16)
+                              axs[plo].grid(True)
+#                              if not ALL:
+#                                  axs[plo].set_ylim(a[plo][1]) 
                               
                               # Subplot title
-                              axs[plo].title.set_text(KPItitles[plo])
+                              axs[plo].set_title(KPItitles[plo], fontsize=18)
           
                     if not ALL:
                          handles, labels = axs[0].get_legend_handles_labels()
-                         plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
+                         plt.legend(handles=handles[0:len(odb_names)], bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=12)
                          fig.tight_layout()
                          plt.subplots_adjust(left=0.05, bottom=0.075 ,top=0.9 )  
                          
-                         plt.savefig(Source +'_plots\\'+fold[0].split("\\")[-1]+'\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
-                         plt.savefig(Source +'_plots\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
-                         plt.close()
+#                         plt.savefig(Source +'_plots\\'+fold[0].split("\\")[-1]+'\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
+#                         plt.savefig(Source +'_plots\\!-'+fold[0].split("\\")[-1]+'_Compare.png')
+#                         plt.close()
                                        
                if ALL:
                     fig.tight_layout()

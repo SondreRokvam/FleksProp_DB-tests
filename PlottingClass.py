@@ -183,7 +183,7 @@ class plottts:
                     odb_names = [f for f in os.listdir(odb_path) if (f.endswith('.odb') and not ('20' in f or '100' in f))]#print(odb_names)
                     if not ALL:
                          fig, axs = plt.subplots(1, 4, figsize=(19, 10))
-                         fig.suptitle('Comparison: '+(fold[0][52:-8])+' Baseline models', fontsize=20)
+                         fig.suptitle('Comparison: '+(fold[0][52:-8])+' Final comparison of  design models', fontsize=20)
                          
                     #Sette alle filene i denne mappen i ett plott
                     #print(odb_names)
